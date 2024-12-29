@@ -1,0 +1,33 @@
+server:
+  port: 8888
+
+spring:
+  profiles:
+    active: native
+
+  application:
+    name: config-service
+
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:///Users/mspapa/final-project/buysellgo-config
+#          search-locations: file:///C:/final-project/buysellgo-config/
+
+#        git:
+#          uri:
+#          default-label:
+#          host-key:
+#          host-key-algorithm:
+#          private-key:
+
+logging:
+  level:
+    logging:
+      level:
+        root: debug
+        org.hibernate.orm.jdbc.bind: info
+        org.hibernate.SQL: info
+        springframework.cloud.config: debug
+        com.buysellgo: debug
