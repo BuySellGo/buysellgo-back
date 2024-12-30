@@ -1,0 +1,131 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          "[/**]": # ?? ??? ?? CORS ??
+            allowed-origins:
+               - "http://localhost:3000"
+#              - "https://buysellgo.shop"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowed-headers:
+              - "Content-Type"
+              - "Authorization"
+              - "X-Requested-With"
+            allow-credentials: true
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: BuySellGo Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
+        - name: DedupeResponseHeader
+          args:
+            name: Access-Control-Allow-Credentials Access-Control-Allow-Origin
+            strategy: RETAIN_FIRST
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/product-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/product-service/(?<segment>.*), /$\{segment}
+#
+#        - id: main-service
+#          uri: lb://MAIN-SERVICE
+#          predicates:
+#            - Path=/main-service/**
+#          filters:
+#            - RemoveRequestHeader=Cookie
+#            - RewritePath=/main-service/(?<segment>.*), /$\{segment}
+#            - AuthorizationHeaderFilter
+#
+#        - id: main-service
+#          uri: lb://MAIN-SERVICE
+#          predicates:
+#            - Path=/main-service/actuator/**
+#          filters:
+#            - RemoveRequestHeader=Cookie
+#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+#
+#        - id: mypage-service
+#          uri: lb://MYPAGE-SERVICE
+#          predicates:
+#            - Path=/mypage-service/**
+#          filters:
+#            - RemoveRequestHeader=Cookie
+#            - RewritePath=/mypage-service/(?<segment>.*), /$\{segment}
+#            - AuthorizationHeaderFilter
+#
+#        - id: mypage-service
+#          uri: lb://MYPAGE-SERVICE
+#          predicates:
+#            - Path=/mypage-service/actuator/**
+#          filters:
+#            - RemoveRequestHeader=Cookie
+#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+#
+#        - id: travelboard-service
+#          uri: lb://TRAVELBOARD-SERVICE
+#          predicates:
+#            - Path=/travelboard-service/**
+#          filters:
+#            - RemoveRequestHeader=Cookie
+#            - RewritePath=/travelboard-service/(?<segment>.*), /$\{segment}
+#            - AuthorizationHeaderFilter
+#
+#        - id: travelboard-service
+#          uri: lb://TRAVELBOARD-SERVICE
+#          predicates:
+#            - Path=/travelboard-service/actuator/**
+#          filters:
+#            - RemoveRequestHeader=Cookie
+#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+# log level setting
+logging:
+  level:
+    logging:
+      level:
+        root: info
+        org.hibernate.orm.jdbc.bind: info
+        org.hibernate.SQL: info
+        springframework.cloud.config: info
+        com.buysellgo: info

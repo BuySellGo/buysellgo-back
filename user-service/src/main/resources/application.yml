@@ -1,0 +1,17 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: user-service
+
+# log level setting
+logging:
+  level:
+    logging:
+      level:
+        root: info
+        org.hibernate.orm.jdbc.bind: info
+        org.hibernate.SQL: info
+        springframework.cloud.config: info
+        com.buysellgo: info
