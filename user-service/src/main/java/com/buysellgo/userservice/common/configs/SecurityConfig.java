@@ -50,7 +50,11 @@ public class SecurityConfig {
             auth
 //                    .requestMatchers("/user/list").hasAnyRole("ADMIN")
                     .requestMatchers("/sign-up", "/sign-in",
-                            "/refresh", "/", "/health-check").permitAll()
+                            "/refresh", "/", "/health-check",
+                            "/api/**", "/graphiql", "/graphql",
+                            "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
+                            "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html"
+                            ).permitAll()
 //                    .requestMatchers("/**").access(
 //                            new WebExpressionAuthorizationManager("hasIpAddress('localhost') or hasIpAddress('::1') or hasIpAddress('127.0.0.1')  or hasIpAddress('172.30.67.125')")
 //                    )
