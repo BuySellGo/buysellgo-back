@@ -75,6 +75,16 @@ dependencies {
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // swagger mvc
+//    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0"
+
+    // swagger mvc
+//    implementation 'org.springdoc:springdoc-openapi-webflux-core:1.7.0'
+//    implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.7.0'
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0"
+
+
 }
 
 dependencyManagement {

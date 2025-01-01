@@ -50,7 +50,13 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+#            - Path=/user-service/v3/api-docs
+            - Path=/user-service/swagger-ui.html
+            - Method=GET
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE
@@ -68,6 +74,12 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/product-service/(?<segment>.*), /$\{segment}
+
+        - id: product-service-swagger
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product-service/swagger-ui.html
+            - Method=GET
 #
 #        - id: main-service
 #          uri: lb://MAIN-SERVICE
@@ -129,3 +141,25 @@ logging:
         org.hibernate.SQL: info
         springframework.cloud.config: info
         com.buysellgo: info
+
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway Service
+        primaryName: API Gateway Service
+      - url: /user-service/v3/api-docs
+        name: User Service
+        primaryName: User Service
+      - url: /product-service/v3/api-docs
+        name: Product Service
+        primaryName: Order Service
+      - url: /order-service/v3/api-docs
+        name: Order Service
+        primaryName: Order Service

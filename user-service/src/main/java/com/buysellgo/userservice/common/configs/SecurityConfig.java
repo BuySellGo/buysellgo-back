@@ -49,8 +49,19 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
             auth
 //                    .requestMatchers("/user/list").hasAnyRole("ADMIN")
-                    .requestMatchers("/sign-up", "/sign-in",
-                            "/refresh", "/", "/health-check").permitAll()
+                    .requestMatchers(
+                            "/sign-up",
+                            "/sign-in",
+                            "/refresh",
+                            "/",
+                            "/health-check",
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-resources/**",
+                            "/webjars/**",
+                            "/swagger-ui.html",
+                            "/swagger-ui-custom.html"
+                    ).permitAll()
 //                    .requestMatchers("/**").access(
 //                            new WebExpressionAuthorizationManager("hasIpAddress('localhost') or hasIpAddress('::1') or hasIpAddress('127.0.0.1')  or hasIpAddress('172.30.67.125')")
 //                    )
