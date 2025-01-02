@@ -75,6 +75,32 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/product-service/(?<segment>.*), /$\{segment}
 
+
+        - id: helpdesk-service-api-docs
+          uri: lb://HELPDESK-SERVICE
+          predicates:
+            - Path=/helpdesk-service/v3/api-docs
+            - Method=GET
+
+        - id: helpdesk-service
+          uri: lb://HELPDESK-SERVICE
+          predicates:
+            - Path=/helpdesk-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/helpdesk-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: helpdesk-service
+          uri: lb://HELPDESK-SERVICE
+          predicates:
+            - Path=/helpdesk-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/helpdesk-service/(?<segment>.*), /$\{segment}
+
+
+
 #        - id: openapi-proxy
 #          uri: http://localhost:8000
 #          predicates:
