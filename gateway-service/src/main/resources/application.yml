@@ -1,6 +1,7 @@
 server:
   port: 8000
-
+  servlet:
+    context-path: /
 spring:
   application:
     name: gateway-service
@@ -34,6 +35,12 @@ spring:
             name: Access-Control-Allow-Credentials Access-Control-Allow-Origin
             strategy: RETAIN_FIRST
       routes:
+        - id: user-service-api-docs
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/v3/api-docs
+            - Method=GET
+
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
@@ -50,7 +57,6 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE
@@ -68,6 +74,20 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/product-service/(?<segment>.*), /$\{segment}
+
+#        - id: openapi-proxy
+#          uri: http://localhost:8000
+#          predicates:
+#          - Path=/demo-microservices/v3/api-docs/**
+#          filters:
+#          - RewritePath=/demo-microservices/v3/api-docs/(?<path>.*), /demo-microservices/$\{path}/v3/api-docs
+
+#        - id: openapi
+#          uri: http://localhost:${server.port}
+#          predicates:
+#            - Path=/v3/api-docs/**
+#          filters:
+#            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
 #
 #        - id: main-service
 #          uri: lb://MAIN-SERVICE
@@ -129,3 +149,25 @@ logging:
         org.hibernate.SQL: info
         springframework.cloud.config: info
         com.buysellgo: info
+
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway Service
+        primaryName: API Gateway Service
+      - url: /user-service/v3/api-docs
+        name: User Service
+        primaryName: User Service
+      - url: /product-service/v3/api-docs
+        name: Product Service
+        primaryName: Order Service
+      - url: /order-service/v3/api-docs
+        name: Order Service
+        primaryName: Order Service

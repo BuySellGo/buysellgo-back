@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+//@RestControllerAdvice(basePackages = {"com.buysellgo.userservice.controller"})
 @RestControllerAdvice
 @Slf4j
 public class CommonExceptionHandler {

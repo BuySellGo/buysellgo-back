@@ -12,8 +12,8 @@ spring:
     config:
       server:
         native:
-#          search-locations: file:///Users/user/final-project/buysellgo-config # for MAC
-          search-locations: file:///C:/final-project/buysellgo-config # for Windows
+#          search-locations: file:///Users/mspapa/final-project/buysellgo-config
+          search-locations: file:///C:/final-project/buysellgo-config/
 
 #        git:
 #          uri:
