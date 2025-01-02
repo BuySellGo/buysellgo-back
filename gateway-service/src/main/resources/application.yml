@@ -75,12 +75,6 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/product-service/(?<segment>.*), /$\{segment}
 
-        - id: product-service-swagger
-          uri: lb://PRODUCT-SERVICE
-          predicates:
-            - Path=/product-service/swagger-ui.html
-            - Method=GET
-
 #        - id: openapi-proxy
 #          uri: http://localhost:8000
 #          predicates:
