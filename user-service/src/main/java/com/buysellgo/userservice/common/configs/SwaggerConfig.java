@@ -7,59 +7,38 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+@Slf4j
+//@OpenAPIDefinition(info = @io.swagger.v3.oas.annotations.info.Info(title="user service", version="v1", description = "Documentation user service api v1.0"))
 @OpenAPIDefinition
 @Configuration
 public class SwaggerConfig {
-//    private final static String AUTH_HEADER = "Authorization";
-//
-//    @Bean
-//    public OpenAPI openApi() {
-//        var securityScheme = new SecurityScheme()
-//                .type(SecurityScheme.Type.HTTP)
-//                .scheme("bearer")
-//                .bearerFormat(AUTH_HEADER)
-//                .in(SecurityScheme.In.HEADER)
-//                .name(AUTH_HEADER);
-//
-//        var addSecurityItem = new SecurityRequirement();
-//        addSecurityItem.addList(AUTH_HEADER);
-//
-//        return new OpenAPI()
-//                .components(new Components().addSecuritySchemes(AUTH_HEADER, securityScheme))
-//                .addSecurityItem(addSecurityItem)
-//                .info(apiInfo());
-//    }
-//
-//    private Info apiInfo() {
-//        return new Info()
-//                .title("User Service")
-//                .description("User Service API")
-//                .version("v1");
-//    }
-
 
     @Bean
-    public OpenAPI customOpenApi(@Value("${openapi.service.url}") String url,
-                                 @Value("${openapi.service.title}") String serviceTitle,
-                                 @Value("${openapi.service.version}") String serviceVersion
-                                 ) {
+    public OpenAPI customOpenApi(
+            @Value("${openapi.service.url}") String url,
+            @Value("${openapi.service.title}") String serviceTitle,
+            @Value("${openapi.service.version}") String serviceVersion) {
 
-                return new OpenAPI()
-                        .servers(List.of(new Server().url(url)))
-                        .components(new Components().addSecuritySchemes(
-                            "Bearer",
-                            new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-                        .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                        .info(new Info()
-                                .title(serviceTitle)
-                                .version(serviceVersion)
-                                .description("User Service API"));
+        System.out.println("!@#$%^&*()_!@#$%^&*()!@#$%^&*(@#$%^&*(@#$%^&*(!@#$%^&*(@#$%^&*");
+        log.info("serverUrl={}", url);
+
+        return new OpenAPI()
+                .servers(List.of(new Server().url(url)))
+                .components(new Components().addSecuritySchemes(
+                    "Bearer",
+                    new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                .info(new Info()
+                        .title(serviceTitle)
+                        .version(serviceVersion)
+                        .description("User Service API"));
     }
 
 //    @Bean

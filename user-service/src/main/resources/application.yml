@@ -10,7 +10,7 @@ openapi:
   service:
     title: user-service doc
     version: v1
-    url: http://localhost:8000
+    url: http://localhost:8000/${spring.application.name}
 springdoc:
   api-docs:
     path: /user-service/v3/api-docs

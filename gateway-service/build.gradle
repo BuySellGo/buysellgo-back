@@ -39,9 +39,14 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
-    // swagger mvc
-//    implementation 'org.springdoc:springdoc-openapi-webflux-core:1.7.0'
+    // swagger webflux
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.2'
+//    implementation 'org.springdoc:springdoc-openapi-webflux-core:1.5.13'
+//    implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.5.13'
+//    implementation 'org.springdoc:springdoc-openapi-webflux-core:1.7.0'
+//    implementation 'org.springframework.boot:spring-boot-starter-webflux'  // WebFlux 의존성 (Swagger UI 및 OpenAPI에 필요)
+//    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0'  // Swagger UI를 위한 의존성
+
 }
 
 dependencyManagement {
