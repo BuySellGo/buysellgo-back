@@ -1,12 +1,10 @@
 package com.buysellgo.userservice.user.domain.user;
 
+import com.buysellgo.userservice.common.entity.Authorization;
+import com.buysellgo.userservice.common.entity.BaseEntity;
 import com.buysellgo.userservice.common.entity.Role;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -15,59 +13,47 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "user_id", columnDefinition = "bigint")
+    private long userId;
 
-    @Column(name = "email", columnDefinition = "varchar(50)",nullable = false)
+    @Column(name = "email", columnDefinition = "varchar(50)",nullable = false, unique = true)
     private String email;
 
     @Column(name = "password", columnDefinition = "varchar(200)",nullable = false)
     private String password;
 
-    @Column(name = "username", columnDefinition = "varchar(50)",nullable = false)
+    @Column(name = "username", columnDefinition = "varchar(50)",nullable = false, unique = true)
     private String username;
 
-    @Column(name = "phone", columnDefinition = "varchar(30)", nullable = false)
+    @Column(name = "phone", columnDefinition = "varchar(30)", nullable = false, unique = true)
     private String phone;
 
     @Column(name = "login_type", columnDefinition = "enum('COMMON','KAKAO','NAVER','GOOGLE')", nullable = false)
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
 
-    @Column(name = "status", columnDefinition = "enum('ENABLE','DISABLE')", nullable = false)
+    @Column(name = "status", columnDefinition = "enum('AUTHORIZED','UNAUTHORIZED')", nullable = false)
     @Enumerated(EnumType.STRING)
-    private AcountStatus status;
+    private Authorization status;
 
     @Column(name = "role", columnDefinition = "enum('ADMIN','USER')", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(name = "email_certified", columnDefinition = "boolean", nullable = false)
-    private Boolean emailCertified;
-
-    @Column(name = "created_at", columnDefinition = "timestamp", nullable = false)
-    @CreationTimestamp
-    private Timestamp createdAt;
-
-    @Column(name = "updated_at", columnDefinition = "timestamp", nullable = false)
-    @UpdateTimestamp
-    private Timestamp updatedAt;
+    private boolean emailCertified;
 
     @Column(name = "agree_PICU", columnDefinition = "boolean", nullable = false)
-    private Boolean agreePICU;
+    private boolean agreePICU;
 
     @Column(name = "agree_email", columnDefinition = "boolean", nullable = false)
-    private Boolean agreeEmail;
+    private boolean agreeEmail;
 
     @Column(name = "agree_TOS", columnDefinition = "boolean", nullable = false)
-    private Boolean agreeTOS;
-
-    @Version
-    @Column(name = "version", nullable = false)
-    private long version;
+    private boolean agreeTOS;
 
     public static User of(String email, String encodePassword, String username, String phone, LoginType loginType, Role role, Boolean emailCertified, Boolean agreePICU, Boolean agreeEmail, Boolean agreeTOS) {
         return User.builder()
@@ -76,7 +62,7 @@ public class User {
                 .username(username)
                 .phone(phone)
                 .loginType(loginType)
-                .status(AcountStatus.ENABLE)
+                .status(Authorization.AUTHORIZED)
                 .role(role)
                 .emailCertified(emailCertified)
                 .agreePICU(agreePICU)
@@ -98,10 +84,10 @@ public class User {
             String loginType,
             String status,
             String role,
-            Boolean emailCertified,
-            Boolean agreePICU,
-            Boolean agreeEmail,
-            Boolean agreeTOS,
+            boolean emailCertified,
+            boolean agreePICU,
+            boolean agreeEmail,
+            boolean agreeTOS,
             long version
 
     ){}
