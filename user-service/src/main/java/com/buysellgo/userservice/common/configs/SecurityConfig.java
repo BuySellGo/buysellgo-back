@@ -6,18 +6,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
-
-import java.util.function.Supplier;
 
 @Configuration
 @EnableWebSecurity
@@ -41,39 +37,37 @@ public class SecurityConfig {
     // 시큐리티 기본 설정 (권한 처리, 초기 로그인 화면 없애기 등등...)
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrfConfig -> csrfConfig.disable());
+        http.csrf(AbstractHttpConfigurer::disable);
 //        http.cors(Customizer.withDefaults()); // 직접 커스텀한 CORS 설정을 적용하겠다.
         http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.authorizeHttpRequests(auth -> {
-            auth
+        http.authorizeHttpRequests(auth -> auth
 //                    .requestMatchers("/user/list").hasAnyRole("ADMIN")
-                    .requestMatchers(
-                            "/api/v1/hello-user-service",
-                            "/sign-up",
-                            "/sign-in",
-                            "/refresh",
-                            "/",
-                            "/health-check",
+                .requestMatchers(
+                        "/api/v1/hello-user-service",
+                        "/sign-up",
+                        "/sign-in",
+                        "/refresh",
+                        "/",
+                        "/health-check",
 //                            "/v3/api-docs/**",
 //                            "/swagger-ui/**",
 //                            "/swagger-resources/**",
 //                            "/webjars/**",
 //                            "/swagger-ui.html",
 //                            "/swagger-ui-custom.html"
-                            "/user-service/v3/api-docs/**",
-                            "/user-service/swagger-ui/**",
-                            "/user-service/swagger-resources/**",
-                            "/user-service/webjars/**",
-                            "/user-service/swagger-ui.html",
-                            "/user-service/swagger-ui-custom.html"
-                    ).permitAll()
+                        "/user-service/v3/api-docs/**",
+                        "/user-service/swagger-ui/**",
+                        "/user-service/swagger-resources/**",
+                        "/user-service/webjars/**",
+                        "/user-service/swagger-ui.html",
+                        "/user-service/swagger-ui-custom.html"
+                ).permitAll()
 //                    .requestMatchers("/**").access(
 //                            new WebExpressionAuthorizationManager("hasIpAddress('localhost') or hasIpAddress('::1') or hasIpAddress('127.0.0.1')  or hasIpAddress('172.30.67.125')")
 //                    )
-                    .anyRequest().authenticated();
-        })
+                .anyRequest().authenticated())
                 // 커스텀 필터를 등록.
                 // 시큐리티에서 기본으로 인증, 인가 처리를 해 주는 UsernamePasswordAuthenticationFilter 전에 내 필터 add
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -81,13 +75,10 @@ public class SecurityConfig {
         return http.build();
     }
 
-    private AuthorizationDecision hasIpAddress(Supplier<Authentication> authentication, RequestAuthorizationContext object) {
-        return new AuthorizationDecision(IP_ADDRESS_MATCHER.matches(object.getRequest()));
-    }
-
 
 
 }
+
 
 
 
