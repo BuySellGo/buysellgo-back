@@ -197,3 +197,6 @@ springdoc:
       - url: /order-service/v3/api-docs
         name: Order Service
         primaryName: Order Service
+      - url: /helpdesk-service/v3/api-docs
+        name: HelpDesk Service
+        primaryName: HelpDesk Service

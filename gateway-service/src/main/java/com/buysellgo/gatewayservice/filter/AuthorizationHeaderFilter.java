@@ -30,7 +30,9 @@ public class AuthorizationHeaderFilter
     private String secretKey;
 
     private final List<String> allowUrl = Arrays.asList(
-            "/sign-up", "/sign-in", "/api/v1/hello-user-service",
+            "/sign-up", "/sign-in",
+            "/api/v1/hello-user-service",
+            "/api/v1/hello-helpdesk-service",
             "/v3/api-docs",
             "/swagger-ui/**",
             "/swagger-resources/**",
