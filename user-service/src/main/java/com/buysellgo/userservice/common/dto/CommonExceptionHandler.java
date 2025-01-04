@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 //@RestControllerAdvice(basePackages = {"com.buysellgo.userservice.controller"})
 @RestControllerAdvice
@@ -86,6 +87,14 @@ public class CommonExceptionHandler {
             .body(commonErrorDto);
     }
 
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<CommonErrorDto> noSuchElementHandler(NoSuchElementException e) {
+        CommonErrorDto dto = new CommonErrorDto(HttpStatus.NOT_FOUND, e.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(dto);
+    }
 
 }
 

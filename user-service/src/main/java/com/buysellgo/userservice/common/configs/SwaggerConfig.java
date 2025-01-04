@@ -26,15 +26,10 @@ public class SwaggerConfig {
             @Value("${openapi.service.title}") String serviceTitle,
             @Value("${openapi.service.version}") String serviceVersion) {
 
-        log.info("!@#$%^&*()_!@#$%^&*()!@#$%^&*(@#$%^&*(@#$%^&*(!@#$%^&*(@#$%^&*");
         log.info("serverUrl={}", url);
 
         return new OpenAPI()
                 .servers(List.of(new Server().url(url)))
-                .components(new Components().addSecuritySchemes(
-                    "Bearer",
-                    new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .info(new Info()
                         .title(serviceTitle)
                         .version(serviceVersion)
