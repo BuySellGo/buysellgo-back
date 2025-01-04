@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 8001
 
 spring:
   application:
@@ -12,10 +12,20 @@ openapi:
     version: v1
     url: http://localhost:8000/${spring.application.name}
 springdoc:
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
   api-docs:
-    path: /user-service/v3/api-docs
+    enabled: true
+    path: /v3/api-docs
   swagger-ui:
-    path: /user-service/swagger-ui.html
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: API
+  paths-to-match:
+    - /**
 
 # log level setting
 logging:
