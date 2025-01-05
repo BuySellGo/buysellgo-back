@@ -18,7 +18,7 @@ public class OneToOneInquiry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "onetoonoe_inquiry_id")
+    @Column(name = "onetoone_inquiry_id")
     private Long onetooneInquiryId;
 
     @Column(name = "user_id")

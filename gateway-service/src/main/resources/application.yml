@@ -75,7 +75,6 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/product-service/(?<segment>.*), /$\{segment}
 
-
         - id: helpdesk-service-api-docs
           uri: lb://HELPDESK-SERVICE
           predicates:
@@ -99,6 +98,75 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/helpdesk-service/(?<segment>.*), /$\{segment}
 
+
+        - id: promotion-service-api-docs
+          uri: lb://PROMOTION-SERVICE
+          predicates:
+            - Path=/promotion-service/v3/api-docs
+            - Method=GET
+
+        - id: promotion-service
+          uri: lb://PROMOTION-SERVICE
+          predicates:
+            - Path=/promotion-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/promotion-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: promotion-service
+          uri: lb://PROMOTION-SERVICE
+          predicates:
+            - Path=/promotion-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/promotion-service/(?<segment>.*), /$\{segment}
+
+        - id: statistics-service-api-docs
+          uri: lb://STATISTICS-SERVICE
+          predicates:
+            - Path=/statistics-service/v3/api-docs
+            - Method=GET
+
+        - id: statistics-service
+          uri: lb://STATISTICS-SERVICE
+          predicates:
+            - Path=/statistics-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/statistics-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: statistics-service
+          uri: lb://STATISTICS-SERVICE
+          predicates:
+            - Path=/statistics-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/statistics-service/(?<segment>.*), /$\{segment}
+
+        - id: delivery-service-api-docs
+          uri: lb://DELIVERY-SERVICE
+          predicates:
+            - Path=/delivery-service/v3/api-docs
+            - Method=GET
+
+        - id: delivery-service
+          uri: lb://DELIVERY-SERVICE
+          predicates:
+            - Path=/delivery-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/delivery-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: delivery-service
+          uri: lb://DELIVERY-SERVICE
+          predicates:
+            - Path=/delivery-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/delivery-service/(?<segment>.*), /$\{segment}
 
 
 #        - id: openapi-proxy
@@ -187,16 +255,25 @@ springdoc:
     urls:
       - url: /v3/api-docs
         name: API Gateway Service
-        primaryName: API Gateway Service
+#        primaryName: API Gateway Service
       - url: /user-service/v3/api-docs
         name: User Service
-        primaryName: User Service
+#        primaryName: User Service
       - url: /product-service/v3/api-docs
         name: Product Service
-        primaryName: Order Service
+#        primaryName: Order Service
       - url: /order-service/v3/api-docs
         name: Order Service
-        primaryName: Order Service
+#        primaryName: Order Service
       - url: /helpdesk-service/v3/api-docs
         name: HelpDesk Service
-        primaryName: HelpDesk Service
+#        primaryName: HelpDesk Service
+      - url: /promotion-service/v3/api-docs
+        name: Promotion Service
+#        primaryName: Promotion Service
+      - url: /statistics-service/v3/api-docs
+        name: Statistics Service
+#        primaryName: Statistics Service
+      - url: /delivery-service/v3/api-docs
+        name: Delivery Service
+#        primaryName: Delivery Service

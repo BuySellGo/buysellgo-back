@@ -38,7 +38,7 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title(serviceTitle)
                         .version(serviceVersion)
-                        .description("User Service API"));
+                        .description("Help Desk Service API"));
     }
 
 //    @Bean

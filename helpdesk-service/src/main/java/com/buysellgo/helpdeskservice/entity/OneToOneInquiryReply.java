@@ -23,7 +23,7 @@ public class OneToOneInquiryReply {
     private Long onetooneInquiryReplyId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "onetoone_inquiry_id")
+    @JoinColumn(name = "onetoone_inquiry_id", nullable = false)
     private OneToOneInquiry oneToOneInquiry;
 
     @Column(name = "user_id")
