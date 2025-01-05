@@ -45,15 +45,15 @@ public class Seller extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Authorization isApproved;
 
-    public static Seller of(String companyName, String presidentName, Address address, String email, String encodePassword, String buisinessRegistrationNumber, String buisinessRegistrationNumberImg) {
+    public static Seller of(String companyName, String presidentName, Address address, String email, String encodePassword, String businessRegistrationNumber, String businessRegistrationNumberImg) {
         return Seller.builder()
                 .companyName(companyName)
                 .presidentName(presidentName)
                 .address(address)
                 .email(email)
                 .password(encodePassword)
-                .businessRegistrationNumber(buisinessRegistrationNumber)
-                .businessRegistrationNumberImg(buisinessRegistrationNumberImg)
+                .businessRegistrationNumber(businessRegistrationNumber)
+                .businessRegistrationNumberImg(businessRegistrationNumberImg)
                 .isApproved(Authorization.UNAUTHORIZED)
                 .build();
     }
