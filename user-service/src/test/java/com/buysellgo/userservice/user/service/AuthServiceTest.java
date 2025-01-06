@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.user.controller.dto.JwtCreateReq;
+import com.buysellgo.userservice.user.controller.dto.JwtUpdateReq;
 import com.buysellgo.userservice.user.controller.dto.KeepLogin;
 import com.buysellgo.userservice.user.domain.seller.Seller;
 import com.buysellgo.userservice.user.domain.user.User;
@@ -286,5 +287,106 @@ class AuthServiceTest {
             .containsEntry("username", username);
         
         verify(valueOperations).set(email, refreshToken, 10L, TimeUnit.HOURS); // 10시간
+    }
+
+    @Test
+    @DisplayName("일반 사용자 JWT 토큰 업데이트 성공")
+    void updateJwt_UserSuccess() {
+        // given
+        String email = "test@test.com";
+        String username = "홍길동";
+        String accessToken = "Bearer accessToken";
+        String newAccessToken = "newAccessToken";
+        String refreshToken = "refreshToken";
+
+        User user = User.builder()
+                .email(email)
+                .username(username)
+                .build();
+
+        JwtUpdateReq req = new JwtUpdateReq(email, accessToken, Role.USER);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userTemplate.opsForValue().get(email)).thenReturn(refreshToken);
+        when(jwtTokenProvider.createToken(email, Role.USER.toString())).thenReturn(newAccessToken);
+
+        // when
+        Map<String, Object> result = authService.updateJwt(req);
+
+        // then
+        assertThat(result)
+                .containsEntry("accessToken", newAccessToken)
+                .containsEntry("username", username);
+    }
+
+    @Test
+    @DisplayName("판매자 JWT 토큰 업데이트 성공")
+    void updateJwt_SellerSuccess() {
+        // given
+        String email = "seller@test.com";
+        String companyName = "테스트회사";
+        String accessToken = "Bearer accessToken";
+        String newAccessToken = "newAccessToken";
+        String refreshToken = "refreshToken";
+
+        Seller seller = Seller.builder()
+                .email(email)
+                .companyName(companyName)
+                .build();
+
+        JwtUpdateReq req = new JwtUpdateReq(email, accessToken, Role.SELLER);
+
+        when(sellerRepository.findByEmail(email)).thenReturn(Optional.of(seller));
+        when(sellerTemplate.opsForValue().get(email)).thenReturn(refreshToken);
+        when(jwtTokenProvider.createToken(email, Role.SELLER.toString())).thenReturn(newAccessToken);
+
+        // when
+        Map<String, Object> result = authService.updateJwt(req);
+
+        // then
+        assertThat(result)
+                .containsEntry("accessToken", newAccessToken)
+                .containsEntry("companyName", companyName);
+    }
+
+    @Test
+    @DisplayName("리프레시 토큰이 없을 때 JWT 토큰 업데이트 실패")
+    void updateJwt_RefreshTokenNotFound() {
+        // given
+        String email = "test@test.com";
+        String accessToken = "Bearer accessToken";
+
+        User user = User.builder()
+                .email(email)
+                .username("홍길동")
+                .build();
+
+        JwtUpdateReq req = new JwtUpdateReq(email, accessToken, Role.USER);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userTemplate.opsForValue().get(email)).thenReturn(null);
+
+        // when
+        Map<String, Object> result = authService.updateJwt(req);
+
+        // then
+        assertThat(result)
+                .containsEntry("failure", "RefreshToken not found");
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 이메일로 JWT 토큰 업데이트 실패")
+    void updateJwt_EmailNotFound() {
+        // given
+        String nonExistentEmail = "nonexistent@test.com";
+        String accessToken = "Bearer accessToken";
+
+        JwtUpdateReq req = new JwtUpdateReq(nonExistentEmail, accessToken, Role.USER);
+
+        when(userRepository.findByEmail(nonExistentEmail)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> authService.updateJwt(req))
+                .isInstanceOf(NoSuchElementException.class);
     }
 }

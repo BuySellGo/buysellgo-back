@@ -3,6 +3,7 @@ package com.buysellgo.userservice.user.service;
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.user.controller.dto.JwtCreateReq;
+import com.buysellgo.userservice.user.controller.dto.JwtUpdateReq;
 import com.buysellgo.userservice.user.controller.dto.KeepLogin;
 import com.buysellgo.userservice.user.domain.seller.Seller;
 import com.buysellgo.userservice.user.domain.user.User;
@@ -11,6 +12,7 @@ import com.buysellgo.userservice.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -77,5 +79,42 @@ public class AuthService {
         }
         map.put(FAILURE, "login fail");
         return map;
+    }
+
+    public Map<String, Object> updateJwt(JwtUpdateReq req) {
+        Map<String, Object> map = new HashMap<>();
+        if(req.role().equals(Role.USER)) {
+            User user = userRepository.findByEmail(req.email()).orElseThrow();
+            Object object = userTemplate.opsForValue().get(req.email());
+            refreshTokenCheck(object, map);
+            String newAccessToken = jwtTokenProvider.createToken(req.email(), req.role().toString());
+            map.put(ACCESS_TOKEN, newAccessToken);
+            map.put(USERNAME, user.getUsername());
+            return map;
+        } else if (req.role().equals(Role.SELLER)) {
+            Seller seller = sellerRepository.findByEmail(req.email()).orElseThrow();
+            Object object = sellerTemplate.opsForValue().get(req.email());
+            refreshTokenCheck(object, map);
+            String newAccessToken = jwtTokenProvider.createToken(req.email(), req.role().toString());
+            map.put(ACCESS_TOKEN, newAccessToken);
+            map.put(COMPANY_NAME, seller.getCompanyName());
+            return map;
+        } else if (req.role().equals(Role.ADMIN)) {
+            User user = userRepository.findByUsername(req.email()).orElseThrow();
+            Object object = userTemplate.opsForValue().get(req.email());
+            refreshTokenCheck(object, map);
+            String newAccessToken = jwtTokenProvider.createToken(req.email(), req.role().toString());
+            map.put(ACCESS_TOKEN, newAccessToken);
+            map.put(USERNAME, user.getUsername());
+            return map;
+        }
+        map.put(FAILURE, "User not found");
+        return map;
+    }
+
+    private static void refreshTokenCheck(Object object, Map<String, Object> map) {
+        if (ObjectUtils.anyNull(object)) {
+            map.put(FAILURE, "RefreshToken not found");
+        }
     }
 }
