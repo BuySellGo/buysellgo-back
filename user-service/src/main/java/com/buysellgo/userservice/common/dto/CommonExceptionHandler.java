@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import org.springframework.web.bind.MissingRequestHeaderException;
+import io.jsonwebtoken.JwtException;
 
 //@RestControllerAdvice(basePackages = {"com.buysellgo.userservice.controller"})
 @RestControllerAdvice
@@ -89,9 +91,39 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<CommonErrorDto> noSuchElementHandler(NoSuchElementException e) {
-        CommonErrorDto dto = new CommonErrorDto(HttpStatus.NOT_FOUND, e.getMessage());
+        log.error("No Such Element: {}", e.getMessage());
+        CommonErrorDto dto = new CommonErrorDto(
+            HttpStatus.NOT_FOUND, 
+            "리프레시 토큰이 만료되었거나, 해당 사용자가 존재하지 않습니다."
+        );
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(dto);
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<CommonErrorDto> missingRequestHeaderHandler(MissingRequestHeaderException e) {
+        log.error("Missing Request Header: {}", e.getMessage());
+        CommonErrorDto dto = new CommonErrorDto(
+            HttpStatus.BAD_REQUEST, 
+            "Required request header 'Authorization' for method parameter type String is not present"
+        );
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(dto);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<CommonErrorDto> jwtExceptionHandler(JwtException e) {
+        log.error("JWT Exception: {}", e.getMessage());
+        CommonErrorDto dto = new CommonErrorDto(
+            HttpStatus.UNAUTHORIZED, 
+            e.getMessage()
+        );
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
             .contentType(MediaType.APPLICATION_JSON)
             .body(dto);
     }

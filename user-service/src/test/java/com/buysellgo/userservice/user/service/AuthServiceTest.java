@@ -5,14 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
+import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.user.controller.dto.JwtCreateReq;
-import com.buysellgo.userservice.user.controller.dto.JwtUpdateReq;
 import com.buysellgo.userservice.user.controller.dto.KeepLogin;
 import com.buysellgo.userservice.user.domain.seller.Seller;
 import com.buysellgo.userservice.user.domain.user.User;
 import com.buysellgo.userservice.user.repository.SellerRepository;
 import com.buysellgo.userservice.user.repository.UserRepository;
+import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -295,7 +296,7 @@ class AuthServiceTest {
         // given
         String email = "test@test.com";
         String username = "홍길동";
-        String accessToken = "Bearer accessToken";
+        String accessToken = "test.access.token";
         String newAccessToken = "newAccessToken";
         String refreshToken = "refreshToken";
 
@@ -304,19 +305,28 @@ class AuthServiceTest {
                 .username(username)
                 .build();
 
-        JwtUpdateReq req = new JwtUpdateReq(email, accessToken, Role.USER);
+        TokenUserInfo userInfo = TokenUserInfo.builder()
+                .email(email)
+                .role(Role.USER)
+                .build();
 
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(accessToken)).thenReturn(userInfo);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(userTemplate.opsForValue().get(email)).thenReturn(refreshToken);
         when(jwtTokenProvider.createToken(email, Role.USER.toString())).thenReturn(newAccessToken);
 
         // when
-        Map<String, Object> result = authService.updateJwt(req);
+        Map<String, Object> result = authService.updateJwt(accessToken);
 
         // then
         assertThat(result)
                 .containsEntry("accessToken", newAccessToken)
                 .containsEntry("username", username);
+        
+        verify(jwtTokenProvider).validateAndGetTokenUserInfo(accessToken);
+        verify(userRepository).findByEmail(email);
+        verify(userTemplate.opsForValue()).get(email);
+        verify(jwtTokenProvider).createToken(email, Role.USER.toString());
     }
 
     @Test
@@ -325,7 +335,7 @@ class AuthServiceTest {
         // given
         String email = "seller@test.com";
         String companyName = "테스트회사";
-        String accessToken = "Bearer accessToken";
+        String accessToken = "test.access.token";
         String newAccessToken = "newAccessToken";
         String refreshToken = "refreshToken";
 
@@ -334,19 +344,67 @@ class AuthServiceTest {
                 .companyName(companyName)
                 .build();
 
-        JwtUpdateReq req = new JwtUpdateReq(email, accessToken, Role.SELLER);
+        TokenUserInfo userInfo = TokenUserInfo.builder()
+                .email(email)
+                .role(Role.SELLER)
+                .build();
 
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(accessToken)).thenReturn(userInfo);
         when(sellerRepository.findByEmail(email)).thenReturn(Optional.of(seller));
         when(sellerTemplate.opsForValue().get(email)).thenReturn(refreshToken);
         when(jwtTokenProvider.createToken(email, Role.SELLER.toString())).thenReturn(newAccessToken);
 
         // when
-        Map<String, Object> result = authService.updateJwt(req);
+        Map<String, Object> result = authService.updateJwt(accessToken);
 
         // then
         assertThat(result)
                 .containsEntry("accessToken", newAccessToken)
                 .containsEntry("companyName", companyName);
+        
+        verify(jwtTokenProvider).validateAndGetTokenUserInfo(accessToken);
+        verify(sellerRepository).findByEmail(email);
+        verify(sellerTemplate.opsForValue()).get(email);
+        verify(jwtTokenProvider).createToken(email, Role.SELLER.toString());
+    }
+
+    @Test
+    @DisplayName("관리자 JWT 토큰 업데이트 성공")
+    void updateJwt_AdminSuccess() {
+        // given
+        String email = "admin@test.com";
+        String username = "관리자";
+        String accessToken = "test.access.token";
+        String newAccessToken = "newAccessToken";
+        String refreshToken = "refreshToken";
+
+        User admin = User.builder()
+                .email(email)
+                .username(username)
+                .build();
+
+        TokenUserInfo userInfo = TokenUserInfo.builder()
+                .email(email)
+                .role(Role.ADMIN)
+                .build();
+
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(accessToken)).thenReturn(userInfo);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(admin));
+        when(userTemplate.opsForValue().get(email)).thenReturn(refreshToken);
+        when(jwtTokenProvider.createToken(email, Role.ADMIN.toString())).thenReturn(newAccessToken);
+
+        // when
+        Map<String, Object> result = authService.updateJwt(accessToken);
+
+        // then
+        assertThat(result)
+                .containsEntry("accessToken", newAccessToken)
+                .containsEntry("username", username);
+        
+        verify(jwtTokenProvider).validateAndGetTokenUserInfo(accessToken);
+        verify(userRepository).findByEmail(email);
+        verify(userTemplate.opsForValue()).get(email);
+        verify(jwtTokenProvider).createToken(email, Role.ADMIN.toString());
     }
 
     @Test
@@ -354,39 +412,61 @@ class AuthServiceTest {
     void updateJwt_RefreshTokenNotFound() {
         // given
         String email = "test@test.com";
-        String accessToken = "Bearer accessToken";
+        String accessToken = "test.access.token";
+
+        TokenUserInfo userInfo = TokenUserInfo.builder()
+                .email(email)
+                .role(Role.USER)
+                .build();
 
         User user = User.builder()
                 .email(email)
                 .username("홍길동")
                 .build();
 
-        JwtUpdateReq req = new JwtUpdateReq(email, accessToken, Role.USER);
-
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(accessToken)).thenReturn(userInfo);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(userTemplate.opsForValue().get(email)).thenReturn(null);
 
         // when
-        Map<String, Object> result = authService.updateJwt(req);
+        Map<String, Object> result = authService.updateJwt(accessToken);
 
         // then
-        assertThat(result)
-                .containsEntry("failure", "RefreshToken not found");
+        assertThat(result).containsEntry("failure", "RefreshToken not found");
+    }
+
+    @Test
+    @DisplayName("토큰 검증 실패시 JWT 토큰 업데이트 실패")
+    void updateJwt_InvalidToken() {
+        // given
+        String invalidToken = "invalid.token";
+
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(invalidToken))
+                .thenThrow(new JwtException("유효하지 않은 토큰입니다."));
+
+        // when & then
+        assertThatThrownBy(() -> authService.updateJwt(invalidToken))
+                .isInstanceOf(JwtException.class)
+                .hasMessage("유효하지 않은 토큰입니다.");
     }
 
     @Test
     @DisplayName("존재하지 않는 이메일로 JWT 토큰 업데이트 실패")
     void updateJwt_EmailNotFound() {
         // given
-        String nonExistentEmail = "nonexistent@test.com";
-        String accessToken = "Bearer accessToken";
+        String email = "nonexistent@test.com";
+        String accessToken = "test.access.token";
 
-        JwtUpdateReq req = new JwtUpdateReq(nonExistentEmail, accessToken, Role.USER);
+        TokenUserInfo userInfo = TokenUserInfo.builder()
+                .email(email)
+                .role(Role.USER)
+                .build();
 
-        when(userRepository.findByEmail(nonExistentEmail)).thenReturn(Optional.empty());
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(accessToken)).thenReturn(userInfo);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> authService.updateJwt(req))
+        assertThatThrownBy(() -> authService.updateJwt(accessToken))
                 .isInstanceOf(NoSuchElementException.class);
     }
 }
