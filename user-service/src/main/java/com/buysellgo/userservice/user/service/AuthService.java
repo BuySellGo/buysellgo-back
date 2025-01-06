@@ -1,9 +1,9 @@
 package com.buysellgo.userservice.user.service;
 
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
+import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.user.controller.dto.JwtCreateReq;
-import com.buysellgo.userservice.user.controller.dto.JwtUpdateReq;
 import com.buysellgo.userservice.user.controller.dto.KeepLogin;
 import com.buysellgo.userservice.user.domain.seller.Seller;
 import com.buysellgo.userservice.user.domain.user.User;
@@ -33,6 +33,8 @@ public class AuthService {
     private static final String FAILURE = "failure";
     private static final long DEFAULT_HOURS = 10L;  // 기본 10시간
     private static final long KEEP_LOGIN_HOURS = 168L;  // 로그인 유지 7일 (7 * 24 = 168시간)
+    private static final String EMAIL = "email";
+    private static final String ROLE = "role";
     
     private final UserRepository userRepository;
     private final SellerRepository sellerRepository;
@@ -81,31 +83,38 @@ public class AuthService {
         return map;
     }
 
-    public Map<String, Object> updateJwt(JwtUpdateReq req) {
+    public Map<String, Object> updateJwt(String accessToken) {
         Map<String, Object> map = new HashMap<>();
-        if(req.role().equals(Role.USER)) {
-            User user = userRepository.findByEmail(req.email()).orElseThrow();
-            Object object = userTemplate.opsForValue().get(req.email());
+        TokenUserInfo userInfo = jwtTokenProvider.validateAndGetTokenUserInfo(accessToken);
+        if(userInfo.getRole().equals(Role.USER)) {
+            User user = userRepository.findByEmail(userInfo.getEmail()).orElseThrow();
+            Object object = userTemplate.opsForValue().get(user.getEmail());
             refreshTokenCheck(object, map);
-            String newAccessToken = jwtTokenProvider.createToken(req.email(), req.role().toString());
+            String newAccessToken = jwtTokenProvider.createToken(userInfo.getEmail(), userInfo.getRole().toString());
             map.put(ACCESS_TOKEN, newAccessToken);
             map.put(USERNAME, user.getUsername());
+            map.put(EMAIL,userInfo.getEmail());
+            map.put(ROLE,userInfo.getRole());
             return map;
-        } else if (req.role().equals(Role.SELLER)) {
-            Seller seller = sellerRepository.findByEmail(req.email()).orElseThrow();
-            Object object = sellerTemplate.opsForValue().get(req.email());
+        } else if (userInfo.getRole().equals(Role.SELLER)) {
+            Seller seller = sellerRepository.findByEmail(userInfo.getEmail()).orElseThrow();
+            Object object = sellerTemplate.opsForValue().get(userInfo.getEmail());
             refreshTokenCheck(object, map);
-            String newAccessToken = jwtTokenProvider.createToken(req.email(), req.role().toString());
+            String newAccessToken = jwtTokenProvider.createToken(userInfo.getEmail(), userInfo.getRole().toString());
             map.put(ACCESS_TOKEN, newAccessToken);
             map.put(COMPANY_NAME, seller.getCompanyName());
+            map.put(EMAIL,userInfo.getEmail());
+            map.put(ROLE,userInfo.getRole());
             return map;
-        } else if (req.role().equals(Role.ADMIN)) {
-            User user = userRepository.findByUsername(req.email()).orElseThrow();
-            Object object = userTemplate.opsForValue().get(req.email());
+        } else if (userInfo.getRole().equals(Role.ADMIN)) {
+            User user = userRepository.findByEmail(userInfo.getEmail()).orElseThrow();
+            Object object = userTemplate.opsForValue().get(userInfo.getEmail());
             refreshTokenCheck(object, map);
-            String newAccessToken = jwtTokenProvider.createToken(req.email(), req.role().toString());
+            String newAccessToken = jwtTokenProvider.createToken(userInfo.getEmail(), userInfo.getRole().toString());
             map.put(ACCESS_TOKEN, newAccessToken);
             map.put(USERNAME, user.getUsername());
+            map.put(EMAIL,userInfo.getEmail());
+            map.put(ROLE,userInfo.getRole());
             return map;
         }
         map.put(FAILURE, "User not found");
