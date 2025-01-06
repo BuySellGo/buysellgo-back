@@ -1,8 +1,9 @@
-package com.buysellgo.userservice.user.repository;
+package com.buysellgo.userservice.repository;
 
 import com.buysellgo.userservice.common.entity.Address;
 import com.buysellgo.userservice.common.entity.Authorization;
-import com.buysellgo.userservice.user.domain.seller.Seller;
+import com.buysellgo.userservice.domain.seller.Seller;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,11 @@ class SellerRepositoryTest {
 
     @Autowired
     private SellerRepository sellerRepository;
+
+    @BeforeEach
+    void setUp() {
+        sellerRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("seller를 생성한다.")

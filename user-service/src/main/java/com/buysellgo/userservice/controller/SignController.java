@@ -1,11 +1,11 @@
-package com.buysellgo.userservice.user.controller;
+package com.buysellgo.userservice.controller;
 
 import com.buysellgo.userservice.common.dto.CommonResDto;
-import com.buysellgo.userservice.user.controller.dto.UserCreateReq;
-import com.buysellgo.userservice.user.controller.dto.SellerCreateReq;
-import com.buysellgo.userservice.user.domain.seller.Seller;
-import com.buysellgo.userservice.user.domain.user.User;
-import com.buysellgo.userservice.user.service.SignService;
+import com.buysellgo.userservice.controller.dto.UserCreateReq;
+import com.buysellgo.userservice.controller.dto.SellerCreateReq;
+import com.buysellgo.userservice.domain.seller.Seller;
+import com.buysellgo.userservice.domain.user.User;
+import com.buysellgo.userservice.service.SignService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.user.controller.dto;
+package com.buysellgo.userservice.controller.dto;
 
 import com.buysellgo.userservice.common.entity.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,7 +40,7 @@ public record SellerCreateReq(
         @Schema(title = "사업자등록번호", example = "123-45-67890", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotEmpty(message = "사업자등록번호는 필수 입니다.")
         @Pattern(
-                regexp = "^\\d{3}-\\d{2}-\\d{5}$",
+                regexp = "^$|^\\d{3}-\\d{2}-\\d{5}$",
                 message = "올바른 사업자등록번호 형식이 아닙니다."
         )
         String businessRegistrationNumber,

@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.user.domain.user;
+package com.buysellgo.userservice.domain.user;
 
 import com.buysellgo.userservice.common.entity.Authorization;
 import com.buysellgo.userservice.common.entity.BaseEntity;

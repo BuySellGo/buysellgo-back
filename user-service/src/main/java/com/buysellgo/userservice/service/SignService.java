@@ -1,13 +1,13 @@
-package com.buysellgo.userservice.user.service;
+package com.buysellgo.userservice.service;
 
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.user.controller.dto.SellerCreateReq;
-import com.buysellgo.userservice.user.controller.dto.UserCreateReq;
-import com.buysellgo.userservice.user.domain.seller.Seller;
-import com.buysellgo.userservice.user.domain.user.LoginType;
-import com.buysellgo.userservice.user.domain.user.User;
-import com.buysellgo.userservice.user.repository.SellerRepository;
-import com.buysellgo.userservice.user.repository.UserRepository;
+import com.buysellgo.userservice.controller.dto.SellerCreateReq;
+import com.buysellgo.userservice.controller.dto.UserCreateReq;
+import com.buysellgo.userservice.domain.seller.Seller;
+import com.buysellgo.userservice.domain.user.LoginType;
+import com.buysellgo.userservice.domain.user.User;
+import com.buysellgo.userservice.repository.SellerRepository;
+import com.buysellgo.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

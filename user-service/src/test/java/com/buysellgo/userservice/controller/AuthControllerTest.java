@@ -1,10 +1,10 @@
-package com.buysellgo.userservice.user.controller;
+package com.buysellgo.userservice.controller;
 
 import com.buysellgo.userservice.common.dto.CommonExceptionHandler;
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.user.controller.dto.JwtCreateReq;
-import com.buysellgo.userservice.user.controller.dto.KeepLogin;
-import com.buysellgo.userservice.user.service.AuthService;
+import com.buysellgo.userservice.controller.dto.JwtCreateReq;
+import com.buysellgo.userservice.controller.dto.KeepLogin;
+import com.buysellgo.userservice.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -214,5 +215,68 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.result.username").value("관리자"))
                 .andExpect(jsonPath("$.result.email").value("admin@test.com"))
                 .andExpect(jsonPath("$.result.role").value("ADMIN"));
+    }
+
+    @Test
+    @DisplayName("일반 사용자 토큰 삭제 성공")
+    void deleteToken_UserSuccess() throws Exception {
+        // given
+        Map<String, Object> serviceResponse = new HashMap<>();
+        serviceResponse.put("success", "refresh token deleted");
+        
+        given(authService.deleteToken("test.access.token")).willReturn(serviceResponse);
+
+        // when & then
+        mockMvc.perform(delete("/auth/jwt")
+                .header("Authorization", "Bearer test.access.token"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusCode").value(200))
+                .andExpect(jsonPath("$.statusMessage").value("리프레시 토큰 삭제 완료"))
+                .andExpect(jsonPath("$.result.success").value("refresh token deleted"));
+    }
+
+    @Test
+    @DisplayName("토큰 누락으로 토큰 삭제 실패")
+    void deleteToken_EmptyToken() throws Exception {
+        mockMvc.perform(delete("/auth/jwt"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("Required request header 'Authorization' for method parameter type String is not present"));
+    }
+
+    @Test
+    @DisplayName("유효하지 않은 토큰으로 토큰 삭제 실패")
+    void deleteToken_InvalidToken() throws Exception {
+        // given
+        given(authService.deleteToken("invalid.token"))
+                .willThrow(new JwtException("유효하지 않은 토큰입니다."));
+
+        // when & then
+        mockMvc.perform(delete("/auth/jwt")
+                .header("Authorization", "Bearer invalid.token"))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
+                .andExpect(jsonPath("$.message").value("유효하지 않은 토큰입니다."));
+    }
+
+    @Test
+    @DisplayName("리프레시 토큰 만료 또는 사용자 없음으로 토큰 삭제 실패")
+    void deleteToken_RefreshTokenExpiredOrUserNotFound() throws Exception {
+        // given
+        Map<String, Object> serviceResponse = new HashMap<>();
+        serviceResponse.put("failure", true);
+        
+        given(authService.deleteToken("test.access.token")).willReturn(serviceResponse);
+
+        // when & then
+        mockMvc.perform(delete("/auth/jwt")
+                .header("Authorization", "Bearer test.access.token"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.message").value("리프레시 토큰이 만료되었거나, 해당 사용자가 존재하지 않습니다."));
     }
 }
