@@ -1,7 +1,7 @@
-package com.buysellgo.userservice.user.controller;
+package com.buysellgo.userservice.controller;
 import com.buysellgo.userservice.common.dto.CommonResDto;
-import com.buysellgo.userservice.user.controller.dto.JwtCreateReq;
-import com.buysellgo.userservice.user.service.AuthService;
+import com.buysellgo.userservice.controller.dto.JwtCreateReq;
+import com.buysellgo.userservice.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +26,13 @@ public class AuthController {
     private static final String EMAIL = "email";
     private static final String ROLE= "role";
     private static final String HEADVALUE = "Bearer ";
+    private static final String FAILURE = "failure";
 
     @Operation(summary = "로그인 요청(공통)")
     @PostMapping("/jwt")
     public ResponseEntity<CommonResDto> createJwt(@Valid @RequestBody JwtCreateReq req) {
         Map<String, Object> jwt = authService.createJwt(req);
-        if(jwt.containsKey("failure")) { 
+        if(jwt.containsKey(FAILURE)) {
             throw new NoSuchElementException(USER_NOT_FOUND_MESSAGE); 
         }
 
@@ -62,7 +63,7 @@ public class AuthController {
         // 토큰 갱신 요청
         Map<String, Object> refreshJwt = authService.updateJwt(token);
         
-        if(refreshJwt.containsKey("failure")) {
+        if(refreshJwt.containsKey(FAILURE)) {
             throw new NoSuchElementException(TOKEN_OR_USER_NOT_FOUND_MESSAGE);
         }
 
@@ -80,5 +81,19 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED)
                             .headers(headers)
                             .body(dto);
+    }
+
+    @Operation(summary = "로그아웃 요청(공통)")
+    @DeleteMapping("/jwt")
+    public ResponseEntity<CommonResDto> deleteToken(
+            @RequestHeader(value = "Authorization", required = true) String accessToken
+    ){
+        String token = accessToken.replace(HEADVALUE, "");
+        Map<String, Object> map = authService.deleteToken(token);
+        if(map.containsKey(FAILURE)){
+            throw new NoSuchElementException(TOKEN_OR_USER_NOT_FOUND_MESSAGE);
+        }
+        CommonResDto dto = new CommonResDto(HttpStatus.OK,"리프레시 토큰 삭제 완료",map);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 }

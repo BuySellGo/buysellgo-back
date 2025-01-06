@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.user.controller;
+package com.buysellgo.userservice.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -9,10 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.buysellgo.userservice.common.dto.CommonExceptionHandler;
 import com.buysellgo.userservice.common.entity.Authorization;
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.user.controller.dto.UserCreateReq;
-import com.buysellgo.userservice.user.domain.user.LoginType;
-import com.buysellgo.userservice.user.domain.user.User;
-import com.buysellgo.userservice.user.service.SignService;
+import com.buysellgo.userservice.controller.dto.UserCreateReq;
+import com.buysellgo.userservice.domain.user.LoginType;
+import com.buysellgo.userservice.domain.user.User;
+import com.buysellgo.userservice.service.SignService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,8 +29,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.http.HttpStatus;
 import com.buysellgo.userservice.common.entity.Address;
-import com.buysellgo.userservice.user.controller.dto.SellerCreateReq;
-import com.buysellgo.userservice.user.domain.seller.Seller;
+import com.buysellgo.userservice.controller.dto.SellerCreateReq;
+import com.buysellgo.userservice.domain.seller.Seller;
 
 @ExtendWith(MockitoExtension.class)
 class SignControllerTest {

@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.user.service;
+package com.buysellgo.userservice.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,12 +7,12 @@ import static org.mockito.Mockito.*;
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.user.controller.dto.JwtCreateReq;
-import com.buysellgo.userservice.user.controller.dto.KeepLogin;
-import com.buysellgo.userservice.user.domain.seller.Seller;
-import com.buysellgo.userservice.user.domain.user.User;
-import com.buysellgo.userservice.user.repository.SellerRepository;
-import com.buysellgo.userservice.user.repository.UserRepository;
+import com.buysellgo.userservice.controller.dto.JwtCreateReq;
+import com.buysellgo.userservice.controller.dto.KeepLogin;
+import com.buysellgo.userservice.domain.seller.Seller;
+import com.buysellgo.userservice.domain.user.User;
+import com.buysellgo.userservice.repository.SellerRepository;
+import com.buysellgo.userservice.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -69,6 +69,7 @@ class AuthServiceTest {
 
     @BeforeEach
     void setUp() {
+        // 기본 ValueOperations 설정
         lenient().when(userTemplate.opsForValue()).thenReturn(valueOperations);
         lenient().when(sellerTemplate.opsForValue()).thenReturn(valueOperations);
         lenient().when(adminTemplate.opsForValue()).thenReturn(valueOperations);
@@ -79,22 +80,20 @@ class AuthServiceTest {
     void createJwt_UserSuccess() {
         // given
         String email = "test@test.com";
-        String password = "test1234!";
-        String username = "홍길동";
-        String encodedPassword = "encodedPassword";
-        String accessToken = "accessToken";
-        String refreshToken = "refreshToken";
-
-        User user = User.builder()
-            .email(email)
-            .password(encodedPassword)
-            .username(username)
-            .build();
+        String password = "password";
+        String username = "testuser";
+        String accessToken = "test.access.token";
+        String refreshToken = "test.refresh.token";
 
         JwtCreateReq req = new JwtCreateReq(email, password, KeepLogin.ACTIVE, Role.USER);
+        User user = User.builder()
+                .email(email)
+                .password(password)
+                .username(username)
+                .build();
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);
+        when(passwordEncoder.matches(password, password)).thenReturn(true);
         when(jwtTokenProvider.createToken(email, Role.USER.toString())).thenReturn(accessToken);
         when(jwtTokenProvider.createRefreshToken(email, Role.USER.toString())).thenReturn(refreshToken);
 
@@ -103,33 +102,30 @@ class AuthServiceTest {
 
         // then
         assertThat(result)
-            .containsEntry("accessToken", accessToken)
-            .containsEntry("username", username);
-        
+                .containsEntry("accessToken", accessToken)
+                .containsEntry("username", username);
         verify(valueOperations).set(email, refreshToken, KEEP_LOGIN_HOURS, TimeUnit.HOURS);
     }
 
     @Test
-    @DisplayName("판매자 JWT 토큰 생성 성공 (로그인 유지 포함)")
+    @DisplayName("판매자 JWT 토큰 생성 성공")
     void createJwt_SellerSuccess() {
         // given
         String email = "seller@test.com";
-        String password = "test1234!";
-        String companyName = "테스트회사";
-        String encodedPassword = "encodedPassword";
-        String accessToken = "accessToken";
-        String refreshToken = "refreshToken";
-
-        Seller seller = Seller.builder()
-            .email(email)
-            .password(encodedPassword)
-            .companyName(companyName)
-            .build();
+        String password = "password";
+        String companyName = "testCompany";
+        String accessToken = "test.access.token";
+        String refreshToken = "test.refresh.token";
 
         JwtCreateReq req = new JwtCreateReq(email, password, KeepLogin.ACTIVE, Role.SELLER);
+        Seller seller = Seller.builder()
+                .email(email)
+                .password(password)
+                .companyName(companyName)
+                .build();
 
         when(sellerRepository.findByEmail(email)).thenReturn(Optional.of(seller));
-        when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);
+        when(passwordEncoder.matches(password, password)).thenReturn(true);
         when(jwtTokenProvider.createToken(email, Role.SELLER.toString())).thenReturn(accessToken);
         when(jwtTokenProvider.createRefreshToken(email, Role.SELLER.toString())).thenReturn(refreshToken);
 
@@ -138,9 +134,8 @@ class AuthServiceTest {
 
         // then
         assertThat(result)
-            .containsEntry("accessToken", accessToken)
-            .containsEntry("companyName", companyName);
-        
+                .containsEntry("accessToken", accessToken)
+                .containsEntry("companyName", companyName);
         verify(valueOperations).set(email, refreshToken, KEEP_LOGIN_HOURS, TimeUnit.HOURS);
     }
 
@@ -321,7 +316,9 @@ class AuthServiceTest {
         // then
         assertThat(result)
                 .containsEntry("accessToken", newAccessToken)
-                .containsEntry("username", username);
+                .containsEntry("username", username)
+                .containsEntry("email", email)
+                .containsEntry("role", Role.USER);
         
         verify(jwtTokenProvider).validateAndGetTokenUserInfo(accessToken);
         verify(userRepository).findByEmail(email);
@@ -360,7 +357,9 @@ class AuthServiceTest {
         // then
         assertThat(result)
                 .containsEntry("accessToken", newAccessToken)
-                .containsEntry("companyName", companyName);
+                .containsEntry("companyName", companyName)
+                .containsEntry("email", email)
+                .containsEntry("role", Role.SELLER);
         
         verify(jwtTokenProvider).validateAndGetTokenUserInfo(accessToken);
         verify(sellerRepository).findByEmail(email);
@@ -399,7 +398,9 @@ class AuthServiceTest {
         // then
         assertThat(result)
                 .containsEntry("accessToken", newAccessToken)
-                .containsEntry("username", username);
+                .containsEntry("username", username)
+                .containsEntry("email", email)
+                .containsEntry("role", Role.ADMIN);
         
         verify(jwtTokenProvider).validateAndGetTokenUserInfo(accessToken);
         verify(userRepository).findByEmail(email);
@@ -468,5 +469,86 @@ class AuthServiceTest {
         // when & then
         assertThatThrownBy(() -> authService.updateJwt(accessToken))
                 .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    @DisplayName("일반 사용자 토큰 삭제 성공")
+    void deleteToken_UserSuccess() {
+        // given
+        String email = "test@test.com";
+        String token = "test.access.token";
+        TokenUserInfo userInfo = TokenUserInfo.builder()
+                .email(email)
+                .role(Role.USER)
+                .build();
+
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(token)).thenReturn(userInfo);
+        when(valueOperations.getOperations()).thenReturn(userTemplate);
+
+        // when
+        Map<String, Object> result = authService.deleteToken(token);
+
+        // then
+        assertThat(result).containsEntry("success", "refresh token deleted");
+        verify(userTemplate).delete(email);
+    }
+
+    @Test
+    @DisplayName("판매자 토큰 삭제 성공")
+    void deleteToken_SellerSuccess() {
+        // given
+        String email = "seller@test.com";
+        String token = "test.access.token";
+        TokenUserInfo userInfo = TokenUserInfo.builder()
+                .email(email)
+                .role(Role.SELLER)
+                .build();
+
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(token)).thenReturn(userInfo);
+        when(valueOperations.getOperations()).thenReturn(sellerTemplate);
+
+        // when
+        Map<String, Object> result = authService.deleteToken(token);
+
+        // then
+        assertThat(result).containsEntry("success", "refresh token deleted");
+        verify(sellerTemplate).delete(email);
+    }
+
+    @Test
+    @DisplayName("관리자 토큰 삭제 성공")
+    void deleteToken_AdminSuccess() {
+        // given
+        String email = "admin@test.com";
+        String token = "test.access.token";
+        TokenUserInfo userInfo = TokenUserInfo.builder()
+                .email(email)
+                .role(Role.ADMIN)
+                .build();
+
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(token)).thenReturn(userInfo);
+        when(valueOperations.getOperations()).thenReturn(adminTemplate);
+
+        // when
+        Map<String, Object> result = authService.deleteToken(token);
+
+        // then
+        assertThat(result).containsEntry("success", "refresh token deleted");
+        verify(adminTemplate).delete(email);
+    }
+
+    @Test
+    @DisplayName("토큰 삭제 실패 - 토큰 검증 실패")
+    void deleteToken_InvalidToken() {
+        // given
+        String token = "invalid.token";
+
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(token))
+                .thenThrow(new JwtException("Invalid token"));
+
+        // when & then
+        assertThatThrownBy(() -> authService.deleteToken(token))
+                .isInstanceOf(JwtException.class)
+                .hasMessage("Invalid token");
     }
 }

@@ -1,14 +1,14 @@
-package com.buysellgo.userservice.user.service;
+package com.buysellgo.userservice.service;
 
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.user.controller.dto.JwtCreateReq;
-import com.buysellgo.userservice.user.controller.dto.KeepLogin;
-import com.buysellgo.userservice.user.domain.seller.Seller;
-import com.buysellgo.userservice.user.domain.user.User;
-import com.buysellgo.userservice.user.repository.SellerRepository;
-import com.buysellgo.userservice.user.repository.UserRepository;
+import com.buysellgo.userservice.controller.dto.JwtCreateReq;
+import com.buysellgo.userservice.controller.dto.KeepLogin;
+import com.buysellgo.userservice.domain.seller.Seller;
+import com.buysellgo.userservice.domain.user.User;
+import com.buysellgo.userservice.repository.SellerRepository;
+import com.buysellgo.userservice.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +35,8 @@ public class AuthService {
     private static final long KEEP_LOGIN_HOURS = 168L;  // 로그인 유지 7일 (7 * 24 = 168시간)
     private static final String EMAIL = "email";
     private static final String ROLE = "role";
+    private static final String SUCCESS = "success";
+    private static final String REFRESH_TOKEN_DELETED="refresh token deleted";
     
     private final UserRepository userRepository;
     private final SellerRepository sellerRepository;
@@ -125,5 +127,25 @@ public class AuthService {
         if (ObjectUtils.anyNull(object)) {
             map.put(FAILURE, "RefreshToken not found");
         }
+    }
+
+    public Map<String, Object> deleteToken(String token) {
+        Map<String, Object> map = new HashMap<>();
+        TokenUserInfo userInfo = jwtTokenProvider.validateAndGetTokenUserInfo(token);
+        if(userInfo.getRole().equals(Role.USER)) {
+            userTemplate.opsForValue().getOperations().delete(userInfo.getEmail());
+            map.put(SUCCESS, REFRESH_TOKEN_DELETED);
+            return map;
+        } else if(userInfo.getRole().equals(Role.SELLER)){
+            sellerTemplate.opsForValue().getOperations().delete(userInfo.getEmail());
+            map.put(SUCCESS, REFRESH_TOKEN_DELETED);
+            return map;
+        } else if(userInfo.getRole().equals(Role.ADMIN)){
+            adminTemplate.opsForValue().getOperations().delete(userInfo.getEmail());
+            map.put(SUCCESS, REFRESH_TOKEN_DELETED);
+            return map;
+        }
+        map.put(FAILURE, "RefreshToken not found");
+        return map;
     }
 }
