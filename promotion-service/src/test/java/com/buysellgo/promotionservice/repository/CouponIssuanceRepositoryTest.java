@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
+@Rollback(value = true)
 class CouponIssuanceRepositoryTest {
 
     @Autowired
@@ -23,7 +23,7 @@ class CouponIssuanceRepositoryTest {
     private CouponRepository couponRepository;
 
     @Test
-    @DisplayName("쿠폰 발급내역 테이블 생성 테스트")
+    @DisplayName("쿠폰 발급내역 테이블/데이터 생성 테스트")
     void createCouponIssuanceTest() {
         // given
         Long profileId = 1L;

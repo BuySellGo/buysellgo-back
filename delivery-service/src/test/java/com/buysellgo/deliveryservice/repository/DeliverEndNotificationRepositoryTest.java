@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
+@Rollback(value = true)
 class DeliverEndNotificationRepositoryTest {
 
     @Autowired
     private DeliveryEndNotificationRepository deliverEndNotificationRepository;
 
     @Test
-    @DisplayName("배송완료 알림 테이블 생성 테스트")
+    @DisplayName("배송완료 알림 테이블/데이터 생성 테스트")
     void createDeliveryEndNotificationTest() {
         // given
         Long deliveryEndNotificationId = 1L;

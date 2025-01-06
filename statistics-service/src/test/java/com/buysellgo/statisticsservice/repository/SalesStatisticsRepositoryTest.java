@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
+@Rollback(value = true)
 class SalesStatisticsRepositoryTest {
 
     @Autowired
     private SalesStatisticsRepository salesStatisticsRepository;
 
     @Test
-    @DisplayName("매출통계 테이블 생성 테스트")
+    @DisplayName("매출통계 테이블/데이터 생성 테스트")
     void createSalesStatisticsTest() {
         // given
         Long sellerId = 1L;

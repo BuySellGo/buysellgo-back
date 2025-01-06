@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
+@Rollback(value = true)
 class PromotionRepositoryTest {
 
     @Autowired
@@ -26,7 +26,7 @@ class PromotionRepositoryTest {
     private BannersRepository bannersRepository;
 
     @Test
-    @DisplayName("프로모션 테이블 생성 테스트")
+    @DisplayName("프로모션 테이블/데이터 생성 테스트")
     void createPromotionTest() {
         // given
         String bannerTitle = "봄 맞이 할인 행사";

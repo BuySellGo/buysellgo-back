@@ -14,7 +14,7 @@ import java.time.ZoneId;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Rollback(value = false)
+@Rollback(value = true)
 @Transactional
 class BannersRepositoryTest {
 
@@ -22,7 +22,7 @@ class BannersRepositoryTest {
     private BannersRepository bannersRepository;
 
     @Test
-    @DisplayName("배너 테이블 생성 테스트")
+    @DisplayName("배너 테이블/데이터 생성 테스트")
     void createBannersTest() {
         // given
         String bannerTitle = "봄 맞이 할인 행사";

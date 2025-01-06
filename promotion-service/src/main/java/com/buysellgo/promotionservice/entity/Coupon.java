@@ -25,7 +25,7 @@ public class Coupon {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Column(name = "coupon_title")
+    @Column(name = "coupon_title", columnDefinition = "varchar(100)")
     private String couponTitle;
 
     @Column(name = "discount_rate")

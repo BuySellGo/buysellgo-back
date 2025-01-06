@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
+@Rollback(value = true)
 class FaqRepositoryTest {
 
     @Autowired
@@ -23,7 +23,7 @@ class FaqRepositoryTest {
     FaqGroupRepository faqGroupRepository;
 
     @Test
-    @DisplayName("FAQ 생성 테스트")
+    @DisplayName("FAQ 테이블/데이터 생성 테스트")
     void createFaqTest() {
         // given
         FaqGroup faqGroup = faqGroupRepository.save(FaqGroup.of("배송"));

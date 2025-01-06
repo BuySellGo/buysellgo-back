@@ -26,7 +26,7 @@ public class DeliveryEndNotification {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Column(name = "noti_content")
+    @Column(name = "noti_content", columnDefinition = "varchar(500)")
     private String notiContent;
 
     @Column(name = "noti_datetime")

@@ -23,7 +23,7 @@ public class Banners {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "banner_title")
+    @Column(name = "banner_title", columnDefinition = "varchar(100)")
     private String bannerTitle;
 
     @Column(name= "start_date")
@@ -32,10 +32,10 @@ public class Banners {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", columnDefinition = "varchar(200)")
     private String imageUrl;
 
-    @Column(name = "product_url")
+    @Column(name = "product_url", columnDefinition = "varchar(200)")
     private String productUrl;
 
     public static Banners of(String bannerTitle,

@@ -11,7 +11,7 @@ import org.springframework.test.annotation.Rollback;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Rollback(value = false)
+@Rollback(value = true)
 @Transactional
 class OneToOneInquiryRepositoryTest {
 
@@ -19,7 +19,7 @@ class OneToOneInquiryRepositoryTest {
     private OneToOneInquiryRepository onetoOneInquiryRepository;
 
     @Test
-    @DisplayName("1:1 문의 테이블 생성 테스트")
+    @DisplayName("1:1 문의 테이블/데이터 생성 테스트")
     void createOneToOneInquiryTest() {
         // given
         Long userId = 1L;

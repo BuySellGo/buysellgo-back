@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
+@Rollback(value = true)
 class CouponRepositoryTest {
 
     @Autowired
     private CouponRepository couponRepository;
 
     @Test
-    @DisplayName("쿠폰 테이블 생성 테스트")
+    @DisplayName("쿠폰 테이블/데이터 생성 테스트")
     void createCouponTest() {
         // given
         String couponTitle = "VIP 할인 쿠폰";

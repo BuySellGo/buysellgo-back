@@ -27,10 +27,10 @@ public class Faq {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Column(name = "faq_title")
+    @Column(name = "faq_title", columnDefinition = "varchar(200)")
     private String faqTitle;
 
-    @Column(name = "faq_content")
+    @Column(name = "faq_content", columnDefinition = "TEXT")
     private String faqContent;
 
     public static Faq of(FaqGroup faqGroup,

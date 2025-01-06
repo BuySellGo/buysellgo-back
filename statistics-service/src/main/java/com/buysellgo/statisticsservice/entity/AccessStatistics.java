@@ -24,7 +24,7 @@ public class AccessStatistics {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "access_ip")
+    @Column(name = "access_ip", columnDefinition = "varchar(100)")
     private String accessIp;
 
     @Column(name = "access_date_time")

@@ -23,7 +23,7 @@ class NoticeRepositoryTest {
     private NoticeRepository noticeRepository;
 
     @Test
-    @DisplayName("공지사항 Insert 테스트")
+    @DisplayName("공지사항 테이블/데이터 생성 테스트")
     void createNoticeTest() {
         // given
         Long userId = 1L;

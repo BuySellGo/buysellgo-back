@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
+@Rollback(value = true)
 class CouponNotificationRepositoryTest {
 
     @Autowired
     private CouponNotificationRepository couponNotificationRepository;
 
     @Test
-    @DisplayName("쿠폰 알림 테이블 생성 테스트")
+    @DisplayName("쿠폰 알림 테이블/데이터 생성 테스트")
     void createCouponNotificationTest() {
         // given
         Long couponNotificationId = 1L;

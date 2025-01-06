@@ -19,7 +19,7 @@ class FaqGroupRepositoryTest {
     private FaqGroupRepository faqGroupRepository;
 
     @Test
-    @DisplayName("FAQ 그룹 생성 테스트")
+    @DisplayName("FAQ 그룹 테이블/데이터 생성 테스트")
     void createFaqGroupTest() {
         // given
         String faqTitle = "FAQ 그룹-1";
