@@ -6,13 +6,13 @@
 // 4.주문서비스(order-service)
 // 5.리뷰서비스(review-service)
 // 6.Q&A서비스(qna-service)
-// 7.고객센터서비스(helpdesk-service)
+// 7.고객센터서비스(helpdesk-service) <
 // 8.검색서비스(search-service)
 // 9.결제서비스(payment-service)
-// 10.배송서비스(delivery-service)
-// 11.프로모션(promotion-service)
+// 10.배송서비스(delivery-service) <
+// 11.프로모션(promotion-service) <
 // 12.채팅서비스(chat-service)
-// 13.통계서비스(statistics-service)
+// 13.통계서비스(statistics-service) <
 
 // 필요한 변수를 선언할 수 있다. (내가 직접 선언하는 변수, 젠킨스 환경변수를 끌고 올 수 있음)
 def ecrLoginHelper="docker-credential-ecr-login" // ECR credential helper 이름

@@ -13,7 +13,7 @@ spring:
       server:
         native:
 #          search-locations: file:///Users/mspapa/final-project/buysellgo-config
-          search-locations: file:///C:/final-project/buysellgo-config/
+          search-locations: file:///C:/final-project/buysellgo-config
 
 #        git:
 #          uri:

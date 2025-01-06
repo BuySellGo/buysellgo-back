@@ -1,0 +1,29 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: promotion-service
+
+# Swagger Setting
+openapi:
+  service:
+    title: promotion-service doc
+    version: v1
+    url: http://localhost:8000/${spring.application.name}
+springdoc:
+  api-docs:
+    path: /promotion-service/v3/api-docs
+  swagger-ui:
+    path: /promotion-service/swagger-ui.html
+
+# log level setting
+logging:
+  level:
+    logging:
+      level:
+        root: info
+        org.hibernate.orm.jdbc.bind: info
+        org.hibernate.SQL: info
+        springframework.cloud.config: info
+        com.buysellgo: info
