@@ -1,6 +1,7 @@
 package com.buysellgo.userservice.strategy.auth;
 
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
+import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.controller.dto.KeepLogin;
 import com.buysellgo.userservice.domain.user.User;
@@ -128,5 +129,52 @@ class AdminAuthStrategyTest {
         assertThat(adminAuthStrategy.supports(Role.ADMIN)).isTrue();
         assertThat(adminAuthStrategy.supports(Role.USER)).isFalse();
         assertThat(adminAuthStrategy.supports(Role.SELLER)).isFalse();
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 갱신 성공")
+    void updateJwt_Success() {
+        // given
+        String refreshToken = "test.refresh.token";
+        TokenUserInfo userInfo = new TokenUserInfo(TEST_EMAIL, Role.ADMIN);
+        
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(refreshToken)).thenReturn(userInfo);
+        when(adminTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get(TEST_EMAIL)).thenReturn("test.refresh.token");
+        when(jwtTokenProvider.createToken(TEST_EMAIL, Role.ADMIN.toString())).thenReturn("new.access.token");
+
+        // when
+        AuthResult<Map<String, Object>> result = adminAuthStrategy.updateJwt(refreshToken);
+
+        // then
+        assertThat(result.success()).isTrue();
+        assertThat(result.data())
+            .containsEntry("accessToken", "new.access.token")
+            .containsEntry("email", TEST_EMAIL)
+            .containsEntry("role", Role.ADMIN);
+        
+        verify(jwtTokenProvider).validateAndGetTokenUserInfo(refreshToken);
+        verify(adminTemplate).opsForValue();
+        verify(valueOperations).get(TEST_EMAIL);
+        verify(jwtTokenProvider).createToken(TEST_EMAIL, Role.ADMIN.toString());
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 갱신 실패 - 저장된 토큰 없음")
+    void updateJwt_RefreshTokenNotFound() {
+        // given
+        String refreshToken = "test.refresh.token";
+        TokenUserInfo userInfo = new TokenUserInfo(TEST_EMAIL, Role.ADMIN);
+        
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(refreshToken)).thenReturn(userInfo);
+        when(adminTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get(TEST_EMAIL)).thenReturn(null);
+
+        // when
+        AuthResult<Map<String, Object>> result = adminAuthStrategy.updateJwt(refreshToken);
+
+        // then
+        assertThat(result.success()).isFalse();
+        assertThat(result.errorMessage()).isEqualTo("Refresh token not found");
     }
 }

@@ -94,16 +94,20 @@ public class CommonExceptionHandler {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<CommonErrorDto> noSuchElementHandler(NoSuchElementException e) {
+    public ResponseEntity<CommonErrorDto> handleNoSuchElementException(NoSuchElementException e) {
         log.error("No Such Element: {}", e.getMessage());
-        CommonErrorDto dto = new CommonErrorDto(
-            HttpStatus.NOT_FOUND, 
-            "리프레시 토큰이 만료되었거나, 해당 사용자가 존재하지 않습니다."
-        );
+        
+        // 메시지에 따라 다른 상태 코드 반환
+        if (e.getMessage().equals("Refresh token not found")) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new CommonErrorDto(HttpStatus.UNAUTHORIZED, e.getMessage()));
+        }
+        
+        // 그 외의 경우는 기존대로 404 반환
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(dto);
+            .body(new CommonErrorDto(HttpStatus.NOT_FOUND, e.getMessage()));
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)

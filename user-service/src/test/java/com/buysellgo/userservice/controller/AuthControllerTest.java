@@ -26,6 +26,7 @@ import java.util.Map;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -249,5 +250,72 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
                 .andExpect(jsonPath("$.errors.keepLogin").value("허용되지 않는 값입니다. (허용값: ACTIVE, INACTIVE)"));
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 갱신 성공")
+    void updateJwt_Success() throws Exception {
+        // given
+        String refreshToken = "test.refresh.token";
+        Map<String, Object> tokenInfo = new HashMap<>();
+        tokenInfo.put("accessToken", "new.access.token");
+        tokenInfo.put("email", TEST_EMAIL);
+        tokenInfo.put("role", Role.USER);
+
+        @SuppressWarnings("rawtypes")
+        AuthResult serviceResponse = AuthResult.success(tokenInfo);
+        given(authService.updateJwt(refreshToken)).willReturn(serviceResponse);
+
+        // when & then
+        mockMvc.perform(put("/auth/jwt")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + refreshToken))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.AUTHORIZATION, "Bearer new.access.token"))
+                .andExpect(jsonPath("$.statusCode").value(200))
+                .andExpect(jsonPath("$.statusMessage").value("토큰 갱신 성공"))
+                .andExpect(jsonPath("$.result.email").value(TEST_EMAIL))
+                .andExpect(jsonPath("$.result.role").value("USER"));
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 갱신 실패 - 리프레시 토큰 없음")
+    void updateJwt_NoRefreshToken() throws Exception {
+        // when & then
+        mockMvc.perform(put("/auth/jwt"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("리프레시 토큰이 필요합니다."));
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 갱신 실패 - 유효하지 않은 리프레시 토큰")
+    void updateJwt_InvalidRefreshToken() throws Exception {
+        // given
+        String invalidToken = "invalid.refresh.token";
+        @SuppressWarnings("rawtypes")
+        AuthResult serviceResponse = AuthResult.failure("Refresh token not found");
+        given(authService.updateJwt(invalidToken)).willReturn(serviceResponse);
+
+        // when & then
+        mockMvc.perform(put("/auth/jwt")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + invalidToken))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
+                .andExpect(jsonPath("$.message").value("Refresh token not found"));
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 갱신 실패 - 잘못된 Authorization 헤더 형식")
+    void updateJwt_InvalidAuthorizationHeader() throws Exception {
+        // when & then
+        mockMvc.perform(put("/auth/jwt")
+                .header(HttpHeaders.AUTHORIZATION, "Invalid-Format"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("잘못된 Authorization 헤더 형식입니다."));
     }
 }
