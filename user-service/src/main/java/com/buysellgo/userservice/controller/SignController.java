@@ -12,10 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static com.buysellgo.userservice.common.util.CommonConstant.*;
 
 @Slf4j
 @RestController
@@ -40,4 +39,14 @@ public class SignController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    @Operation(summary = "회원탈퇴 요청(회원)")
+    @DeleteMapping("/user")
+    public ResponseEntity<CommonResDto> userDelete(
+            @RequestHeader(value = "Authorization", required = true) String accessToken
+    ){
+        String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
+        signService.userDelete(token);
+        CommonResDto dto =  new CommonResDto(HttpStatus.OK,"회원 탈퇴 완료(회원)",null);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
 }

@@ -15,35 +15,32 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.HashMap;
 
+import static com.buysellgo.userservice.common.util.CommonConstant.*;
+
 @Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private static final String USER_NOT_FOUND_MESSAGE = "사용자를 찾을 수 없습니다.";
-    private static final String TOKEN_OR_USER_NOT_FOUND_MESSAGE = "리프레시 토큰이 만료되었거나, 해당 사용자가 존재하지 않습니다.";
-    private static final String EMAIL = "email";
-    private static final String ROLE= "role";
-    private static final String HEADVALUE = "Bearer ";
-    private static final String FAILURE = "failure";
+
 
     @Operation(summary = "로그인 요청(공통)")
     @PostMapping("/jwt")
     public ResponseEntity<CommonResDto> createJwt(@Valid @RequestBody JwtCreateReq req) {
         Map<String, Object> jwt = authService.createJwt(req);
-        if(jwt.containsKey(FAILURE)) {
-            throw new NoSuchElementException(USER_NOT_FOUND_MESSAGE); 
+        if(jwt.containsKey(FAILURE.getValue())) {
+            throw new NoSuchElementException(USER_NOT_FOUND.getValue());
         }
 
         // 응답 헤더에 토큰 추가
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, HEADVALUE + jwt.get("accessToken"));
+        headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX.getValue() + jwt.get("accessToken"));
         
         // 응답 바디에서는 토큰 제외
         Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put(EMAIL, req.email());
-        responseBody.put(ROLE, req.role());
+        responseBody.put(EMAIL.getValue(), req.email());
+        responseBody.put(ROLE.getValue(), req.role());
         responseBody.putAll(jwt);
         
         CommonResDto dto = new CommonResDto(HttpStatus.CREATED, "로그인 성공", responseBody);
@@ -58,23 +55,23 @@ public class AuthController {
             @RequestHeader(value = "Authorization", required = true) String accessToken) {
         
         // Bearer 제거 및 토큰 검증
-        String token = accessToken.replace(HEADVALUE, "");
+        String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
 
         // 토큰 갱신 요청
         Map<String, Object> refreshJwt = authService.updateJwt(token);
         
-        if(refreshJwt.containsKey(FAILURE)) {
-            throw new NoSuchElementException(TOKEN_OR_USER_NOT_FOUND_MESSAGE);
+        if(refreshJwt.containsKey(FAILURE.getValue())) {
+            throw new NoSuchElementException(TOKEN_OR_USER_NOT_FOUND.getValue());
         }
 
         // 응답 헤더에 새로운 토큰 추가
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, HEADVALUE + refreshJwt.get("accessToken"));
+        headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX.getValue() + refreshJwt.get("accessToken"));
         
         // 응답 바디에서는 토큰 제외
         Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put(EMAIL, refreshJwt.get(EMAIL));
-        responseBody.put(ROLE, refreshJwt.get(ROLE));
+        responseBody.put(EMAIL.getValue(), refreshJwt.get(EMAIL.getValue()));
+        responseBody.put(ROLE.getValue(), refreshJwt.get(ROLE.getValue()));
         responseBody.putAll(refreshJwt);
         
         CommonResDto dto = new CommonResDto(HttpStatus.CREATED, "토큰 갱신 성공", responseBody);
@@ -88,10 +85,10 @@ public class AuthController {
     public ResponseEntity<CommonResDto> deleteToken(
             @RequestHeader(value = "Authorization", required = true) String accessToken
     ){
-        String token = accessToken.replace(HEADVALUE, "");
+        String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
         Map<String, Object> map = authService.deleteToken(token);
-        if(map.containsKey(FAILURE)){
-            throw new NoSuchElementException(TOKEN_OR_USER_NOT_FOUND_MESSAGE);
+        if(map.containsKey(FAILURE.getValue())){
+            throw new NoSuchElementException(TOKEN_OR_USER_NOT_FOUND.getValue());
         }
         CommonResDto dto = new CommonResDto(HttpStatus.OK,"리프레시 토큰 삭제 완료",map);
         return ResponseEntity.status(HttpStatus.OK).body(dto);
