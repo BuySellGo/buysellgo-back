@@ -1,10 +1,14 @@
 package com.buysellgo.userservice.controller;
 
 import com.buysellgo.userservice.common.dto.CommonExceptionHandler;
+import com.buysellgo.userservice.common.entity.Address;
 import com.buysellgo.userservice.common.entity.Role;
+import com.buysellgo.userservice.controller.dto.SellerCreateReq;
 import com.buysellgo.userservice.controller.dto.UserCreateReq;
+import com.buysellgo.userservice.domain.seller.Seller;
 import com.buysellgo.userservice.domain.user.User;
 import com.buysellgo.userservice.service.SignService;
+import com.buysellgo.userservice.service.dto.SellerSignUpDto;
 import com.buysellgo.userservice.service.dto.UserSignUpDto;
 import com.buysellgo.userservice.strategy.sign.common.SignResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -193,5 +197,126 @@ class SignControllerTest {
             .andExpect(jsonPath("$.message").value("Validation failed"))
             .andExpect(jsonPath("$.errors.email").value("이메일은 50자를 초과할 수 없습니다."))
             .andExpect(jsonPath("$.errors.username").value("닉네임은 50자를 초과할 수 없습니다."));
+    }
+
+    private SellerCreateReq createValidSellerRequest() {
+        Address address = Address.builder()
+            .city("서울시")
+            .street("강남구 테헤란로")
+            .zipCode("06234")
+            .build();
+
+        return new SellerCreateReq(
+            "부매고 주식회사",         // companyName
+            "홍길동",                 // presidentName
+            address,                  // address
+            "seller@buysellgo.com",   // email
+            "Test1234!",             // password
+            "123-45-67890",          // businessRegistrationNumber
+            "business_registration.jpg" // businessRegistrationNumberImg
+        );
+    }
+
+    private SellerCreateReq createInvalidSellerRequest() {
+        return new SellerCreateReq(
+            "",                     // companyName (empty)
+            "",                     // presidentName (empty)
+            null,                   // address (null)
+            "invalid-email",        // email (invalid format)
+            "short",               // password (invalid format)
+            "12345",               // businessRegistrationNumber (invalid format)
+            ""                      // businessRegistrationNumberImg (empty)
+        );
+    }
+
+    private Seller.Vo createSellerVo(SellerCreateReq req) {
+        Address address = req.address();
+        String fullAddress = String.format("%s %s %s", 
+            address.getCity(), 
+            address.getStreet(), 
+            address.getZipCode());
+
+        return new Seller.Vo(
+            1L,                                    // sellerId
+            req.companyName(),                     // companyName
+            req.presidentName(),                   // presidentName
+            fullAddress,                           // address
+            req.email(),                          // email
+            "encodedPassword",                    // password
+            req.businessRegistrationNumber(),      // businessRegistrationNumber
+            req.businessRegistrationNumberImg(),   // businessRegistrationNumberImg
+            "AUTHORIZED"                          // isApproved
+        );
+    }
+
+    @Test
+    @DisplayName("판매자 회원가입 성공")
+    void sellerSign_Success() throws Exception {
+        // given
+        SellerCreateReq req = createValidSellerRequest();
+        Seller.Vo sellerVo = createSellerVo(req);
+
+        doReturn(SignResult.success(sellerVo))
+            .when(signService)
+            .signUp(any(SellerSignUpDto.class), any(Role.class));
+
+        // when & then
+        mockMvc.perform(post("/sign/seller")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.statusCode").value(201))
+            .andExpect(jsonPath("$.statusMessage").value("회원가입 성공(판매자)"))
+            .andExpect(jsonPath("$.result.email").value(req.email()))
+            .andExpect(jsonPath("$.result.companyName").value(req.companyName()));
+    }
+
+    @Test
+    @DisplayName("판매자 회원가입 실패 - 유효성 검사 실패")
+    void sellerSign_ValidationFailure() throws Exception {
+        // given
+        SellerCreateReq req = createInvalidSellerRequest();
+
+        // when & then
+        mockMvc.perform(post("/sign/seller")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+            .andExpect(jsonPath("$.message").value("Validation failed"))
+            .andExpect(jsonPath("$.errors.companyName").value("회사명은 필수 입니다."))
+            .andExpect(jsonPath("$.errors.presidentName").value("대표자명은 필수 입니다."))
+            .andExpect(jsonPath("$.errors.address").value("주소는 필수 입니다."))
+            .andExpect(jsonPath("$.errors.email").value("올바른 이메일 형식이 아닙니다."))
+            .andExpect(jsonPath("$.errors.password").value("비밀번호는 최소 8자 이상이며, 1개 이상의 숫자와 특수문자를 포함해야 합니다."))
+            .andExpect(jsonPath("$.errors.businessRegistrationNumber").value("올바른 사업자등록번호 형식이 아닙니다."))
+            .andExpect(jsonPath("$.errors.businessRegistrationNumberImg").value("사업자등록증 이미지는 필수 입니다."));
+    }
+
+    @Test
+    @DisplayName("판매자 회원가입 실패 - 필수 필드 누락")
+    void sellerSign_MissingRequiredFields() throws Exception {
+        // given
+        String invalidJson = "{}";
+
+        // when & then
+        mockMvc.perform(post("/sign/seller")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJson))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> {
+                String content = result.getResponse().getContentAsString();
+                assertThat(content)
+                    .contains("회사명은 필수 입니다.")
+                    .contains("대표자명은 필수 입니다.")
+                    .contains("주소는 필수 입니다.")
+                    .contains("이메일은 필수 입니다.")
+                    .contains("비밀번호는 필수 입니다.")
+                    .contains("사업자등록번호는 필수 입니다.")
+                    .contains("사업자등록증 이미지는 필수 입니다.");
+            });
     }
 }
