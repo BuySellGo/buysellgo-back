@@ -16,6 +16,9 @@ import java.util.NoSuchElementException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import io.jsonwebtoken.JwtException;
 import com.buysellgo.userservice.common.exception.WithdrawFailedException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import java.util.Arrays;
 
 //@RestControllerAdvice(basePackages = {"com.buysellgo.userservice.controller"})
 @RestControllerAdvice
@@ -136,6 +139,26 @@ public class CommonExceptionHandler {
             HttpStatus.BAD_REQUEST, 
             e.getMessage()
         );
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(dto);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<CommonErrorDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        Map<String, String> errors = new HashMap<>();
+        
+        if (ex.getCause() instanceof InvalidFormatException ife) {
+            String fieldName = ife.getPath().get(0).getFieldName();
+            String message = String.format("허용되지 않는 값입니다. (허용값: %s)", 
+                Arrays.toString(ife.getTargetType().getEnumConstants())
+                    .replace("[", "")
+                    .replace("]", ""));
+            errors.put(fieldName, message);
+        }
+
+        CommonErrorDto dto = new CommonErrorDto(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.", errors);
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .contentType(MediaType.APPLICATION_JSON)
