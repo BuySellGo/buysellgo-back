@@ -52,12 +52,22 @@ public class AuthController {
     @Operation(summary = "토큰 갱신(공통)")
     @PutMapping("/jwt")
     public ResponseEntity<CommonResDto> refreshToken(
-            @RequestHeader(value = "Authorization") String accessToken) {
+            @RequestHeader(value = "Authorization", required = false) String accessToken) {
+        // Authorization 헤더가 없는 경우
+        if (accessToken == null) {
+            throw new IllegalArgumentException("리프레시 토큰이 필요합니다.");
+        }
+
+        // Bearer 접두어 검증
+        if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
+            throw new IllegalArgumentException("잘못된 Authorization 헤더 형식입니다.");
+        }
+
         String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
         AuthResult<?> result = authService.updateJwt(token);
         
         if (!result.success()) {
-            throw new NoSuchElementException(TOKEN_OR_USER_NOT_FOUND.getValue());
+            throw new NoSuchElementException("Refresh token not found");
         }
 
         Map<String, Object> tokenInfo = (Map<String, Object>) result.data();
@@ -68,8 +78,8 @@ public class AuthController {
         Map<String, Object> responseBody = new HashMap<>(tokenInfo);
         responseBody.remove("accessToken");
         
-        CommonResDto dto = new CommonResDto(HttpStatus.CREATED, "토큰 갱신 성공", responseBody);
-        return ResponseEntity.status(HttpStatus.CREATED)
+        CommonResDto dto = new CommonResDto(HttpStatus.OK, "토큰 갱신 성공", responseBody);
+        return ResponseEntity.ok()
                         .headers(headers)
                         .body(dto);
     }

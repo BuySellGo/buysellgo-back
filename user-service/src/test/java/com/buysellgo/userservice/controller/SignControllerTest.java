@@ -231,18 +231,14 @@ class SignControllerTest {
 
     private Seller.Vo createSellerVo(SellerCreateReq req) {
         Address address = req.address();
-        String fullAddress = String.format("%s %s %s", 
-            address.getCity(), 
-            address.getStreet(), 
-            address.getZipCode());
+
 
         return new Seller.Vo(
             1L,                                    // sellerId
             req.companyName(),                     // companyName
             req.presidentName(),                   // presidentName
-            fullAddress,                           // address
+            address,                           // address
             req.email(),                          // email
-            "encodedPassword",                    // password
             req.businessRegistrationNumber(),      // businessRegistrationNumber
             req.businessRegistrationNumberImg(),   // businessRegistrationNumberImg
             "AUTHORIZED"                          // isApproved

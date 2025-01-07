@@ -58,9 +58,8 @@ public class Seller extends BaseEntity {
                 .build();
     }
 
-    public Vo toVo(){
-        return new Vo(sellerId, companyName, presidentName, address.toString(),
-                email, password, businessRegistrationNumber,
+    public Vo toVo(){return new Vo(sellerId, companyName, presidentName, address,
+                email, businessRegistrationNumber,
                 businessRegistrationNumberImg, isApproved.toString());
 
     }
@@ -69,9 +68,8 @@ public class Seller extends BaseEntity {
             long sellerId
             , String companyName
             , String presidentName
-            , String address
+            , Address address
             , String email
-            , String password
             , String businessRegistrationNumber
             , String businessRegistrationNumberImg
             , String isApproved

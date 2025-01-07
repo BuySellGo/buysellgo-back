@@ -78,6 +78,8 @@ class SellerSignStrategyTest {
         assertThat(result.data()).isNotNull();
         assertThat(result.data().email()).isEqualTo(dto.email());
         assertThat(result.data().companyName()).isEqualTo(dto.companyName());
+        assertThat(result.data().presidentName()).isEqualTo(dto.presidentName());
+        assertThat(result.data().businessRegistrationNumber()).isEqualTo(dto.businessRegistrationNumber());
         
         verify(passwordEncoder).encode(dto.password());
         verify(sellerRepository).save(any(Seller.class));

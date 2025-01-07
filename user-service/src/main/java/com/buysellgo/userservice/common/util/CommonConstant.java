@@ -7,6 +7,7 @@ public enum CommonConstant {
     
     // 토큰 상수
     BEARER_PREFIX("Bearer "),
+    ACCESS_TOKEN("accessToken"),
     
     // 응답 키값 상수
     EMAIL("email"),
