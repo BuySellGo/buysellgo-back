@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -312,6 +313,69 @@ class AuthControllerTest {
     void updateJwt_InvalidAuthorizationHeader() throws Exception {
         // when & then
         mockMvc.perform(put("/auth/jwt")
+                .header(HttpHeaders.AUTHORIZATION, "Invalid-Format"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("잘못된 Authorization 헤더 형식입니다."));
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 삭제 성공")
+    void deleteToken_Success() throws Exception {
+        // given
+        String accessToken = "test.access.token";
+        Map<String, Object> resultData = new HashMap<>();
+        resultData.put("message", "Refresh token deleted");
+        
+        @SuppressWarnings("rawtypes")
+        AuthResult serviceResponse = AuthResult.success(resultData);
+        given(authService.deleteToken(accessToken)).willReturn(serviceResponse);
+
+        // when & then
+        mockMvc.perform(delete("/auth/jwt")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusCode").value(200))
+                .andExpect(jsonPath("$.statusMessage").value("로그아웃 성공"))
+                .andExpect(jsonPath("$.result.message").value("Refresh token deleted"));
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 삭제 실패 - Authorization 헤더 누락")
+    void deleteToken_NoAuthorizationHeader() throws Exception {
+        // when & then
+        mockMvc.perform(delete("/auth/jwt"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("Required request header 'Authorization' for method parameter type String is not present"));
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 삭제 실패 - 잘못된 토큰")
+    void deleteToken_InvalidToken() throws Exception {
+        // given
+        String invalidToken = "invalid.access.token";
+        @SuppressWarnings("rawtypes")
+        AuthResult serviceResponse = AuthResult.failure("Token or user not found");
+        given(authService.deleteToken(invalidToken)).willReturn(serviceResponse);
+
+        // when & then
+        mockMvc.perform(delete("/auth/jwt")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + invalidToken))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.message").value("리프레시 토큰이 만료되었거나, 해당 사용자가 존재하지 않습니다."));
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 삭제 실패 - 잘못된 Authorization 헤더 형식")
+    void deleteToken_InvalidAuthorizationHeader() throws Exception {
+        // when & then
+        mockMvc.perform(delete("/auth/jwt")
                 .header(HttpHeaders.AUTHORIZATION, "Invalid-Format"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())

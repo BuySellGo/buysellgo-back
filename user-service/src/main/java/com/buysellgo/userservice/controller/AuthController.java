@@ -88,6 +88,11 @@ public class AuthController {
     @DeleteMapping("/jwt")
     public ResponseEntity<CommonResDto> deleteToken(
             @RequestHeader(value = "Authorization") String accessToken) {
+        // Bearer 접두어 검증
+        if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
+            throw new IllegalArgumentException("잘못된 Authorization 헤더 형식입니다.");
+        }
+
         String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
         AuthResult<?> result = authService.deleteToken(token);
         
