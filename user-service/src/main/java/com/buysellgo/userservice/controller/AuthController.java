@@ -2,6 +2,7 @@ package com.buysellgo.userservice.controller;
 import com.buysellgo.userservice.common.dto.CommonResDto;
 import com.buysellgo.userservice.controller.dto.JwtCreateReq;
 import com.buysellgo.userservice.service.AuthService;
+import com.buysellgo.userservice.strategy.auth.common.AuthResult;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
@@ -24,73 +25,67 @@ import static com.buysellgo.userservice.common.util.CommonConstant.*;
 public class AuthController {
     private final AuthService authService;
 
-
     @Operation(summary = "로그인 요청(공통)")
     @PostMapping("/jwt")
     public ResponseEntity<CommonResDto> createJwt(@Valid @RequestBody JwtCreateReq req) {
-        Map<String, Object> jwt = authService.createJwt(req);
-        if(jwt.containsKey(FAILURE.getValue())) {
+        AuthResult<?> result = authService.createJwt(req);
+        if (!result.success()) {
             throw new NoSuchElementException(USER_NOT_FOUND.getValue());
         }
 
+        Map<String, Object> tokenInfo = (Map<String, Object>) result.data();
+        
         // 응답 헤더에 토큰 추가
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX.getValue() + jwt.get("accessToken"));
+        headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX.getValue() + tokenInfo.get(ACCESS_TOKEN.getValue()));
         
         // 응답 바디에서는 토큰 제외
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put(EMAIL.getValue(), req.email());
-        responseBody.put(ROLE.getValue(), req.role());
-        responseBody.putAll(jwt);
+        Map<String, Object> responseBody = new HashMap<>(tokenInfo);
+        responseBody.remove(ACCESS_TOKEN.getValue());
         
         CommonResDto dto = new CommonResDto(HttpStatus.CREATED, "로그인 성공", responseBody);
         return ResponseEntity.status(HttpStatus.CREATED)
-                            .headers(headers)
-                            .body(dto);
+                        .headers(headers)
+                        .body(dto);
     }
 
     @Operation(summary = "토큰 갱신(공통)")
     @PutMapping("/jwt")
     public ResponseEntity<CommonResDto> refreshToken(
-            @RequestHeader(value = "Authorization", required = true) String accessToken) {
-        
-        // Bearer 제거 및 토큰 검증
+            @RequestHeader(value = "Authorization") String accessToken) {
         String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
-
-        // 토큰 갱신 요청
-        Map<String, Object> refreshJwt = authService.updateJwt(token);
+        AuthResult<?> result = authService.updateJwt(token);
         
-        if(refreshJwt.containsKey(FAILURE.getValue())) {
+        if (!result.success()) {
             throw new NoSuchElementException(TOKEN_OR_USER_NOT_FOUND.getValue());
         }
 
-        // 응답 헤더에 새로운 토큰 추가
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX.getValue() + refreshJwt.get("accessToken"));
+        Map<String, Object> tokenInfo = (Map<String, Object>) result.data();
         
-        // 응답 바디에서는 토큰 제외
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put(EMAIL.getValue(), refreshJwt.get(EMAIL.getValue()));
-        responseBody.put(ROLE.getValue(), refreshJwt.get(ROLE.getValue()));
-        responseBody.putAll(refreshJwt);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX.getValue() + tokenInfo.get("accessToken"));
+        
+        Map<String, Object> responseBody = new HashMap<>(tokenInfo);
+        responseBody.remove("accessToken");
         
         CommonResDto dto = new CommonResDto(HttpStatus.CREATED, "토큰 갱신 성공", responseBody);
         return ResponseEntity.status(HttpStatus.CREATED)
-                            .headers(headers)
-                            .body(dto);
+                        .headers(headers)
+                        .body(dto);
     }
 
     @Operation(summary = "로그아웃 요청(공통)")
     @DeleteMapping("/jwt")
     public ResponseEntity<CommonResDto> deleteToken(
-            @RequestHeader(value = "Authorization", required = true) String accessToken
-    ){
+            @RequestHeader(value = "Authorization") String accessToken) {
         String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
-        Map<String, Object> map = authService.deleteToken(token);
-        if(map.containsKey(FAILURE.getValue())){
+        AuthResult<?> result = authService.deleteToken(token);
+        
+        if (!result.success()) {
             throw new NoSuchElementException(TOKEN_OR_USER_NOT_FOUND.getValue());
         }
-        CommonResDto dto = new CommonResDto(HttpStatus.OK,"리프레시 토큰 삭제 완료",map);
-        return ResponseEntity.status(HttpStatus.OK).body(dto);
+        
+        CommonResDto dto = new CommonResDto(HttpStatus.OK, "로그아웃 성공", result.data());
+        return ResponseEntity.ok(dto);
     }
 }
