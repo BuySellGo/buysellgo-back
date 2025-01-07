@@ -177,4 +177,42 @@ class AdminAuthStrategyTest {
         assertThat(result.success()).isFalse();
         assertThat(result.errorMessage()).isEqualTo("Refresh token not found");
     }
+
+    @Test
+    @DisplayName("토큰 삭제 성공")
+    void deleteToken_Success() {
+        // given
+        String accessToken = "test.access.token";
+        TokenUserInfo userInfo = new TokenUserInfo(TEST_EMAIL, Role.ADMIN);
+        
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(accessToken)).thenReturn(userInfo);
+        when(adminTemplate.delete(TEST_EMAIL)).thenReturn(true);
+
+        // when
+        AuthResult<Map<String, Object>> result = adminAuthStrategy.deleteToken(accessToken);
+
+        // then
+        assertThat(result.success()).isTrue();
+        assertThat(result.data())
+            .containsEntry("message", "Refresh token deleted");
+        
+        verify(jwtTokenProvider).validateAndGetTokenUserInfo(accessToken);
+        verify(adminTemplate).delete(TEST_EMAIL);
+    }
+
+    @Test
+    @DisplayName("토큰 삭제 실패 - 유효하지 않은 토큰")
+    void deleteToken_InvalidToken() {
+        // given
+        String invalidToken = "invalid.access.token";
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(invalidToken))
+            .thenThrow(new IllegalArgumentException("Invalid token"));
+
+        // when & then
+        assertThrows(IllegalArgumentException.class,
+            () -> adminAuthStrategy.deleteToken(invalidToken));
+        
+        verify(jwtTokenProvider).validateAndGetTokenUserInfo(invalidToken);
+        verify(adminTemplate, never()).delete(anyString());
+    }
 }

@@ -177,4 +177,42 @@ class UserAuthStrategyTest {
         assertThat(userAuthStrategy.supports(Role.SELLER)).isFalse();
         assertThat(userAuthStrategy.supports(Role.ADMIN)).isFalse();
     }
+
+    @Test
+    @DisplayName("토큰 삭제 성공")
+    void deleteToken_Success() {
+        // given
+        String accessToken = "test.access.token";
+        TokenUserInfo userInfo = new TokenUserInfo(TEST_EMAIL, Role.USER);
+        
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(accessToken)).thenReturn(userInfo);
+        when(userTemplate.delete(TEST_EMAIL)).thenReturn(true);
+
+        // when
+        AuthResult<Map<String, Object>> result = userAuthStrategy.deleteToken(accessToken);
+
+        // then
+        assertThat(result.success()).isTrue();
+        assertThat(result.data())
+            .containsEntry("message", "Refresh token deleted");
+        
+        verify(jwtTokenProvider).validateAndGetTokenUserInfo(accessToken);
+        verify(userTemplate).delete(TEST_EMAIL);
+    }
+
+    @Test
+    @DisplayName("토큰 삭제 실패 - 유효하지 않은 토큰")
+    void deleteToken_InvalidToken() {
+        // given
+        String invalidToken = "invalid.access.token";
+        when(jwtTokenProvider.validateAndGetTokenUserInfo(invalidToken))
+            .thenThrow(new IllegalArgumentException("Invalid token"));
+
+        // when & then
+        assertThrows(IllegalArgumentException.class,
+            () -> userAuthStrategy.deleteToken(invalidToken));
+        
+        verify(jwtTokenProvider).validateAndGetTokenUserInfo(invalidToken);
+        verify(userTemplate, never()).delete(anyString());
+    }
 }
