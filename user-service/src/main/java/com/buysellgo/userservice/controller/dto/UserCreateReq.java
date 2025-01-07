@@ -5,10 +5,12 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Size;
 
 public record UserCreateReq(
         @Schema(title = "이메일", example = "test@test.com", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotEmpty(message = "이메일은 필수 입니다.")
+        @Size(max = 50, message = "이메일은 50자를 초과할 수 없습니다.")
         @Pattern(
                 regexp = "[^@]+@[^@]+\\.[^@]+",
                 message = "올바른 이메일 형식이 아닙니다."
@@ -25,13 +27,15 @@ public record UserCreateReq(
 
         @Schema(title = "닉네임", example = "홍길동", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotEmpty(message = "닉네임은 필수 입니다.")
+        @Size(max = 50, message = "닉네임은 50자를 초과할 수 없습니다.")
         String username,
 
         @Schema(title = "휴대폰 번호", example = "010-1234-5678", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotEmpty(message = "휴대폰 번호는 필수 입니다.")
+        @Size(max = 30, message = "전화번호는 30자를 초과할 수 없습니다.")
         @Pattern(
                 regexp = "^$|010-\\d{4}-\\d{4}$",
-                message = "올바른 휴대폰 번호 형식이 아닙니다."
+                message = "올바른 전화번호 형식이 아닙니다."
         )
         String phone,
 

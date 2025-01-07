@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import io.jsonwebtoken.JwtException;
+import com.buysellgo.userservice.common.exception.WithdrawFailedException;
 
 //@RestControllerAdvice(basePackages = {"com.buysellgo.userservice.controller"})
 @RestControllerAdvice
@@ -124,6 +125,19 @@ public class CommonExceptionHandler {
         );
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(dto);
+    }
+
+    @ExceptionHandler(WithdrawFailedException.class)
+    public ResponseEntity<CommonErrorDto> withdrawFailedHandler(WithdrawFailedException e) {
+        log.error("Withdraw Failed: {}", e.getMessage());
+        CommonErrorDto dto = new CommonErrorDto(
+            HttpStatus.BAD_REQUEST, 
+            e.getMessage()
+        );
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
             .contentType(MediaType.APPLICATION_JSON)
             .body(dto);
     }
