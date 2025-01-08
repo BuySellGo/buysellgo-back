@@ -79,4 +79,23 @@ public class SignController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(new CommonResDto(HttpStatus.OK, "회원 탈퇴 완료(회원)", result.data()));
     }
+
+    @Operation(summary = "회원탈퇴 요청(판매자)")
+    @DeleteMapping("/seller")
+    public ResponseEntity<CommonResDto> sellerDelete(
+            @RequestHeader(value = "Authorization", required = true) String accessToken){
+        if(!accessToken.startsWith(BEARER_PREFIX.getValue())) {
+            throw new IllegalArgumentException("잘못된 Authorization 헤더 형식입니다.");
+        }
+
+        String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
+        SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(Role.SELLER);
+        SignResult<Map<String, Object>> result = strategy.withdraw(token);
+
+        if(!result.success()) {
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new CommonResDto(HttpStatus.OK,"회원 탈퇴 완료(판매자)", result.data()));
+    }
 }

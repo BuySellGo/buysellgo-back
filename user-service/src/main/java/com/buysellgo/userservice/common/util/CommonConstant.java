@@ -10,6 +10,7 @@ public enum CommonConstant {
     SELLER_CREATED("판매자 가입완료"),
     USER_CREATED("회원 가입완료"),
     USER_DELETED("회원 삭제완료"),
+    SELLER_DELETED("판매자 삭제완료"),
     VALUE_DUPLICATED("중복된 값이 있습니다."),
     SAVE_FAILURE("저장 실패"),
 
@@ -28,7 +29,7 @@ public enum CommonConstant {
 
     // 숫자 상수
     KEEP_LOGIN_HOURS(168L),
-    DEFAULT_HOURS(10L);
+    DEFAULT_HOURS(10L), ;
 
     private final Object value;
 
