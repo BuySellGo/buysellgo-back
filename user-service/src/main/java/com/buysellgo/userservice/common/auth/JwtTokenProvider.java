@@ -42,10 +42,11 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(String email, String role) {
+    public String createToken(String email, String role, long id) {
         // Claims: 페이로드에 들어갈 사용자 정보
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
+        claims.put("id", id);
         Date date = new Date();
 
         return Jwts.builder()
@@ -93,6 +94,7 @@ public class JwtTokenProvider {
             return TokenUserInfo.builder()
                     .email(claims.getSubject())
                     .role(Role.valueOf(claims.get("role", String.class)))
+                    .id(claims.get("id", Long.class))
                     .build();
         } catch (ExpiredJwtException e) {
             log.error("Token expired: {}", e.getMessage());

@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.service.dto;
+package com.buysellgo.userservice.strategy.sign.dto;
 
 import com.buysellgo.userservice.controller.dto.UserCreateReq;
 

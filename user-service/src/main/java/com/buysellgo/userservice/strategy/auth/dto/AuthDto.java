@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.service.dto;
+package com.buysellgo.userservice.strategy.auth.dto;
 
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.controller.dto.JwtCreateReq;

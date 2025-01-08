@@ -1,5 +1,6 @@
 package com.buysellgo.userservice.common.dto;
 
+import com.buysellgo.userservice.common.exception.CustomException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import io.jsonwebtoken.JwtException;
-import com.buysellgo.userservice.common.exception.WithdrawFailedException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import java.util.Arrays;
@@ -136,9 +136,9 @@ public class CommonExceptionHandler {
             .body(dto);
     }
 
-    @ExceptionHandler(WithdrawFailedException.class)
-    public ResponseEntity<CommonErrorDto> withdrawFailedHandler(WithdrawFailedException e) {
-        log.error("Withdraw Failed: {}", e.getMessage());
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<CommonErrorDto> withdrawFailedHandler(CustomException e) {
+        log.error("Custom Auth Exception: {}", e.getMessage());
         CommonErrorDto dto = new CommonErrorDto(
             HttpStatus.BAD_REQUEST, 
             e.getMessage()
