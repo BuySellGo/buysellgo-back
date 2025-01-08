@@ -47,8 +47,9 @@ spring:
             - Path=/user-service/**
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            
 
         - id: user-service
           uri: lb://USER-SERVICE

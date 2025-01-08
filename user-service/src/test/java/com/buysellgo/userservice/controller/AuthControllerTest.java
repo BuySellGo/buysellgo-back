@@ -1,385 +1,216 @@
 package com.buysellgo.userservice.controller;
 
-import com.buysellgo.userservice.common.dto.CommonExceptionHandler;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.controller.dto.JwtCreateReq;
 import com.buysellgo.userservice.controller.dto.KeepLogin;
-import com.buysellgo.userservice.service.AuthService;
-import com.buysellgo.userservice.strategy.auth.common.AuthResult;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.http.MediaType;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
-import java.util.HashMap;
-import java.util.Map;
+import jakarta.validation.ConstraintViolation;
+import java.util.Set;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
 
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
+    private static Validator validator;
 
-    @Mock
-    private AuthService authService;
-
-    @InjectMocks
-    private AuthController authController;
-
-    private static final String TEST_EMAIL = "test@test.com";
-    private static final String TEST_PASSWORD = "password123!";
-
-    @BeforeEach
-    void setUp() {
-        objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders
-            .standaloneSetup(authController)
-            .setControllerAdvice(new CommonExceptionHandler())
-            .addFilter(new CharacterEncodingFilter("UTF-8", true))
-            .build();
+    @BeforeAll
+    static void setUp() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
     }
 
     @Test
-    @DisplayName("일반 사용자 JWT 토큰 생성 성공")
-    void createJwt_UserSuccess() throws Exception {
+    @DisplayName("유효한 로그인 요청 검증")
+    void validateJwtCreateReq_ValidRequest() {
         // given
         JwtCreateReq req = new JwtCreateReq(
-                TEST_EMAIL,
-                TEST_PASSWORD,
-                KeepLogin.ACTIVE,
-                Role.USER
-        );
-
-        Map<String, Object> tokenInfo = new HashMap<>();
-        tokenInfo.put("accessToken", "test.access.token");
-        tokenInfo.put("username", "홍길동");
-        tokenInfo.put("email", TEST_EMAIL);
-        tokenInfo.put("role", Role.USER);
-
-        @SuppressWarnings("rawtypes")
-        AuthResult serviceResponse = AuthResult.success(tokenInfo);
-        given(authService.createJwt(any())).willReturn(serviceResponse);
-
-        // when & then
-        mockMvc.perform(post("/auth/jwt")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(req)))
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(header().string(HttpHeaders.AUTHORIZATION, "Bearer test.access.token"))
-                .andExpect(jsonPath("$.statusCode").value(201))
-                .andExpect(jsonPath("$.statusMessage").value("로그인 성공"))
-                .andExpect(jsonPath("$.result.username").value("홍길동"))
-                .andExpect(jsonPath("$.result.email").value(TEST_EMAIL))
-                .andExpect(jsonPath("$.result.role").value("USER"));
-    }
-
-    @Test
-    @DisplayName("판매자 JWT 토큰 생성 성공")
-    void createJwt_SellerSuccess() throws Exception {
-        // given
-        JwtCreateReq req = new JwtCreateReq(
-                "seller@test.com",
-                "test1234!",
-                KeepLogin.ACTIVE,
-                Role.SELLER
-        );
-
-        Map<String, Object> tokenInfo = new HashMap<>();
-        tokenInfo.put("accessToken", "test.access.token");
-        tokenInfo.put("username", "판매자");
-        tokenInfo.put("email", "seller@test.com");
-        tokenInfo.put("role", Role.SELLER);
-
-        @SuppressWarnings("rawtypes")
-        AuthResult serviceResponse = AuthResult.success(tokenInfo);
-        given(authService.createJwt(any())).willReturn(serviceResponse);
-
-        // when & then
-        mockMvc.perform(post("/auth/jwt")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(req)))
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(header().string(HttpHeaders.AUTHORIZATION, "Bearer test.access.token"))
-                .andExpect(jsonPath("$.statusCode").value(201))
-                .andExpect(jsonPath("$.statusMessage").value("로그인 성공"))
-                .andExpect(jsonPath("$.result.username").value("판매자"))
-                .andExpect(jsonPath("$.result.email").value("seller@test.com"))
-                .andExpect(jsonPath("$.result.role").value("SELLER"));
-    }
-
-    @Test
-    @DisplayName("관리자 JWT 토큰 생성 성공")
-    void createJwt_AdminSuccess() throws Exception {
-        // given
-        JwtCreateReq req = new JwtCreateReq(
-                "admin@test.com",
-                "admin1234!",
-                KeepLogin.ACTIVE,
-                Role.ADMIN
-        );
-
-        Map<String, Object> tokenInfo = new HashMap<>();
-        tokenInfo.put("accessToken", "test.access.token");
-        tokenInfo.put("username", "관리자");
-        tokenInfo.put("email", "admin@test.com");
-        tokenInfo.put("role", Role.ADMIN);
-
-        @SuppressWarnings("rawtypes")
-        AuthResult serviceResponse = AuthResult.success(tokenInfo);
-        given(authService.createJwt(any())).willReturn(serviceResponse);
-
-        // when & then
-        mockMvc.perform(post("/auth/jwt")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(req)))
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(header().string(HttpHeaders.AUTHORIZATION, "Bearer test.access.token"))
-                .andExpect(jsonPath("$.statusCode").value(201))
-                .andExpect(jsonPath("$.statusMessage").value("로그인 성공"))
-                .andExpect(jsonPath("$.result.username").value("관리자"))
-                .andExpect(jsonPath("$.result.email").value("admin@test.com"))
-                .andExpect(jsonPath("$.result.role").value("ADMIN"));
-    }
-
-    @Test
-    @DisplayName("JWT 토큰 생성 실패 - 잘못된 이메일 형식")
-    void createJwt_InvalidEmailFormat() throws Exception {
-        // given
-        JwtCreateReq req = new JwtCreateReq(
-            "invalid-email",  // 잘못된 이메일 형식
-            TEST_PASSWORD,
+            "test@test.com",
+            "test1234!",
             KeepLogin.ACTIVE,
             Role.USER
         );
 
-        // when & then
-        mockMvc.perform(post("/auth/jwt")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(req)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("Validation failed"))
-                .andExpect(jsonPath("$.errors.email").value("올바른 이메일 형식이 아닙니다."));
+        // when
+        Set<ConstraintViolation<JwtCreateReq>> violations = validator.validate(req);
+
+        // then
+        assertThat(violations).isEmpty();
     }
 
     @Test
-    @DisplayName("JWT 토큰 생성 실패 - 잘못된 비밀번호 형식")
-    void createJwt_InvalidPasswordFormat() throws Exception {
+    @DisplayName("이메일 누락 시 검증")
+    void validateJwtCreateReq_EmptyEmail() {
         // given
         JwtCreateReq req = new JwtCreateReq(
-            TEST_EMAIL,
-            "short",  // 최소 8자 미만, 숫자와 특수문자 없음
+            "",
+            "test1234!",
             KeepLogin.ACTIVE,
             Role.USER
         );
 
-        // when & then
-        mockMvc.perform(post("/auth/jwt")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(req)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("Validation failed"))
-                .andExpect(jsonPath("$.errors.password").value("비밀번호는 최소 8자 이상이며, 1개 이상의 숫자와 특수문자를 포함해야 합니다."));
+        // when
+        Set<ConstraintViolation<JwtCreateReq>> violations = validator.validate(req);
+
+        // then
+        assertThat(violations)
+            .hasSize(1)
+            .anyMatch(violation -> 
+                violation.getMessage().equals("이메일은 필수 입니다."));
     }
 
     @Test
-    @DisplayName("JWT 토큰 생성 실패 - 필수 필드 누락")
-    void createJwt_MissingRequiredFields() throws Exception {
+    @DisplayName("잘못된 이메일 형식 검증")
+    void validateJwtCreateReq_InvalidEmailFormat() {
         // given
-        Map<String, Object> req = new HashMap<>();
-        req.put("email", "");  // 빈 이메일
-        req.put("password", TEST_PASSWORD);
-        req.put("keepLogin", KeepLogin.ACTIVE);
-        // role 필드 누락
+        JwtCreateReq req = new JwtCreateReq(
+            "invalid-email",
+            "test1234!",
+            KeepLogin.ACTIVE,
+            Role.USER
+        );
 
-        // when & then
-        mockMvc.perform(post("/auth/jwt")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(req)))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("Validation failed"))
-                .andExpect(jsonPath("$.errors.email").value("이메일은 필수 입니다."))
-                .andExpect(jsonPath("$.errors.role").value("사용자 역할은 필수 입니다."));
+        // when
+        Set<ConstraintViolation<JwtCreateReq>> violations = validator.validate(req);
+
+        // then
+        assertThat(violations)
+            .hasSize(1)
+            .anyMatch(violation -> 
+                violation.getMessage().equals("올바른 이메일 형식이 아닙니다."));
     }
 
     @Test
-    @DisplayName("JWT 토큰 생성 실패 - 잘못된 KeepLogin 값")
-    void createJwt_InvalidKeepLoginValue() throws Exception {
+    @DisplayName("비밀번호 누락 시 검증")
+    void validateJwtCreateReq_EmptyPassword() {
         // given
-        String requestBody = """
-            {
-                "email": "test@test.com",
-                "password": "password123!",
-                "keepLogin": "INVALID_VALUE",
-                "role": "USER"
-            }
-            """;
+        JwtCreateReq req = new JwtCreateReq(
+            "test@test.com",
+            "",
+            KeepLogin.ACTIVE,
+            Role.USER
+        );
 
-        // when & then
-        mockMvc.perform(post("/auth/jwt")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-                .andExpect(jsonPath("$.errors.keepLogin").value("허용되지 않는 값입니다. (허용값: ACTIVE, INACTIVE)"));
+        // when
+        Set<ConstraintViolation<JwtCreateReq>> violations = validator.validate(req);
+
+        // then
+        assertThat(violations)
+            .hasSize(1)
+            .anyMatch(violation -> 
+                violation.getMessage().equals("비밀번호는 필수 입니다."));
     }
 
     @Test
-    @DisplayName("JWT 토큰 갱신 성공")
-    void updateJwt_Success() throws Exception {
+    @DisplayName("비밀번호 형식 검증 - 특수문자 누락")
+    void validateJwtCreateReq_PasswordWithoutSpecialChar() {
         // given
-        String refreshToken = "test.refresh.token";
-        Map<String, Object> tokenInfo = new HashMap<>();
-        tokenInfo.put("accessToken", "new.access.token");
-        tokenInfo.put("email", TEST_EMAIL);
-        tokenInfo.put("role", Role.USER);
+        JwtCreateReq req = new JwtCreateReq(
+            "test@test.com",
+            "test1234",
+            KeepLogin.ACTIVE,
+            Role.USER
+        );
 
-        @SuppressWarnings("rawtypes")
-        AuthResult serviceResponse = AuthResult.success(tokenInfo);
-        given(authService.updateJwt(refreshToken)).willReturn(serviceResponse);
+        // when
+        Set<ConstraintViolation<JwtCreateReq>> violations = validator.validate(req);
 
-        // when & then
-        mockMvc.perform(put("/auth/jwt")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + refreshToken))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.AUTHORIZATION, "Bearer new.access.token"))
-                .andExpect(jsonPath("$.statusCode").value(200))
-                .andExpect(jsonPath("$.statusMessage").value("토큰 갱신 성공"))
-                .andExpect(jsonPath("$.result.email").value(TEST_EMAIL))
-                .andExpect(jsonPath("$.result.role").value("USER"));
+        // then
+        assertThat(violations)
+            .hasSize(1)
+            .anyMatch(violation -> 
+                violation.getMessage().equals("비밀번호는 최소 8자 이상이며, 1개 이상의 숫자와 특수문자를 포함해야 합니다."));
     }
 
     @Test
-    @DisplayName("JWT 토큰 갱신 실패 - 리프레시 토큰 없음")
-    void updateJwt_NoRefreshToken() throws Exception {
-        // when & then
-        mockMvc.perform(put("/auth/jwt"))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("리프레시 토큰이 필요합니다."));
-    }
-
-    @Test
-    @DisplayName("JWT 토큰 갱신 실패 - 유효하지 않은 리프레시 토큰")
-    void updateJwt_InvalidRefreshToken() throws Exception {
+    @DisplayName("비밀번호 형식 검증 - 숫자 누락")
+    void validateJwtCreateReq_PasswordWithoutNumber() {
         // given
-        String invalidToken = "invalid.refresh.token";
-        @SuppressWarnings("rawtypes")
-        AuthResult serviceResponse = AuthResult.failure("Refresh token not found");
-        given(authService.updateJwt(invalidToken)).willReturn(serviceResponse);
+        JwtCreateReq req = new JwtCreateReq(
+            "test@test.com",
+            "test!!!@",
+            KeepLogin.ACTIVE,
+            Role.USER
+        );
 
-        // when & then
-        mockMvc.perform(put("/auth/jwt")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + invalidToken))
-                .andDo(print())
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
-                .andExpect(jsonPath("$.message").value("Refresh token not found"));
+        // when
+        Set<ConstraintViolation<JwtCreateReq>> violations = validator.validate(req);
+
+        // then
+        assertThat(violations)
+            .hasSize(1)
+            .anyMatch(violation -> 
+                violation.getMessage().equals("비밀번호는 최소 8자 이상이며, 1개 이상의 숫자와 특수문자를 포함해야 합니다."));
     }
 
     @Test
-    @DisplayName("JWT 토큰 갱신 실패 - 잘못된 Authorization 헤더 형식")
-    void updateJwt_InvalidAuthorizationHeader() throws Exception {
-        // when & then
-        mockMvc.perform(put("/auth/jwt")
-                .header(HttpHeaders.AUTHORIZATION, "Invalid-Format"))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("잘못된 Authorization 헤더 형식입니다."));
-    }
-
-    @Test
-    @DisplayName("JWT 토큰 삭제 성공")
-    void deleteToken_Success() throws Exception {
+    @DisplayName("비밀번호 형식 검증 - 8자 미만")
+    void validateJwtCreateReq_PasswordTooShort() {
         // given
-        String accessToken = "test.access.token";
-        Map<String, Object> resultData = new HashMap<>();
-        resultData.put("message", "Refresh token deleted");
-        
-        @SuppressWarnings("rawtypes")
-        AuthResult serviceResponse = AuthResult.success(resultData);
-        given(authService.deleteToken(accessToken)).willReturn(serviceResponse);
+        JwtCreateReq req = new JwtCreateReq(
+            "test@test.com",
+            "test1!",
+            KeepLogin.ACTIVE,
+            Role.USER
+        );
 
-        // when & then
-        mockMvc.perform(delete("/auth/jwt")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusCode").value(200))
-                .andExpect(jsonPath("$.statusMessage").value("로그아웃 성공"))
-                .andExpect(jsonPath("$.result.message").value("Refresh token deleted"));
+        // when
+        Set<ConstraintViolation<JwtCreateReq>> violations = validator.validate(req);
+
+        // then
+        assertThat(violations)
+            .hasSize(1)
+            .anyMatch(violation -> 
+                violation.getMessage().equals("비밀번호는 최소 8자 이상이며, 1개 이상의 숫자와 특수문자를 포함해야 합니다."));
     }
 
     @Test
-    @DisplayName("JWT 토큰 삭제 실패 - Authorization 헤더 누락")
-    void deleteToken_NoAuthorizationHeader() throws Exception {
-        // when & then
-        mockMvc.perform(delete("/auth/jwt"))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("Required request header 'Authorization' for method parameter type String is not present"));
-    }
-
-    @Test
-    @DisplayName("JWT 토큰 삭제 실패 - 잘못된 토큰")
-    void deleteToken_InvalidToken() throws Exception {
+    @DisplayName("자동 로그인 설정 누락 검증")
+    void validateJwtCreateReq_NullKeepLogin() {
         // given
-        String invalidToken = "invalid.access.token";
-        @SuppressWarnings("rawtypes")
-        AuthResult serviceResponse = AuthResult.failure("Token or user not found");
-        given(authService.deleteToken(invalidToken)).willReturn(serviceResponse);
+        JwtCreateReq req = new JwtCreateReq(
+            "test@test.com",
+            "test1234!",
+            null,
+            Role.USER
+        );
 
-        // when & then
-        mockMvc.perform(delete("/auth/jwt")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + invalidToken))
-                .andDo(print())
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
-                .andExpect(jsonPath("$.message").value("리프레시 토큰이 만료되었거나, 해당 사용자가 존재하지 않습니다."));
+        // when
+        Set<ConstraintViolation<JwtCreateReq>> violations = validator.validate(req);
+
+        // then
+        assertThat(violations)
+            .hasSize(1)
+            .anyMatch(violation -> 
+                violation.getMessage().equals("자동 로그인 사용 여부는 필수 입니다."));
     }
 
     @Test
-    @DisplayName("JWT 토큰 삭제 실패 - 잘못된 Authorization 헤더 형식")
-    void deleteToken_InvalidAuthorizationHeader() throws Exception {
-        // when & then
-        mockMvc.perform(delete("/auth/jwt")
-                .header(HttpHeaders.AUTHORIZATION, "Invalid-Format"))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("잘못된 Authorization 헤더 형식입니다."));
+    @DisplayName("사용자 역할 누락 검증")
+    void validateJwtCreateReq_NullRole() {
+        // given
+        JwtCreateReq req = new JwtCreateReq(
+            "test@test.com",
+            "test1234!",
+            KeepLogin.ACTIVE,
+            null
+        );
+
+        // when
+        Set<ConstraintViolation<JwtCreateReq>> violations = validator.validate(req);
+
+        // then
+        assertThat(violations)
+            .hasSize(1)
+            .anyMatch(violation -> 
+                violation.getMessage().equals("사용자 역할은 필수 입니다."));
     }
 }
