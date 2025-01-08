@@ -1,6 +1,7 @@
 package com.buysellgo.helpdeskservice.controller;
 
 import com.buysellgo.helpdeskservice.common.auth.JwtTokenProvider;
+import com.buysellgo.helpdeskservice.common.auth.TokenUserInfo;
 import com.buysellgo.helpdeskservice.common.dto.CommonResDto;
 import com.buysellgo.helpdeskservice.dto.NoticeRequestDto;
 import com.buysellgo.helpdeskservice.entity.Notice;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,16 +29,15 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @PostMapping("/write")
-    public ResponseEntity<?> noticeWrite(@Valid @RequestBody NoticeRequestDto noticeRequestDto) {
+    public ResponseEntity<?> noticeCreate(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+                                          @RequestBody NoticeRequestDto noticeRequestDto) {
 
         log.info("noticeRequestDto: {}", noticeRequestDto);
 
-        noticeService.noti
-
-//        ObjectMapper objectMapper = new ObjectMapper();
+        Notice notice = noticeService.createNotice(noticeRequestDto);
 
         CommonResDto resDto = new CommonResDto(
-                HttpStatus.CREATED, "공지사항 작성 성공", );
+                HttpStatus.CREATED, "공지사항 작성 성공", notice.getNoticeId());
 
         return new ResponseEntity<>(resDto, HttpStatus.CREATED);
 
