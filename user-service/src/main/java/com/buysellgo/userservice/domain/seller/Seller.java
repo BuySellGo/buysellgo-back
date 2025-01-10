@@ -3,6 +3,7 @@ package com.buysellgo.userservice.domain.seller;
 import com.buysellgo.userservice.common.entity.Address;
 import com.buysellgo.userservice.common.entity.Authorization;
 import com.buysellgo.userservice.common.entity.BaseEntity;
+import com.buysellgo.userservice.common.entity.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,10 @@ public class Seller extends BaseEntity {
     @Embedded
     private Address address;
 
+    @Column(name = "role", columnDefinition = "enum('SELLER')", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Column(name = "email",columnDefinition = "varchar(50)",nullable = false, unique = true)
     private String email;
 
@@ -45,12 +50,13 @@ public class Seller extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Authorization isApproved;
 
-    public static Seller of(String companyName, String presidentName, Address address, String email, String encodePassword, String businessRegistrationNumber, String businessRegistrationNumberImg) {
+    public static Seller of(String companyName, String presidentName, Address address, String email,Role role, String encodePassword, String businessRegistrationNumber, String businessRegistrationNumberImg) {
         return Seller.builder()
                 .companyName(companyName)
                 .presidentName(presidentName)
                 .address(address)
                 .email(email)
+                .role(role)
                 .password(encodePassword)
                 .businessRegistrationNumber(businessRegistrationNumber)
                 .businessRegistrationNumberImg(businessRegistrationNumberImg)
@@ -59,7 +65,7 @@ public class Seller extends BaseEntity {
     }
 
     public Vo toVo(){return new Vo(sellerId, companyName, presidentName, address,
-                email, businessRegistrationNumber,
+                email, role.toString(), businessRegistrationNumber,
                 businessRegistrationNumberImg, isApproved.toString());
 
     }
@@ -70,6 +76,7 @@ public class Seller extends BaseEntity {
             , String presidentName
             , Address address
             , String email
+            ,String role
             , String businessRegistrationNumber
             , String businessRegistrationNumberImg
             , String isApproved
