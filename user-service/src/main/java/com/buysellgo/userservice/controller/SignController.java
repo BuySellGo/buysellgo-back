@@ -10,6 +10,8 @@ import com.buysellgo.userservice.strategy.sign.dto.UserSignUpDto;
 import com.buysellgo.userservice.strategy.sign.dto.SellerSignUpDto;
 import com.buysellgo.userservice.strategy.sign.common.SignResult;
 import com.buysellgo.userservice.strategy.sign.common.SignStrategy;
+import com.buysellgo.userservice.controller.dto.CheckDuplicateReq;
+import com.buysellgo.userservice.strategy.sign.dto.DuplicateDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -79,4 +81,39 @@ public class SignController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(new CommonResDto(HttpStatus.OK, "회원 탈퇴 완료(회원)", result.data()));
     }
+
+    @Operation(summary = "회원탈퇴 요청(판매자)")
+    @DeleteMapping("/seller")
+    public ResponseEntity<CommonResDto> sellerDelete(
+            @RequestHeader(value = "Authorization", required = true) String accessToken){
+        if(!accessToken.startsWith(BEARER_PREFIX.getValue())) {
+            throw new IllegalArgumentException("잘못된 Authorization 헤더 형식입니다.");
+        }
+
+        String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
+        SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(Role.SELLER);
+        SignResult<Map<String, Object>> result = strategy.withdraw(token);
+
+        if(!result.success()) {
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new CommonResDto(HttpStatus.OK,"회원 탈퇴 완료(판매자)", result.data()));
+    }
+
+    @Operation(summary = "중복 검사")
+    @GetMapping("/duplicate")
+    public ResponseEntity<CommonResDto> checkDuplicate(@RequestBody CheckDuplicateReq req) {
+
+        SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(req.role());
+        SignResult<Map<String, Object>> result = strategy.duplicate(DuplicateDto.from(req));
+
+        if(!result.success()) {
+            throw new CustomException(result.message());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(new CommonResDto(HttpStatus.OK, "중복 검사 완료", result.data()));
+    }
+
 }

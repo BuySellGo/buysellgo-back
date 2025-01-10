@@ -10,8 +10,14 @@ public enum CommonConstant {
     SELLER_CREATED("판매자 가입완료"),
     USER_CREATED("회원 가입완료"),
     USER_DELETED("회원 삭제완료"),
+    SELLER_DELETED("판매자 삭제완료"),
     VALUE_DUPLICATED("중복된 값이 있습니다."),
     SAVE_FAILURE("저장 실패"),
+    ROLE_NOT_MATCHED("해당 역할이 아닙니다."),
+    EMAIL_DUPLICATED("이메일이 중복됩니다."),
+    USERNAME_DUPLICATED("사용자명이 중복됩니다."),
+    COMPANY_NAME_DUPLICATED("회사명이 중복됩니다."),
+    NO_DUPLICATION("중복된 값이 없습니다."),
 
     // 토큰 상수
     BEARER_PREFIX("Bearer "),
@@ -28,7 +34,7 @@ public enum CommonConstant {
 
     // 숫자 상수
     KEEP_LOGIN_HOURS(168L),
-    DEFAULT_HOURS(10L);
+    DEFAULT_HOURS(10L), ;
 
     private final Object value;
 

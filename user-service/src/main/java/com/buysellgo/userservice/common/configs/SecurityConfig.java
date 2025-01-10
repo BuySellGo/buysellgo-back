@@ -46,7 +46,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
 //                    .requestMatchers("/user/list").hasAnyRole("ADMIN")
                 .requestMatchers(
-                        "/sign/user","/sign/seller"
+                        "/sign/user","/sign/seller", "sign/duplicate"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/jwt").permitAll()    // 로그인
 //                    .requestMatchers("/**").access(

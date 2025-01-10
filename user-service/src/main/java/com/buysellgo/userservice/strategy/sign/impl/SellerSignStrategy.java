@@ -1,5 +1,7 @@
 package com.buysellgo.userservice.strategy.sign.impl;
 
+import com.buysellgo.userservice.common.auth.JwtTokenProvider;
+import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.domain.seller.Seller;
 import com.buysellgo.userservice.repository.SellerRepository;
@@ -10,12 +12,14 @@ import com.buysellgo.userservice.strategy.sign.dto.SellerSignUpDto;
 import com.buysellgo.userservice.strategy.sign.common.SignResult;
 import com.buysellgo.userservice.strategy.sign.common.SignStrategy;
 import jakarta.transaction.Transactional;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.buysellgo.userservice.common.util.CommonConstant.*;
 
@@ -25,7 +29,9 @@ import static com.buysellgo.userservice.common.util.CommonConstant.*;
 public class SellerSignStrategy implements SignStrategy<Map<String,Object>> {
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
-    
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate<String, Object> sellerTemplate;
+
     @Override
     public SignResult<Map<String,Object>> signUp(SignUpDto dto) {
         Map<String,Object> data = new HashMap<>();
@@ -59,7 +65,24 @@ public class SellerSignStrategy implements SignStrategy<Map<String,Object>> {
 
     @Override
     public SignResult<Map<String,Object>> withdraw(String token) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        TokenUserInfo userInfo = jwtTokenProvider.validateAndGetTokenUserInfo(token);
+        Optional<Seller> sellerOptional = sellerRepository.findByEmail(userInfo.getEmail());
+
+        if(sellerOptional.isEmpty()){
+            return SignResult.fail(USER_NOT_FOUND.getValue(),data);
+        }
+        Seller seller = sellerOptional.get();
+        data.put(SELLER_VO.getValue(),seller.toVo());
+
+        try{
+            sellerRepository.delete(seller);
+            sellerTemplate.delete(userInfo.getEmail());
+        } catch (Exception e) {
+            return SignResult.fail(e.getMessage(),data);
+        }
+
+        return SignResult.success(SELLER_DELETED.getValue(),data);
     }
 
     @Override
@@ -69,7 +92,19 @@ public class SellerSignStrategy implements SignStrategy<Map<String,Object>> {
 
     @Override
     public SignResult<Map<String,Object>> duplicate(DuplicateDto dto) {
-        return null;
+        if(!dto.role().equals(Role.SELLER)){
+            return SignResult.fail(ROLE_NOT_MATCHED.getValue(), new HashMap<>());
+        }
+
+        if(sellerRepository.existsByEmail(dto.email())){
+            return SignResult.fail(EMAIL_DUPLICATED.getValue(), new HashMap<>());
+        }
+
+        if(sellerRepository.existsByCompanyName(dto.companyName())){
+            return SignResult.fail(COMPANY_NAME_DUPLICATED.getValue(), new HashMap<>());
+        }
+
+        return SignResult.success(NO_DUPLICATION.getValue(), new HashMap<>());
     }
 
     @Override
