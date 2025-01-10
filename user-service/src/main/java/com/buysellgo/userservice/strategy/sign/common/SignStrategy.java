@@ -12,6 +12,7 @@ public interface SignStrategy<T extends Map<String, Object>> {
     SignResult<T> signUp(SignUpDto dto);
     SignResult<T> withdraw(String token);
     SignResult<T> activate(ActivateDto dto);
+    SignResult<T> deactivate(ActivateDto dto);
     SignResult<T> duplicate(DuplicateDto dto);
     SignResult<T> socialSignUp();
     boolean supports(Role role);

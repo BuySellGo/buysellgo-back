@@ -2,6 +2,7 @@ package com.buysellgo.userservice.strategy.sign.impl;
 
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.auth.TokenUserInfo;
+import com.buysellgo.userservice.common.entity.Authorization;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.domain.user.LoginType;
 import com.buysellgo.userservice.domain.user.User;
@@ -91,7 +92,36 @@ public class UserSignStrategy implements SignStrategy<Map<String,Object>> {
 
     @Override
     public SignResult<Map<String, Object>> activate(ActivateDto dto) {
-        return null;
+        if(!dto.role().equals(Role.USER)){
+            return SignResult.fail(ROLE_NOT_MATCHED.getValue(), new HashMap<>());
+        }
+
+        Optional<User> userOptional = userRepository.findByEmail(dto.email());
+        if(userOptional.isEmpty()){
+            return SignResult.fail(USER_NOT_FOUND.getValue(), new HashMap<>());
+        }
+        User user = userOptional.get();
+        user.setStatus(Authorization.AUTHORIZED);
+        userRepository.save(user);
+
+        return SignResult.success(USER_ACTIVATED.getValue(), new HashMap<>());
+    }
+
+    @Override
+    public SignResult<Map<String, Object>> deactivate(ActivateDto dto) {
+        if(!dto.role().equals(Role.USER)){
+            return SignResult.fail(ROLE_NOT_MATCHED.getValue(), new HashMap<>());
+        }
+
+        Optional<User> userOptional = userRepository.findByEmail(dto.email());
+        if(userOptional.isEmpty()){
+            return SignResult.fail(USER_NOT_FOUND.getValue(), new HashMap<>());
+        }
+        User user = userOptional.get();
+        user.setStatus(Authorization.UNAUTHORIZED);
+        userRepository.save(user);
+
+        return SignResult.success(USER_DEACTIVATED.getValue(), new HashMap<>());
     }
 
     @Override

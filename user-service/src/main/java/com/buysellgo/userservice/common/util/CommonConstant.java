@@ -18,6 +18,11 @@ public enum CommonConstant {
     USERNAME_DUPLICATED("사용자명이 중복됩니다."),
     COMPANY_NAME_DUPLICATED("회사명이 중복됩니다."),
     NO_DUPLICATION("중복된 값이 없습니다."),
+    SELLER_ACTIVATED("판매자 승인 완료"),
+    USER_ACTIVATED("회원 활성화 완료"),
+    USER_DEACTIVATED("회원 비활성화 완료"),
+    SELLER_DEACTIVATED("판매자 비활성화 완료"),
+    ADMIN_SIGN_UP_SUCCESS("관리자 회원가입 완료"),
 
     // 토큰 상수
     BEARER_PREFIX("Bearer "),

@@ -39,7 +39,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Authorization status;
 
-    @Column(name = "role", columnDefinition = "enum('ADMIN','USER')", nullable = false)
+    @Column(name = "role", columnDefinition = "enum('USER')", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 

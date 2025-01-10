@@ -67,6 +67,7 @@ class SellerSignStrategyTest {
                 signUpDto.presidentName(),
                 signUpDto.address(),
                 signUpDto.email(),
+                Role.SELLER,
                 "encoded_password",
                 signUpDto.businessRegistrationNumber(),
                 signUpDto.businessRegistrationNumberImg()
