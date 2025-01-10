@@ -12,6 +12,7 @@ import com.buysellgo.userservice.strategy.sign.dto.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -95,7 +96,19 @@ public class UserSignStrategy implements SignStrategy<Map<String,Object>> {
 
     @Override
     public SignResult<Map<String, Object>> duplicate(DuplicateDto dto) {
-        return null;
+        if (!dto.role().equals(Role.USER)) {
+            return SignResult.fail(ROLE_NOT_MATCHED.getValue(), new HashMap<>());
+        }
+
+        if (StringUtils.isNotEmpty(dto.email()) && userRepository.existsByEmail(dto.email())) {
+            return SignResult.fail(EMAIL_DUPLICATED.getValue(), new HashMap<>());
+        }
+
+        if (StringUtils.isNotEmpty(dto.username()) && userRepository.existsByUsername(dto.username())) {
+            return SignResult.fail(USERNAME_DUPLICATED.getValue(), new HashMap<>());
+        }
+
+        return SignResult.success(NO_DUPLICATION.getValue(), new HashMap<>());
     }
 
     @Override
