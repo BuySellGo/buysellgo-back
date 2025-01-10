@@ -92,7 +92,19 @@ public class SellerSignStrategy implements SignStrategy<Map<String,Object>> {
 
     @Override
     public SignResult<Map<String,Object>> duplicate(DuplicateDto dto) {
-        return null;
+        if(!dto.role().equals(Role.SELLER)){
+            return SignResult.fail(ROLE_NOT_MATCHED.getValue(), new HashMap<>());
+        }
+
+        if(sellerRepository.existsByEmail(dto.email())){
+            return SignResult.fail(EMAIL_DUPLICATED.getValue(), new HashMap<>());
+        }
+
+        if(sellerRepository.existsByCompanyName(dto.companyName())){
+            return SignResult.fail(COMPANY_NAME_DUPLICATED.getValue(), new HashMap<>());
+        }
+
+        return SignResult.success(NO_DUPLICATION.getValue(), new HashMap<>());
     }
 
     @Override
