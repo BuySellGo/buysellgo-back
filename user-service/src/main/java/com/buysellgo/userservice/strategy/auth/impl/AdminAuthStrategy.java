@@ -103,6 +103,11 @@ public class AdminAuthStrategy implements AuthStrategy<Map<String, Object>> {
     }
 
     @Override
+    public AuthResult<Map<String, Object>> socialSignIn(String email) {
+        return null;
+    }
+
+    @Override
     public boolean supports(Role role) {
         return Role.ADMIN.equals(role);
     }

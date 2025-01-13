@@ -37,6 +37,14 @@ public interface AuthStrategy<T extends Map<String, Object>> {
     AuthResult<T> deleteToken(String token);
 
     /**
+     * 주어진 이메일과 프로바이더를 사용하여 소셜 로그인을 처리합니다.
+     * jwt 토큰을 생성하고 사용자 정보를 반환합니다.
+     *
+     * @param email 사용자의 이메일입니다.
+     * @return 소셜 로그인 결과를 포함하는 AuthResult입니다.
+     */
+    AuthResult<T> socialSignIn(String email);
+    /**
      * 주어진 역할을 이 전략이 지원하는지 여부를 결정합니다.
      *
      * @param role 확인할 역할입니다.

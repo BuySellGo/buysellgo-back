@@ -98,7 +98,18 @@ class GoogleLoginStrategy implements SocialLoginStrategy<Map<String, Object>> {
             return SocialLoginResult.fail("Failed to retrieve user info due to network error", data);
         }
 
-        data.put("userInfo", userInfoResponse.getBody());
+        try {
+            JsonNode userInfoJson = objectMapper.readTree(userInfoResponse.getBody());
+            String email = userInfoJson.path("email").asText(null);
+
+            if (email.isEmpty()) {
+                return SocialLoginResult.fail("Email not found in user info", data);
+            }
+            data.put("email", email);
+        } catch (JsonProcessingException e) {
+            return SocialLoginResult.fail("Failed to parse user info response", data);
+        }
+
         return SocialLoginResult.success("User info retrieved successfully", data);
     }
 
