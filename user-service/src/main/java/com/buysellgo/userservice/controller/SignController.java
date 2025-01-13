@@ -5,6 +5,7 @@ import com.buysellgo.userservice.common.dto.CommonResDto;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.common.exception.CustomException;
 import com.buysellgo.userservice.controller.dto.*;
+import com.buysellgo.userservice.strategy.forget.common.ForgetStrategy;
 import com.buysellgo.userservice.strategy.sign.common.SignContext;
 import com.buysellgo.userservice.strategy.sign.dto.*;
 import com.buysellgo.userservice.strategy.sign.common.SignResult;
@@ -25,6 +26,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 import static com.buysellgo.userservice.common.util.CommonConstant.*;
+import com.buysellgo.userservice.strategy.forget.common.ForgetResult;   
+import com.buysellgo.userservice.strategy.forget.common.ForgetContext;
+import com.buysellgo.userservice.strategy.auth.common.AuthContext;
+import com.buysellgo.userservice.strategy.auth.common.AuthResult;
+import com.buysellgo.userservice.strategy.auth.common.AuthStrategy;
 
 @Slf4j
 @RestController
@@ -34,6 +40,8 @@ public class SignController {
     private final SignContext signContext;
     private final SocialLoginContext socialLoginContext;
     private final SocialLoginProperties socialLoginProperties;
+    private final ForgetContext forgetContext;
+    private final AuthContext authContext;
 
     @Operation(summary = "회원가입 요청(회원)")
     @PostMapping("/user")
@@ -180,17 +188,37 @@ public class SignController {
     @Operation(summary = "소셜 로그인 콜백(회원)")
     @GetMapping("/{provider}")
     public ResponseEntity<CommonResDto> socialCallback(@PathVariable String provider, @RequestParam String code) {
-        SocialLoginStrategy<Map<String,Object>> strategy = socialLoginContext.getStrategy(provider);
-        SocialLoginResult<Map<String, Object>> result = strategy.execute(code);
+        SocialLoginStrategy<Map<String,Object>> socialStrategy = socialLoginContext.getStrategy(provider);
+        SocialLoginResult<Map<String, Object>> socialResult = socialStrategy.execute(code);
 
-        if(!result.success()) {
-            throw new CustomException(result.message());
+        if(!socialResult.success()) {
+            throw new CustomException(socialResult.message());
         }
         // 전달받은 회원정보를 토대로 회원존재여부 확인
+        ForgetStrategy<Map<String, Object>> verifyStrategy = forgetContext.getStrategy(Role.USER);
+        ForgetResult<Map<String, Object>> verifyResult = verifyStrategy.forgetEmail((String) socialResult.data().get(EMAIL.getValue()));
+        
+        if(!verifyResult.success()) {
+            // 회원 존재하지 않을 시 회원가입 후 로그인 처리    
+            SignStrategy<Map<String, Object>> signStrategy = signContext.getStrategy(Role.USER);
+            SignResult<Map<String, Object>> signResult = signStrategy.socialSignUp( socialResult.data().get(EMAIL.getValue()).toString(), provider);
+            if(!signResult.success()) {
+                throw new CustomException(signResult.message());
+            }                   
+        }   
         // 회원존재시 로그인 처리
-        // 회원 존재하지 않을 시 회원가입 처리
+        AuthStrategy<Map<String, Object>> authStrategy = authContext.getStrategy(Role.USER);
+        AuthResult<Map<String, Object>> authResult = authStrategy.socialSignIn(socialResult.data().get(EMAIL.getValue()).toString());
+        if(!authResult.success()) {
+            throw new CustomException(authResult.message());
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX.getValue() + authResult.message());
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new CommonResDto(HttpStatus.OK, "소셜 로그인 콜백 완료", result.data()));
+            .headers(headers)
+            .body(new CommonResDto(HttpStatus.OK, provider+" 로그인 완료", authResult.data()));
+
     }
 }

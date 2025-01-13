@@ -102,6 +102,26 @@ public class UserAuthStrategy implements AuthStrategy<Map<String, Object>> {
     }
 
     @Override
+    public AuthResult<Map<String, Object>> socialSignIn(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return AuthResult.fail(USER_NOT_FOUND.getValue());
+        }
+        User user = userOptional.get();
+        Map<String, Object> data = new HashMap<>();
+        data.put(USER_VO.getValue(), user.toVo());
+
+        String accessToken = jwtTokenProvider.createToken(user.getEmail(), user.getRole().toString(), user.getUserId());
+        data.put("access_token(개발 중에만 표시)", BEARER_PREFIX.getValue() + accessToken);
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getRole().toString());
+
+        userTemplate.opsForValue().set(user.getEmail(), refreshToken, KEEP_LOGIN_HOURS.getValue(), TimeUnit.HOURS);
+
+        
+        return AuthResult.success(accessToken, data);
+    }
+
+    @Override
     public boolean supports(Role role) {
         return Role.USER.equals(role);
     }

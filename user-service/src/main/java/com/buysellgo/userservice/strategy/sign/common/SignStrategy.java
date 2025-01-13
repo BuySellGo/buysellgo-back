@@ -60,7 +60,7 @@ public interface SignStrategy<T extends Map<String, Object>> {
      *
      * @return 소셜 회원 가입 결과를 포함하는 SignResult입니다.
      */
-    SignResult<T> socialSignUp();
+    SignResult<T> socialSignUp(String email, String provider);
 
     /**
      * 전략이 주어진 역할을 지원하는지 여부를 결정합니다.

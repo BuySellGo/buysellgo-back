@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.buysellgo.userservice.common.util.CommonConstant.*;
 
@@ -142,8 +143,14 @@ public class UserSignStrategy implements SignStrategy<Map<String,Object>> {
     }
 
     @Override
-    public SignResult<Map<String, Object>> socialSignUp() {
-        return null;
+    public SignResult<Map<String, Object>> socialSignUp(String email, String provider) {
+        Map<String, Object> data = new HashMap<>();
+        User user = User.of(email, passwordEncoder.encode(UUID.randomUUID().toString()),
+        email, 
+        "000-0000-0000", LoginType.valueOf(provider.toUpperCase()), Role.USER, true, true, true, true);
+        userRepository.save(user);
+        data.put(USER_VO.getValue(), user.toVo());
+        return SignResult.success(USER_CREATED.getValue(), data);
     }
 
     @Override

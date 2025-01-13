@@ -70,7 +70,7 @@ public class AdminSignStrategy implements SignStrategy<Map<String, Object>> {
     }
 
     @Override
-    public SignResult<Map<String, Object>> socialSignUp() {
+    public SignResult<Map<String, Object>> socialSignUp(String email, String provider) {
         return null;
     }
 
