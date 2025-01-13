@@ -17,9 +17,10 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-
+import org.springframework.transaction.annotation.Transactional;        
 
 @Component
+@Transactional  
 @RequiredArgsConstructor
 class NaverLoginStrategy implements SocialLoginStrategy<Map<String, Object>> {
     private final SocialLoginProperties socialLoginProperties;

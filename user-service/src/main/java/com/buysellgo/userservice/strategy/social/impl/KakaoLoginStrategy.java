@@ -10,15 +10,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
-
+    
 
 @Component
+@Transactional  
 @RequiredArgsConstructor
 class KakaoLoginStrategy implements SocialLoginStrategy<Map<String, Object>> {
     private final SocialLoginProperties socialLoginProperties;

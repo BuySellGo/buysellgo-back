@@ -46,7 +46,11 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
 //                    .requestMatchers("/user/list").hasAnyRole("ADMIN")
                 .requestMatchers(
-                        "/sign/user","/sign/seller","/sign/admin","/sign/duplicate","/sign/social","/sign/kakao","/sign/naver","/sign/google", "/swagger-ui/**","/v3/api-docs/**"
+                        "/sign/user","/sign/seller","/sign/admin",
+                        "/sign/duplicate","/sign/social","/sign/kakao",
+                        "/sign/naver","/sign/google",
+                        "/forget/email","/forget/password",
+                        "/swagger-ui/**","/v3/api-docs/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/jwt").permitAll()    // 로그인
 //                    .requestMatchers("/**").access(

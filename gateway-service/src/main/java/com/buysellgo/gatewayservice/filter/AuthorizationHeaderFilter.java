@@ -65,6 +65,9 @@ public class AuthorizationHeaderFilter
             new RoutePattern("/user-service/sign/kakao"),
             new RoutePattern("/user-service/sign/naver"),
             new RoutePattern("/user-service/sign/google"),
+            new RoutePattern("/user-service/forget/email"),
+            new RoutePattern("/user-service/forget/password"),
+
             // HTTP 메서드별 허용
             new RoutePattern("/user-service/auth/jwt", "POST"),   // 로그인
             
