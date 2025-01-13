@@ -16,7 +16,8 @@ import java.time.Instant;
 public class FaqGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long faqGroupId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "faq_group_title", columnDefinition = "varchar(100)")
     private String faqGroupTitle;
@@ -31,10 +32,10 @@ public class FaqGroup {
     }
 
     public Vo toVo(){
-        return new Vo(faqGroupId, createdAt, faqGroupTitle);
+        return new Vo(id, createdAt, faqGroupTitle);
     }
 
-    private record Vo(Long faqGroupId,
+    private record Vo(Long id,
                       Timestamp createdAt,
                       String faqGroupTitle) {
 

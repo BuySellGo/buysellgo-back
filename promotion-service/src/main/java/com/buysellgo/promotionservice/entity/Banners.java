@@ -17,8 +17,8 @@ import java.time.ZoneId;
 public class Banners {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "banner_id")
-    private Long bannerId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -55,11 +55,11 @@ public class Banners {
     }
 
     public Vo toVo(){
-        return new Vo(bannerId, createdAt, bannerTitle, startDate, endDate, imageUrl, productUrl);
+        return new Vo(id, createdAt, bannerTitle, startDate, endDate, imageUrl, productUrl);
     }
 
 
-    private record Vo(Long bannerId,
+    private record Vo(Long id,
                       LocalDateTime createdAt,
                       String bannerTitle,
                       LocalDateTime startDate,

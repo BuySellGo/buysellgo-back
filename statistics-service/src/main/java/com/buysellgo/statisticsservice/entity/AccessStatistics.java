@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 public class AccessStatistics {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "access_statistics_id")
-    private Long accessStatisticsId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "user_id")
     private Long userId;
@@ -39,10 +39,10 @@ public class AccessStatistics {
     }
 
     public Vo toVo(){
-        return new Vo(accessStatisticsId, userId, accessIp, accessDateTime);
+        return new Vo(id, userId, accessIp, accessDateTime);
     }
 
-    private record Vo(Long accessStatisticsId,
+    private record Vo(Long id,
                       Long userId,
                       String accessIp,
                       Timestamp accessDateTime) {

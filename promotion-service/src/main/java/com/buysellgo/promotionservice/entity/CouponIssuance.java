@@ -17,8 +17,8 @@ import java.time.Instant;
 public class CouponIssuance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_issuance_id")
-    private Integer couponIssuanceId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name="profile_id")
     private Long profileId;
@@ -41,11 +41,11 @@ public class CouponIssuance {
 
     // VO 객체로 변환하는 메서드
     public Vo toVo() {
-        return new Vo(couponIssuanceId, profileId, coupon.getCouponId(), createdAt);
+        return new Vo(id, profileId, coupon.getId(), createdAt);
     }
 
     // DTO 객체로 사용할 VO (Value Object)
-    private record Vo(Integer couponIssuanceId,
+    private record Vo(Long id,
                       Long profileId,
                       Long couponId,
                       Timestamp createdAt) {

@@ -19,8 +19,8 @@ public class Notice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "notice_id")
-    private Long noticeId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "user_id")
     private Long userId;  // 단순 필드 참조
@@ -54,10 +54,11 @@ public class Notice {
     }
 
     public Vo toVo() {
-        return new Vo(noticeId, userId, createdAt, startDate, endDate, title, content);
+
+        return new Vo(id, userId, createdAt, startDate, endDate, title, content);
     }
 
-    private record Vo(Long noticeId,
+    private record Vo(Long id,
                       Long userId,
                       Timestamp createdAt,
                       Timestamp startDate,

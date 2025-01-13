@@ -8,6 +8,7 @@ import com.buysellgo.helpdeskservice.entity.Notice;
 import com.buysellgo.helpdeskservice.repository.NoticeRepository;
 import com.buysellgo.helpdeskservice.service.NoticeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/notice")
 @RequiredArgsConstructor
 @Slf4j
 public class NoticeController {
@@ -28,16 +29,18 @@ public class NoticeController {
     private final JwtTokenProvider jwtTokenProvider;
     private final NoticeService noticeService;
 
+    @Operation(summary = "공지사항 등록(관리자)")
     @PostMapping("/write")
-    public ResponseEntity<?> noticeCreate(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
-                                          @RequestBody NoticeRequestDto noticeRequestDto) {
+//    public ResponseEntity<?> noticeCreate(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+    public ResponseEntity<?> noticeCreate(@RequestBody NoticeRequestDto noticeRequestDto) {
 
         log.info("noticeRequestDto: {}", noticeRequestDto);
+
 
         Notice notice = noticeService.createNotice(noticeRequestDto);
 
         CommonResDto resDto = new CommonResDto(
-                HttpStatus.CREATED, "공지사항 작성 성공", notice.getNoticeId());
+                HttpStatus.CREATED, "공지사항 작성 성공", notice.getId());
 
         return new ResponseEntity<>(resDto, HttpStatus.CREATED);
 

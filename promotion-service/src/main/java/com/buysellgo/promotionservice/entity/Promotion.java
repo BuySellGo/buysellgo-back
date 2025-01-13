@@ -18,8 +18,8 @@ public class Promotion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="promotion_id")
-    private Long promotionId;
+    @Column(name="id")
+    private Long id;
 
     @Column(name="seller_id")
     private Long sellerId;
@@ -65,10 +65,10 @@ public class Promotion {
     }
 
     public Vo toVo() {
-        return new Vo(promotionId, sellerId, productId, banners.getBannerId(), createdAt, discountRate, startDate, endDate, isApproved);
+        return new Vo(id, sellerId, productId, banners.getId(), createdAt, discountRate, startDate, endDate, isApproved);
     }
 
-    private record Vo(Long promotionId,
+    private record Vo(Long id,
                       Long sellerId,
                       Long productId,
                       Long bannerId,

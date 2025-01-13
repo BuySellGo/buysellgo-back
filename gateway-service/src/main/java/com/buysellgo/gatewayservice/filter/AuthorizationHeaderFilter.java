@@ -36,6 +36,7 @@ public class AuthorizationHeaderFilter
             "/api/v1/hello-promotion-service",
             "/api/v1/hello-statistics-service",
             "/api/v1/hello-delivery-service",
+            "/api/v1/helpdesk-service/**",
             "/v3/api-docs",
             "/swagger-ui/**",
             "/swagger-resources/**",

@@ -18,8 +18,8 @@ public class OneToOneInquiry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "onetoone_inquiry_id")
-    private Long onetooneInquiryId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "user_id")
     private Long userId;
@@ -44,10 +44,10 @@ public class OneToOneInquiry {
     }
 
     public Vo toVo(){
-        return new Vo(onetooneInquiryId, userId, content, createdAt, updatedAt);
+        return new Vo(id, userId, content, createdAt, updatedAt);
     }
 
-    private record Vo(Long onetooneInquiryId,
+    private record Vo(Long id,
                       Long userId,
                       String content,
                       Timestamp createdAt,
