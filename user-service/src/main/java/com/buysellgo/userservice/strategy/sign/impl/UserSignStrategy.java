@@ -2,6 +2,7 @@ package com.buysellgo.userservice.strategy.sign.impl;
 
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.auth.TokenUserInfo;
+import com.buysellgo.userservice.common.entity.Authorization;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.domain.user.LoginType;
 import com.buysellgo.userservice.domain.user.User;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.buysellgo.userservice.common.util.CommonConstant.*;
 
@@ -91,7 +93,36 @@ public class UserSignStrategy implements SignStrategy<Map<String,Object>> {
 
     @Override
     public SignResult<Map<String, Object>> activate(ActivateDto dto) {
-        return null;
+        if(!dto.role().equals(Role.USER)){
+            return SignResult.fail(ROLE_NOT_MATCHED.getValue(), new HashMap<>());
+        }
+
+        Optional<User> userOptional = userRepository.findByEmail(dto.email());
+        if(userOptional.isEmpty()){
+            return SignResult.fail(USER_NOT_FOUND.getValue(), new HashMap<>());
+        }
+        User user = userOptional.get();
+        user.setStatus(Authorization.AUTHORIZED);
+        userRepository.save(user);
+
+        return SignResult.success(USER_ACTIVATED.getValue(), new HashMap<>());
+    }
+
+    @Override
+    public SignResult<Map<String, Object>> deactivate(ActivateDto dto) {
+        if(!dto.role().equals(Role.USER)){
+            return SignResult.fail(ROLE_NOT_MATCHED.getValue(), new HashMap<>());
+        }
+
+        Optional<User> userOptional = userRepository.findByEmail(dto.email());
+        if(userOptional.isEmpty()){
+            return SignResult.fail(USER_NOT_FOUND.getValue(), new HashMap<>());
+        }
+        User user = userOptional.get();
+        user.setStatus(Authorization.UNAUTHORIZED);
+        userRepository.save(user);
+
+        return SignResult.success(USER_DEACTIVATED.getValue(), new HashMap<>());
     }
 
     @Override
@@ -112,8 +143,14 @@ public class UserSignStrategy implements SignStrategy<Map<String,Object>> {
     }
 
     @Override
-    public SignResult<Map<String, Object>> socialSignUp() {
-        return null;
+    public SignResult<Map<String, Object>> socialSignUp(String email, String provider) {
+        Map<String, Object> data = new HashMap<>();
+        User user = User.of(email, passwordEncoder.encode(UUID.randomUUID().toString()),
+        email, 
+        "000-0000-0000", LoginType.valueOf(provider.toUpperCase()), Role.USER, true, true, true, true);
+        userRepository.save(user);
+        data.put(USER_VO.getValue(), user.toVo());
+        return SignResult.success(USER_CREATED.getValue(), data);
     }
 
     @Override

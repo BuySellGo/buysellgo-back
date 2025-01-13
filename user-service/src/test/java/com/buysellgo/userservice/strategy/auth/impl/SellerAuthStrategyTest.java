@@ -58,6 +58,7 @@ class SellerAuthStrategyTest {
                 "홍길동",
                 new Address( "서울시", "강남구", "12345"),
                 "seller@test.com",
+                Role.SELLER,
                 "encoded_password",
                 "123-45-67890",
                 "business_registration.jpg"

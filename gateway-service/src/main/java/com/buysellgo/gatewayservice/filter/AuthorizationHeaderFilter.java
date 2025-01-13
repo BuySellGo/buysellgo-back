@@ -57,7 +57,17 @@ public class AuthorizationHeaderFilter
 
     private final List<RoutePattern> allowPatterns = Arrays.asList(
             // 모든 메서드 허용
-            new RoutePattern("/user-service/sign/**"),
+            new RoutePattern("/user-service/sign/user"),
+            new RoutePattern("/user-service/sign/seller"),
+            new RoutePattern("/user-service/sign/admin"),
+            new RoutePattern("/user-service/sign/duplicate"),
+            new RoutePattern("/user-service/sign/social"),
+            new RoutePattern("/user-service/sign/kakao"),
+            new RoutePattern("/user-service/sign/naver"),
+            new RoutePattern("/user-service/sign/google"),
+            new RoutePattern("/user-service/forget/email"),
+            new RoutePattern("/user-service/forget/password"),
+
             // HTTP 메서드별 허용
             new RoutePattern("/user-service/auth/jwt", "POST"),   // 로그인
             

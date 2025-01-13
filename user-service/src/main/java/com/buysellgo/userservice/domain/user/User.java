@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     @Column(name = "username", columnDefinition = "varchar(50)",nullable = false, unique = true)
     private String username;
 
-    @Column(name = "phone", columnDefinition = "varchar(30)", nullable = false, unique = true)
+    @Column(name = "phone", columnDefinition = "varchar(30)", nullable = false)
     private String phone;
 
     @Column(name = "login_type", columnDefinition = "enum('COMMON','KAKAO','NAVER','GOOGLE')", nullable = false)
@@ -39,7 +39,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Authorization status;
 
-    @Column(name = "role", columnDefinition = "enum('ADMIN','USER')", nullable = false)
+    @Column(name = "role", columnDefinition = "enum('USER')", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 

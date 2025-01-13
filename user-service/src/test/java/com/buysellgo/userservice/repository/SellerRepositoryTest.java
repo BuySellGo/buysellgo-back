@@ -2,6 +2,7 @@ package com.buysellgo.userservice.repository;
 
 import com.buysellgo.userservice.common.entity.Address;
 import com.buysellgo.userservice.common.entity.Authorization;
+import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.domain.seller.Seller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ class SellerRepositoryTest {
     void createSeller() {
         sellerRepository.save(Seller.of("testCompany","testPresident"
                 , Address.builder().city("testCity").street("testStreet").zipCode("testZipCode").build(),
-                "test@test.com", "testPassword", "testBRN",
+                "test@test.com", Role.SELLER,"testPassword", "testBRN",
                 "testBRNI"));
         assertEquals("testCompany", sellerRepository.findByCompanyName("testCompany").orElseThrow().getCompanyName());
     }

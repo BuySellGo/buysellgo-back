@@ -2,6 +2,7 @@ package com.buysellgo.userservice.strategy.sign.impl;
 
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.auth.TokenUserInfo;
+import com.buysellgo.userservice.common.entity.Authorization;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.domain.seller.Seller;
 import com.buysellgo.userservice.repository.SellerRepository;
@@ -44,6 +45,7 @@ public class SellerSignStrategy implements SignStrategy<Map<String,Object>> {
                     sellerSignUpDto.presidentName(),
                     sellerSignUpDto.address(),
                     sellerSignUpDto.email(),
+                    Role.SELLER,
                     passwordEncoder.encode(sellerSignUpDto.password()),
                     sellerSignUpDto.businessRegistrationNumber(),
                     sellerSignUpDto.businessRegistrationNumberImg());
@@ -87,7 +89,40 @@ public class SellerSignStrategy implements SignStrategy<Map<String,Object>> {
 
     @Override
     public SignResult<Map<String,Object>> activate(ActivateDto dto) {
-        return null;
+        if(!dto.role().equals(Role.SELLER)){
+            return SignResult.fail(ROLE_NOT_MATCHED.getValue(), new HashMap<>());
+        }
+
+        if(!sellerRepository.existsByEmail(dto.email())){
+            return SignResult.fail(USER_NOT_FOUND.getValue(), new HashMap<>());
+        }
+
+        Optional<Seller> sellerOptional = sellerRepository.findByEmail(dto.email());
+        if(sellerOptional.isEmpty()){
+            return SignResult.fail(USER_NOT_FOUND.getValue(), new HashMap<>());
+        }
+        Seller seller=sellerOptional.get();
+        seller.setIsApproved(Authorization.AUTHORIZED);
+        sellerRepository.save(seller);
+
+        return SignResult.success(SELLER_ACTIVATED.getValue(), new HashMap<>());
+    }
+
+    @Override
+    public SignResult<Map<String,Object>> deactivate(ActivateDto dto) {
+        if(!dto.role().equals(Role.SELLER)){
+            return SignResult.fail(ROLE_NOT_MATCHED.getValue(), new HashMap<>());
+        }
+
+        Optional<Seller> sellerOptional = sellerRepository.findByEmail(dto.email());
+        if(sellerOptional.isEmpty()){
+            return SignResult.fail(USER_NOT_FOUND.getValue(), new HashMap<>());
+        }
+        Seller seller=sellerOptional.get();
+        seller.setIsApproved(Authorization.UNAUTHORIZED);
+        sellerRepository.save(seller);
+
+        return SignResult.success(SELLER_DEACTIVATED.getValue(), new HashMap<>());
     }
 
     @Override
@@ -108,7 +143,7 @@ public class SellerSignStrategy implements SignStrategy<Map<String,Object>> {
     }
 
     @Override
-    public SignResult<Map<String,Object>> socialSignUp() {
+    public SignResult<Map<String,Object>> socialSignUp(String email, String provider) {  
         return null;
     }
 
