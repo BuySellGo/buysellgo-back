@@ -36,7 +36,9 @@ public class ForgetController {
             @RequestHeader("X-Email") String email,
             @Parameter(description = "사용자의 역할", example = "USER")
             @RequestHeader("X-Role") Role role) {
+        // 사용자의 역할에 맞는 이메일 검증 전략을 가져옴
         ForgetStrategy<Map<String,Object>> strategy = forgetContext.getStrategy(role);
+        // 이메일 검증 요청을 처리
         ForgetResult<Map<String,Object>> result = strategy.forgetEmail(email);
 
         if (!result.success()) {
@@ -52,7 +54,9 @@ public class ForgetController {
             @RequestHeader("X-Email") String email,
             @Parameter(description = "사용자의 역할", example = "USER")
             @RequestHeader("X-Role") Role role) {
+        // 사용자의 역할에 맞는 비밀번호 초기화 전략을 가져옴
         ForgetStrategy<Map<String,Object>> strategy = forgetContext.getStrategy(role);
+        // 비밀번호 초기화 요청을 처리
         ForgetResult<Map<String,Object>> result = strategy.forgetPassword(email);
 
         if (!result.success()) {
