@@ -30,14 +30,16 @@ public class AuthController {
     @Operation(summary = "로그인 요청(공통)")
     @PostMapping("/jwt")
     public ResponseEntity<CommonResDto> createJwt(@Valid @RequestBody JwtCreateReq req) {
-
+        // 사용자의 역할에 맞는 인증 전략을 가져옴
         AuthStrategy<Map<String, Object>> strategy = authContext.getStrategy(req.role());
+        // JWT 생성 요청을 처리
         AuthResult<Map<String, Object>> result = strategy.createJwt(AuthDto.from(req));
 
         if(!result.success()){
             throw new CustomException(result.message());
         }
 
+        // JWT를 헤더에 추가하여 응답
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX.getValue() + result.message());
         
@@ -58,15 +60,19 @@ public class AuthController {
             throw new IllegalArgumentException("잘못된 Authorization 헤더 형식입니다.");
         }
 
+        // 토큰에서 사용자 정보 추출
         String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
         TokenUserInfo userInfo = jwtTokenProvider.validateAndGetTokenUserInfo(token);
+        // 사용자의 역할에 맞는 인증 전략을 가져옴
         AuthStrategy<Map<String, Object>> strategy = authContext.getStrategy(userInfo.getRole());
+        // JWT 갱신 요청을 처리
         AuthResult<Map<String, Object>> result = strategy.updateJwt(token);
 
         if(!result.success()){
             throw new CustomException(result.message());
         }
 
+        // 갱신된 JWT를 헤더에 추가하여 응답
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX.getValue() + result.message());
         
@@ -83,9 +89,12 @@ public class AuthController {
             throw new IllegalArgumentException("잘못된 Authorization 헤더 형식입니다.");
         }
 
+        // 토큰에서 사용자 정보 추출
         String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
         TokenUserInfo userInfo = jwtTokenProvider.validateAndGetTokenUserInfo(token);
+        // 사용자의 역할에 맞는 인증 전략을 가져옴
         AuthStrategy<Map<String, Object>> strategy = authContext.getStrategy(userInfo.getRole());
+        // 로그아웃 요청을 처리
         AuthResult<Map<String, Object>> result = strategy.deleteToken(token);
 
         if(!result.success()){
