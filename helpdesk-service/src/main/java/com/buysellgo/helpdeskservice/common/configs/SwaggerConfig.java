@@ -29,16 +29,20 @@ public class SwaggerConfig {
         System.out.println("!@#$%^&*()_!@#$%^&*()!@#$%^&*(@#$%^&*(@#$%^&*(!@#$%^&*(@#$%^&*");
         log.info("serverUrl={}", url);
 
+        // SecurityScheme 명
+        String jwtSchemeName = "jwtAuth";
+
+        // API 요청 헤더에 인증정보 포함. Security Requirement 정의
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
+
         // Security Scheme 정의
         SecurityScheme securityScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
                 .bearerFormat("JWT")
                 .in(SecurityScheme.In.HEADER)
-                .name("Authorization");
+                .name(jwtSchemeName);
 
-        // Security Requirement 정의
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearer");
 
         return new OpenAPI()
                 .servers(List.of(new Server().url(url)))
@@ -47,7 +51,7 @@ public class SwaggerConfig {
                         .version(serviceVersion)
                         .description("Help Desk Service API"))
                 .addSecurityItem(securityRequirement)
-                .schemaRequirement("BearerAuth", securityScheme);
+                .schemaRequirement(jwtSchemeName, securityScheme);
     }
 
 //    @Bean

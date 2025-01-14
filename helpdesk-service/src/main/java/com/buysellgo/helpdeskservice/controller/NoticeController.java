@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 public class NoticeController {
-    private final NoticeRepository noticeRepository;
-    private final JwtTokenProvider jwtTokenProvider;
     private final NoticeService noticeService;
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -33,10 +32,6 @@ public class NoticeController {
     public ResponseEntity<?> noticeCreate(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
                                           @RequestBody NoticeRequestDto noticeRequestDto) {
 
-        System.out.println("@#@#$^%$$$%^^%$%^%%^%%%%^%^%^%%^%#^$%");
-        System.out.println("@#@#$^%$$$%^^%$%^%%^%%%%^%^%^%%^%#^$%");
-        System.out.println("@#@#$^%$$$%^^%$%^%%^%%%%^%^%^%%^%#^$%");
-        System.out.println("@#@#$^%$$$%^^%$%^%%^%%%%^%^%^%%^%#^$%");
         log.info("noticeRequestDto: {}", noticeRequestDto);
 
         Notice notice = noticeService.createNotice(noticeRequestDto, tokenUserInfo.getId());
@@ -46,4 +41,5 @@ public class NoticeController {
 
         return new ResponseEntity<>(resDto, HttpStatus.CREATED);
     }
+
 }
