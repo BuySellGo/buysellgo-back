@@ -9,7 +9,7 @@ public record ForgetResult<T>(
         return new ForgetResult<>(true, message, data);
     }
 
-    public static <T> ForgetResult<T> fail(String message) {
-        return new ForgetResult<>(false, message, null);
+    public static <T> ForgetResult<T> fail(String message, T data) {
+        return new ForgetResult<>(false, message, data);
     }
 }
