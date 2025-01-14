@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.controller.dto.SendType;
+import com.buysellgo.userservice.controller.mail.SendType;
 import com.buysellgo.userservice.service.GenerateCodeService;
 import com.buysellgo.userservice.service.dto.ServiceRes;
 import com.buysellgo.userservice.strategy.forget.common.ForgetResult;

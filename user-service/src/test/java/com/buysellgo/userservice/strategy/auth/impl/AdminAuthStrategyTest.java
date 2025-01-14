@@ -3,7 +3,7 @@ package com.buysellgo.userservice.strategy.auth.impl;
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.controller.dto.KeepLogin;
+import com.buysellgo.userservice.controller.auth.KeepLogin;
 import com.buysellgo.userservice.domain.user.LoginType;
 import com.buysellgo.userservice.domain.user.User;
 import com.buysellgo.userservice.repository.UserRepository;
