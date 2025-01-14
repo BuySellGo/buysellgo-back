@@ -29,7 +29,7 @@ public class UserForgetStrategy implements ForgetStrategy<Map<String, Object>> {
             data.put("email", user.get().getEmail());
             return ForgetResult.success("이메일 찾기 성공", data);
         }
-        return ForgetResult.fail("이메일 찾기 실패");
+        return ForgetResult.fail("이메일 찾기 실패", data);
     }
 
     @Override

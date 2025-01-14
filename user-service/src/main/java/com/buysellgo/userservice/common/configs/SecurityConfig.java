@@ -50,6 +50,7 @@ public class SecurityConfig {
                         "/sign/duplicate","/sign/social","/sign/kakao",
                         "/sign/naver","/sign/google",
                         "/forget/email","/forget/password",
+                        "/mail/send","/mail/verify",
                         "/swagger-ui/**","/v3/api-docs/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/jwt").permitAll()    // 로그인
