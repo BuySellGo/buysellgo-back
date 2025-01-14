@@ -2,15 +2,9 @@ package com.buysellgo.helpdeskservice.dto;
 
 import com.buysellgo.helpdeskservice.entity.Notice;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-
-import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -19,13 +13,13 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Builder
 public class NoticeRequestDto {
-    @Schema(title = "User ID", example="1", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "User ID는 필수입니다.")
-    @Pattern(
-            regexp = "^\\d{1,19}$",
-            message = "데이터 타입이 잘못 되었습니다."
-    )
-    private Long userId;
+//    @Schema(title = "User ID", example="1", requiredMode = Schema.RequiredMode.REQUIRED)
+//    @NotEmpty(message = "User ID는 필수입니다.")
+//    @Pattern(
+//            regexp = "^\\d{1,19}$",
+//            message = "데이터 타입이 잘못 되었습니다."
+//    )
+//    private Long userId;
 
     @Schema(title = "공지사항 제목", example="시스템 일시 중단", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty(message = "제목은 필수 입니다.")
@@ -43,7 +37,7 @@ public class NoticeRequestDto {
     )
     private String content;
 
-    public Notice toEntity(){
+    public Notice toEntity(long userId){
         return Notice.of(userId, title, content);
     }
 }

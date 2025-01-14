@@ -4,7 +4,6 @@ import com.buysellgo.helpdeskservice.dto.NoticeRequestDto;
 import com.buysellgo.helpdeskservice.entity.Notice;
 import com.buysellgo.helpdeskservice.repository.NoticeRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,8 +15,8 @@ import org.springframework.stereotype.Service;
 public class NoticeService {
     private final NoticeRepository noticeRepository;
 
-    public Notice createNotice(NoticeRequestDto noticeRequestDto) {
-        Notice saved = noticeRepository.save(noticeRequestDto.toEntity());
+    public Notice createNotice(NoticeRequestDto noticeRequestDto, long userId) {
+        Notice saved = noticeRepository.save(noticeRequestDto.toEntity(userId));
         log.info("saved: {}", saved);
         return saved;
     }

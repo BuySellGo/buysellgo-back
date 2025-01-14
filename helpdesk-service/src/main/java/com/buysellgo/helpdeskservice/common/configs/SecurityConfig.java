@@ -69,7 +69,7 @@ public class SecurityConfig {
                             "/helpdesk-service/swagger-ui.html",
                             "/helpdesk-service/swagger-ui-custom.html",
                             "/helpdesk-service/api/v1/**",
-                            "/api/v1/notice/**"
+                            "/api/v1/notice/write"
                     ).permitAll()
 //                    .requestMatchers("/**").access(
 //                            new WebExpressionAuthorizationManager("hasIpAddress('localhost') or hasIpAddress('::1') or hasIpAddress('127.0.0.1')  or hasIpAddress('172.30.67.125')")

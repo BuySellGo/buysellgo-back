@@ -14,11 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/notice")
@@ -29,20 +27,23 @@ public class NoticeController {
     private final JwtTokenProvider jwtTokenProvider;
     private final NoticeService noticeService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "공지사항 등록(관리자)")
     @PostMapping("/write")
-//    public ResponseEntity<?> noticeCreate(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
-    public ResponseEntity<?> noticeCreate(@RequestBody NoticeRequestDto noticeRequestDto) {
+    public ResponseEntity<?> noticeCreate(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+                                          @RequestBody NoticeRequestDto noticeRequestDto) {
 
+        System.out.println("@#@#$^%$$$%^^%$%^%%^%%%%^%^%^%%^%#^$%");
+        System.out.println("@#@#$^%$$$%^^%$%^%%^%%%%^%^%^%%^%#^$%");
+        System.out.println("@#@#$^%$$$%^^%$%^%%^%%%%^%^%^%%^%#^$%");
+        System.out.println("@#@#$^%$$$%^^%$%^%%^%%%%^%^%^%%^%#^$%");
         log.info("noticeRequestDto: {}", noticeRequestDto);
 
-
-        Notice notice = noticeService.createNotice(noticeRequestDto);
+        Notice notice = noticeService.createNotice(noticeRequestDto, tokenUserInfo.getId());
 
         CommonResDto resDto = new CommonResDto(
                 HttpStatus.CREATED, "공지사항 작성 성공", notice.getId());
 
         return new ResponseEntity<>(resDto, HttpStatus.CREATED);
-
     }
 }

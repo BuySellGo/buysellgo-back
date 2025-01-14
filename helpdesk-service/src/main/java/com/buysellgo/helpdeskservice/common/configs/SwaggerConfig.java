@@ -29,16 +29,25 @@ public class SwaggerConfig {
         System.out.println("!@#$%^&*()_!@#$%^&*()!@#$%^&*(@#$%^&*(@#$%^&*(!@#$%^&*(@#$%^&*");
         log.info("serverUrl={}", url);
 
+        // Security Scheme 정의
+        SecurityScheme securityScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER)
+                .name("Authorization");
+
+        // Security Requirement 정의
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearer");
+
         return new OpenAPI()
                 .servers(List.of(new Server().url(url)))
-                .components(new Components().addSecuritySchemes(
-                    "Bearer",
-                    new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .info(new Info()
                         .title(serviceTitle)
                         .version(serviceVersion)
-                        .description("Help Desk Service API"));
+                        .description("Help Desk Service API"))
+                .addSecurityItem(securityRequirement)
+                .schemaRequirement("BearerAuth", securityScheme);
     }
 
 //    @Bean

@@ -72,12 +72,21 @@ public class AuthorizationHeaderFilter
             new RoutePattern("/user-service/auth/jwt", "POST"),   // 로그인
 
             // Swagger 관련
+            new RoutePattern("/user-service/v3/api-docs/**"),
             new RoutePattern("/v3/api-docs/**"),
             new RoutePattern("/swagger-ui/**"),
             new RoutePattern("/swagger-resources/**"),
             new RoutePattern("/webjars/**"),
             new RoutePattern("/swagger-ui.html"),
-            new RoutePattern("/swagger-ui-custom.html")
+            new RoutePattern("/swagger-ui-custom.html"),
+
+            // For Swagger test with API Gateway
+            new RoutePattern("/api/v1/hello-user-service"),
+            new RoutePattern("/api/v1/hello-helpdesk-service"),
+            new RoutePattern("/api/v1/hello-promotion-service"),
+            new RoutePattern("/api/v1/hello-statistics-service"),
+            new RoutePattern("/api/v1/hello-delivery-service")
+
     );
 
     public AuthorizationHeaderFilter() {
@@ -94,8 +103,8 @@ public class AuthorizationHeaderFilter
             // 허용된 패턴인지 확인
             boolean isAllowed = allowPatterns.stream()
                     .anyMatch(pattern ->
-                        antPathMatcher.match(pattern.path, path) &&
-                        (pattern.method == null || pattern.method.equals(method))
+                            antPathMatcher.match(pattern.path, path) &&
+                                    (pattern.method == null || pattern.method.equals(method))
                     );
 
             if (isAllowed) {
