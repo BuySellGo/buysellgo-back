@@ -1,8 +1,8 @@
 package com.buysellgo.userservice.controller;
 
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.controller.dto.JwtCreateReq;
-import com.buysellgo.userservice.controller.dto.KeepLogin;
+import com.buysellgo.userservice.controller.auth.JwtCreateReq;
+import com.buysellgo.userservice.controller.auth.KeepLogin;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;

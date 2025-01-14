@@ -1,6 +1,6 @@
 package com.buysellgo.userservice.strategy.sign.dto;
 
-import com.buysellgo.userservice.controller.dto.UserCreateReq;
+import com.buysellgo.userservice.controller.sign.UserCreateReq;
 
 public record UserSignUpDto(
     String email,

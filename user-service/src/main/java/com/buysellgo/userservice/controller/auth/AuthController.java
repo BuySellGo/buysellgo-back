@@ -1,9 +1,8 @@
-package com.buysellgo.userservice.controller;
+package com.buysellgo.userservice.controller.auth;
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.dto.CommonResDto;
 import com.buysellgo.userservice.common.exception.CustomException;
-import com.buysellgo.userservice.controller.dto.JwtCreateReq;
 import com.buysellgo.userservice.strategy.auth.common.AuthContext;
 import com.buysellgo.userservice.strategy.auth.common.AuthStrategy;
 import com.buysellgo.userservice.strategy.auth.common.AuthResult;

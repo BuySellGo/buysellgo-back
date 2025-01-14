@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.controller;
+package com.buysellgo.userservice.controller.forget;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +19,7 @@ import com.buysellgo.userservice.strategy.forget.common.ForgetResult;
 import com.buysellgo.userservice.strategy.forget.common.ForgetContext;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import java.util.Map;
 
@@ -28,9 +29,13 @@ import java.util.Map;
 public class ForgetController {
     private final ForgetContext forgetContext;
 
-    @Operation(summary = "이메일 찾기(이메일 검증)")
+    @Operation(summary = "이메일 찾기(이메일 검증)", description = "사용자의 이메일을 검증합니다.")
     @GetMapping("/email")
-    public ResponseEntity<CommonResDto> forgetEmail(@RequestHeader("X-Email") String email, @RequestHeader("X-Role") Role role) {
+    public ResponseEntity<CommonResDto> forgetEmail(
+            @Parameter(description = "사용자의 이메일 주소", example = "user@example.com")
+            @RequestHeader("X-Email") String email,
+            @Parameter(description = "사용자의 역할", example = "USER")
+            @RequestHeader("X-Role") Role role) {
         ForgetStrategy<Map<String,Object>> strategy = forgetContext.getStrategy(role);
         ForgetResult<Map<String,Object>> result = strategy.forgetEmail(email);
 
@@ -40,9 +45,13 @@ public class ForgetController {
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, result.message(), result.data()));
     }
 
-    @Operation(summary = "비밀번호 찾기(임시 비밀번호 발급)")
+    @Operation(summary = "비밀번호 찾기(임시 비밀번호 발급)", description = "사용자의 비밀번호를 재설정합니다.")
     @PostMapping("/password")
-    public ResponseEntity<CommonResDto> forgetPassword(@RequestHeader("X-Email") String email, @RequestHeader("X-Role") Role role) {
+    public ResponseEntity<CommonResDto> forgetPassword(
+            @Parameter(description = "사용자의 이메일 주소", example = "user@example.com")
+            @RequestHeader("X-Email") String email,
+            @Parameter(description = "사용자의 역할", example = "USER")
+            @RequestHeader("X-Role") Role role) {
         ForgetStrategy<Map<String,Object>> strategy = forgetContext.getStrategy(role);
         ForgetResult<Map<String,Object>> result = strategy.forgetPassword(email);
 
