@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -45,8 +46,13 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
 //                    .requestMatchers("/user/list").hasAnyRole("ADMIN")
                 .requestMatchers(
-                        "/**"
+                        "/sign/user","/sign/seller","/sign/admin",
+                        "/sign/duplicate","/sign/social","/sign/kakao",
+                        "/sign/naver","/sign/google",
+                        "/forget/email","/forget/password",
+                        "/swagger-ui/**","/v3/api-docs/**"
                 ).permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/jwt").permitAll()    // 로그인
 //                    .requestMatchers("/**").access(
 //                            new WebExpressionAuthorizationManager("hasIpAddress('localhost') or hasIpAddress('::1') or hasIpAddress('127.0.0.1')  or hasIpAddress('172.30.67.125')")
 //                    )

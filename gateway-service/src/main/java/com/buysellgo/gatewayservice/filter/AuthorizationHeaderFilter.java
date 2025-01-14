@@ -2,6 +2,9 @@ package com.buysellgo.gatewayservice.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -17,9 +20,11 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -29,20 +34,50 @@ public class AuthorizationHeaderFilter
     @Value("${jwt.secretKey}")
     private String secretKey;
 
-    private final List<String> allowUrl = Arrays.asList(
-            "/sign-up", "/sign-in",
-            "/api/v1/hello-user-service",
-            "/api/v1/hello-helpdesk-service",
-            "/api/v1/hello-promotion-service",
-            "/api/v1/hello-statistics-service",
-            "/api/v1/hello-delivery-service",
-            "/api/v1/helpdesk-service/**",
-            "/v3/api-docs",
-            "/swagger-ui/**",
-            "/swagger-resources/**",
-            "/webjars/**",
-            "/swagger-ui.html",
-            "/swagger-ui-custom.html"
+    private SecretKey getSigningKey(String secretKey) {
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    // URL과 HTTP 메서드를 함께 저장하는 내부 클래스
+    private static class RoutePattern {
+        String path;
+        String method;  // null이면 모든 메서드 허용
+
+        RoutePattern(String path) {
+            this.path = path;
+            this.method = null;
+        }
+
+        RoutePattern(String path, String method) {
+            this.path = path;
+            this.method = method;
+        }
+    }
+
+    private final List<RoutePattern> allowPatterns = Arrays.asList(
+            // 모든 메서드 허용
+            new RoutePattern("/user-service/sign/user"),
+            new RoutePattern("/user-service/sign/seller"),
+            new RoutePattern("/user-service/sign/admin"),
+            new RoutePattern("/user-service/sign/duplicate"),
+            new RoutePattern("/user-service/sign/social"),
+            new RoutePattern("/user-service/sign/kakao"),
+            new RoutePattern("/user-service/sign/naver"),
+            new RoutePattern("/user-service/sign/google"),
+            new RoutePattern("/user-service/forget/email"),
+            new RoutePattern("/user-service/forget/password"),
+
+            // HTTP 메서드별 허용
+            new RoutePattern("/user-service/auth/jwt", "POST"),   // 로그인
+
+            // Swagger 관련
+            new RoutePattern("/v3/api-docs/**"),
+            new RoutePattern("/swagger-ui/**"),
+            new RoutePattern("/swagger-resources/**"),
+            new RoutePattern("/webjars/**"),
+            new RoutePattern("/swagger-ui.html"),
+            new RoutePattern("/swagger-ui-custom.html")
     );
 
     public AuthorizationHeaderFilter() {
@@ -53,13 +88,17 @@ public class AuthorizationHeaderFilter
     public GatewayFilter apply(AuthorizationHeaderFilter.Config config) {
         return (exchange, chain) -> {
             String path = exchange.getRequest().getURI().getPath();
+            String method = exchange.getRequest().getMethod().name();
             AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-            // 허용 url 리스트를 순회하면서 지금 들어온 요청 url과 하나라도 일치하면 true 리턴
-            boolean isAllowed
-                    = allowUrl.stream().anyMatch(url -> antPathMatcher.match(url, path));
+            // 허용된 패턴인지 확인
+            boolean isAllowed = allowPatterns.stream()
+                    .anyMatch(pattern ->
+                        antPathMatcher.match(pattern.path, path) &&
+                        (pattern.method == null || pattern.method.equals(method))
+                    );
+
             if (isAllowed) {
-                // 허용 url이 맞다면 그냥 통과~
                 return chain.filter(exchange);
             }
 
@@ -76,16 +115,18 @@ public class AuthorizationHeaderFilter
             String token = authorizationHeader.replace("Bearer ", "");
 
             // JWT 토큰 유효성 검증 및 클레임 얻어내기
-            Claims claims = validateJwt(token);
-            if (claims == null) {
+            Optional<Claims> claimsOptional = validateJwt(token);
+            if (claimsOptional.isEmpty()) {
                 return onError(exchange, "Invalid token", HttpStatus.UNAUTHORIZED);
             }
 
             // 사용자 정보를 클레임에서 꺼내서 헤더에 담자.
+            Claims claims = claimsOptional.get();
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()
                     .header("X-User-Email", claims.getSubject())
                     .header("X-User-Role", claims.get("role", String.class))
+                    .header("X-User-ID", String.valueOf(claims.get("id", Long.class)))
                     .build();
 
             // 새롭게 만든(토큰 정보를 헤더에 담은) request를 exchange에 갈아끼워서 보내자.
@@ -93,16 +134,17 @@ public class AuthorizationHeaderFilter
         };
     }
 
-    private Claims validateJwt(String token) {
+    private Optional<Claims> validateJwt(String token) {
         try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey(secretKey))
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+            return Optional.of(claims);
         } catch (Exception e) {
             log.error("JWT validation failed: {}", e.getMessage());
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -121,8 +163,21 @@ public class AuthorizationHeaderFilter
         return response.writeWith(Flux.just(buffer));
     }
 
+    @Getter
+    @Setter
     public static class Config {
-        // 기타 설정값 가져오는 로직 작성 가능.
+        private String secretKey;  // JWT 시크릿 키
+        private List<String> excludePaths; // 인증 제외 경로
+
+        // 기본 생성자
+        public Config() {
+        }
+
+        // 파라미터가 있는 생성자
+        public Config(String secretKey, List<String> excludePaths) {
+            this.secretKey = secretKey;
+            this.excludePaths = excludePaths;
+        }
     }
 
 }
