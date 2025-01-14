@@ -55,6 +55,9 @@ public class User extends BaseEntity {
     @Column(name = "agree_TOS", columnDefinition = "boolean", nullable = false)
     private boolean agreeTOS;
 
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Profile profile;
+
     public static User of(String email, String encodePassword, String username, String phone, LoginType loginType, Role role, Boolean emailCertified, Boolean agreePICU, Boolean agreeEmail, Boolean agreeTOS) {
         return User.builder()
                 .email(email)
