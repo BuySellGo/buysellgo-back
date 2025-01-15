@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.controller.mail;
+package com.buysellgo.userservice.controller.mail.dto;
 
 public enum SendType {
     VERIFY, PASSWORD;

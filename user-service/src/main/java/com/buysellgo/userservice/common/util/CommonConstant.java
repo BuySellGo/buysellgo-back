@@ -38,6 +38,7 @@ public enum CommonConstant {
     USER_VO("userVo"),
     SELLER_VO("sellerVo"),
     ADMIN_VO("adminVo"),
+    PROFILE_VO("profileVo"),
     SUCCESS("success"),
     FAILURE("failure"),
 

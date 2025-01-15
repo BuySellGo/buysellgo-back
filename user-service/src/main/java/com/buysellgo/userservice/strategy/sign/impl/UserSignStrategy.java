@@ -5,7 +5,9 @@ import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.entity.Authorization;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.domain.user.LoginType;
+import com.buysellgo.userservice.domain.user.Profile;
 import com.buysellgo.userservice.domain.user.User;
+import com.buysellgo.userservice.repository.ProfileRepository;
 import com.buysellgo.userservice.repository.UserRepository;
 import com.buysellgo.userservice.strategy.sign.common.SignResult;
 import com.buysellgo.userservice.strategy.sign.common.SignStrategy;
@@ -34,6 +36,7 @@ public class UserSignStrategy implements SignStrategy<Map<String,Object>> {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> userTemplate;
+    private final ProfileRepository profileRepository;
 
     @Override
     public SignResult<Map<String,Object>> signUp(SignUpDto dto) {
@@ -62,6 +65,10 @@ public class UserSignStrategy implements SignStrategy<Map<String,Object>> {
                 return SignResult.fail(VALUE_DUPLICATED.getValue(),data);
             }
             userRepository.save(user);
+            Profile profile = Profile.of(user);
+
+            profileRepository.save(profile);
+            data.put(PROFILE_VO.getValue(), profile.toVo());
             return SignResult.success(USER_CREATED.getValue(), data);
         } catch (RuntimeException e) {
             e.setStackTrace(e.getStackTrace());
@@ -149,7 +156,10 @@ public class UserSignStrategy implements SignStrategy<Map<String,Object>> {
         email, 
         "000-0000-0000", LoginType.valueOf(provider.toUpperCase()), Role.USER, true, true, true, true);
         userRepository.save(user);
+        Profile profile = Profile.of(user);
+        profileRepository.save(profile);
         data.put(USER_VO.getValue(), user.toVo());
+        data.put(PROFILE_VO.getValue(), profile.toVo());
         return SignResult.success(USER_CREATED.getValue(), data);
     }
 

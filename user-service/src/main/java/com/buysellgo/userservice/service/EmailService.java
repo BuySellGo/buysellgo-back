@@ -1,6 +1,6 @@
 package com.buysellgo.userservice.service;
 
-import com.buysellgo.userservice.controller.mail.SendType;
+import com.buysellgo.userservice.controller.mail.dto.SendType;
 import com.buysellgo.userservice.service.dto.ServiceRes;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;

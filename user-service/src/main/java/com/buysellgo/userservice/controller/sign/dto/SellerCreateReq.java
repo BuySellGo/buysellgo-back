@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.controller.sign;
+package com.buysellgo.userservice.controller.sign.dto;
 
 import com.buysellgo.userservice.common.entity.Address;
 import io.swagger.v3.oas.annotations.media.Schema;

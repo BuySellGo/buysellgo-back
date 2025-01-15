@@ -76,7 +76,7 @@ public class Seller extends BaseEntity {
             , String presidentName
             , Address address
             , String email
-            ,String role
+            , String role
             , String businessRegistrationNumber
             , String businessRegistrationNumberImg
             , String isApproved

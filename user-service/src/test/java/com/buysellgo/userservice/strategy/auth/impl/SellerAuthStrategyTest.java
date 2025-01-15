@@ -4,7 +4,7 @@ import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.entity.Address;
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.controller.auth.KeepLogin;
+import com.buysellgo.userservice.controller.auth.dto.KeepLogin;
 import com.buysellgo.userservice.domain.seller.Seller;
 import com.buysellgo.userservice.repository.SellerRepository;
 import com.buysellgo.userservice.strategy.auth.common.AuthResult;

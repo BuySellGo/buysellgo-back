@@ -1,7 +1,7 @@
 package com.buysellgo.userservice.strategy.sign.dto;
 
 import com.buysellgo.userservice.common.entity.Address;
-import com.buysellgo.userservice.controller.sign.SellerCreateReq;
+import com.buysellgo.userservice.controller.sign.dto.SellerCreateReq;
 
 public record SellerSignUpDto(
     String email,

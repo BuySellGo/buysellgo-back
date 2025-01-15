@@ -3,6 +3,7 @@ package com.buysellgo.userservice.strategy.auth.impl;
 import com.buysellgo.userservice.common.auth.JwtTokenProvider;
 import com.buysellgo.userservice.common.auth.TokenUserInfo;
 import com.buysellgo.userservice.common.entity.Role;
+import com.buysellgo.userservice.domain.user.Profile;
 import com.buysellgo.userservice.domain.user.User;
 import com.buysellgo.userservice.repository.UserRepository;
 import com.buysellgo.userservice.strategy.auth.common.AuthResult;
@@ -17,7 +18,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeUnit;       
+import com.buysellgo.userservice.repository.ProfileRepository;
 
 import static com.buysellgo.userservice.common.util.CommonConstant.*;
 
@@ -29,6 +31,7 @@ public class UserAuthStrategy implements AuthStrategy<Map<String, Object>> {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> userTemplate;
+    private final ProfileRepository profileRepository;
     
     @Override
     public AuthResult<Map<String, Object>> createJwt(AuthDto dto) {
@@ -39,8 +42,10 @@ public class UserAuthStrategy implements AuthStrategy<Map<String, Object>> {
         }
         
         User user = userOptional.get();
+        Profile profile = profileRepository.findByUser(user).orElseThrow();
         Map<String, Object> data = new HashMap<>();
         data.put(USER_VO.getValue(), user.toVo());
+        data.put(PROFILE_VO.getValue(), profile.toVo());
 
         if (!passwordEncoder.matches(dto.password(), user.getPassword())){
             return AuthResult.fail(PASSWORD_NOT_MATCHED.getValue());
@@ -108,8 +113,10 @@ public class UserAuthStrategy implements AuthStrategy<Map<String, Object>> {
             return AuthResult.fail(USER_NOT_FOUND.getValue());
         }
         User user = userOptional.get();
+        Profile profile = profileRepository.findByUser(user).orElseThrow();
         Map<String, Object> data = new HashMap<>();
         data.put(USER_VO.getValue(), user.toVo());
+        data.put(PROFILE_VO.getValue(), profile.toVo());
 
         String accessToken = jwtTokenProvider.createToken(user.getEmail(), user.getRole().toString(), user.getUserId());
         data.put("access_token(개발 중에만 표시)", BEARER_PREFIX.getValue() + accessToken);

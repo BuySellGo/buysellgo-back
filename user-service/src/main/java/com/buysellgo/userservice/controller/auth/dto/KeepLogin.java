@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.controller.auth;
+package com.buysellgo.userservice.controller.auth.dto;
 
 public enum KeepLogin {
     ACTIVE, INACTIVE;
