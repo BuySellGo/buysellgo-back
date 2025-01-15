@@ -3,8 +3,7 @@ package com.buysellgo.userservice.strategy.info.common;
 import java.util.Map;
 
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.controller.info.dto.InfoUpdateReq;
-
+import com.buysellgo.userservice.controller.info.dto.InfoUpdateReq; 
 /**
  * 회원 정보를 조회하고 수정하는 역할을 하는 전략 인터페이스입니다.
  * 이 인터페이스는 회원 정보의 검색, 목록 조회, 수정 및 역할 지원을 위한 메서드를 정의합니다.
@@ -25,7 +24,7 @@ public interface InfoStrategy<T extends Map<String, Object>> {
      *
      * @return T 타입의 회원 정보 목록을 포함하는 infoResult를 반환합니다.
      */
-    InfoResult<T> getList();
+    InfoResult<T> getList(Role role);
 
     /**
      * 회원 정보를 수정하고 결과를 반환합니다.

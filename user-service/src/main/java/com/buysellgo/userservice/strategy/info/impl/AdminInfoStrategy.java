@@ -1,13 +1,18 @@
 package com.buysellgo.userservice.strategy.info.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import com.buysellgo.userservice.controller.info.dto.AdminUpdateReq;
 import com.buysellgo.userservice.controller.info.dto.InfoUpdateReq;
 import com.buysellgo.userservice.domain.admin.Admin;
+import com.buysellgo.userservice.domain.seller.Seller;
+import com.buysellgo.userservice.domain.user.User;
 import com.buysellgo.userservice.repository.AdminRepository;
+import com.buysellgo.userservice.repository.SellerRepository;
+import com.buysellgo.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -26,6 +31,8 @@ import org.apache.commons.lang3.ObjectUtils;
 public class AdminInfoStrategy implements InfoStrategy<Map<String, Object>> {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final SellerRepository sellerRepository;
 
     @Override
     public InfoResult<Map<String, Object>> getOne(String email) {
@@ -40,8 +47,31 @@ public class AdminInfoStrategy implements InfoStrategy<Map<String, Object>> {
     }
 
     @Override
-    public InfoResult<Map<String, Object>> getList() {
-        return null;
+    public InfoResult<Map<String, Object>> getList(Role role) {
+        Map<String, Object> data = new HashMap<>();
+        switch (role) {
+            case USER -> {
+                List<User> users = userRepository.findAll();
+                data.put(USER_VO.getValue(), users.stream().map(
+                    user -> {
+                    Map<String, Object> userMap = new HashMap<>();
+                    userMap.put(USER_VO.getValue(), user.toVo());
+                    userMap.put(PROFILE_VO.getValue(), user.getProfile().toVo());
+                    return userMap; 
+                }).toList());
+                return InfoResult.success(SUCCESS.getValue(), data);
+            }
+            case SELLER -> {
+                List<Seller> sellers = sellerRepository.findAll();
+                data.put(SELLER_VO.getValue(), sellers.stream().map(Seller::toVo).toList());
+                return InfoResult.success(SUCCESS.getValue(), data);
+            }
+            default -> {
+                return InfoResult.fail(INVALID_ROLE.getValue(),data);
+            }
+
+        }
+        
     }   
 
     @Override
