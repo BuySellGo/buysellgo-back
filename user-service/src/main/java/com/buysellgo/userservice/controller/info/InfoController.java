@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import com.buysellgo.userservice.controller.info.dto.InfoUpdateReq;
+import com.buysellgo.userservice.controller.info.dto.InfoListReq;
 import java.util.Map;
 
 
@@ -40,13 +41,16 @@ public class InfoController {
     }
 
     @Operation(summary = "회원정보 리스트 조회(관리자)")
-    @GetMapping("/list")
+    @PostMapping("/list")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CommonResDto<Object>> getList() {
-        //회원정보를 여러개 조회하는 로직
-        //관리자가 사용하는 로직
-        //판매자 전체를 조회하거나, 회원 전체를 조회함
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "회원정보 조회 성공", null));
+    public ResponseEntity<CommonResDto<Object>> getList(@Valid @RequestBody InfoListReq infoListReq,
+                                                        @RequestHeader("X-User-Role") Role role) {
+        InfoStrategy<Map<String, Object>> strategy = infoContext.getStrategy(role);
+        InfoResult<Map<String, Object>> result = strategy.getList(infoListReq.role());
+        if(!result.success()) {
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "회원정보 조회 성공", result));
     }
 
     @Operation(summary = "회원정보 수정")

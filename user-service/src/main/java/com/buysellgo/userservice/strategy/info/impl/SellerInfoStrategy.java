@@ -41,7 +41,7 @@ public class SellerInfoStrategy implements InfoStrategy<Map<String, Object>> {
     }
 
     @Override
-    public InfoResult<Map<String, Object>> getList() {
+    public InfoResult<Map<String, Object>> getList(Role role) {
         return null;
     }
 

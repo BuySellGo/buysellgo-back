@@ -29,7 +29,7 @@ public enum CommonConstant {
     TYPE_NOT_SUPPORTED("지원하지 않는 로그인 제공자입니다."),
     NO_CHANGE("업데이트할 값이 없습니다."),
     UPDATE_SUCCESS("업데이트 성공"),
-
+    INVALID_ROLE("유효하지 않은 역할입니다."),
     // 토큰 상수
     BEARER_PREFIX("Bearer "),
     ACCESS_TOKEN("accessToken"),
