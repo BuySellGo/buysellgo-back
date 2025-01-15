@@ -18,7 +18,7 @@ public interface InfoStrategy<T extends Map<String, Object>> {
      *
      * @return T 타입의 단일 회원 정보를 포함하는 infoResult를 반환합니다.
      */
-    InfoResult<T> getOne();
+    InfoResult<T> getOne(String email);
 
     /**
      * 회원 정보 목록을 검색합니다.

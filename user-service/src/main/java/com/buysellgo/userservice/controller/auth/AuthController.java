@@ -30,7 +30,7 @@ public class AuthController {
 
     @Operation(summary = "로그인 요청(공통)")
     @PostMapping("/jwt")
-    public ResponseEntity<CommonResDto> createJwt(@Valid @RequestBody JwtCreateReq req) {
+    public ResponseEntity<CommonResDto<Object>> createJwt(@Valid @RequestBody JwtCreateReq req) {
         // 사용자의 역할에 맞는 인증 전략을 가져옴
         AuthStrategy<Map<String, Object>> strategy = authContext.getStrategy(req.role());
         // JWT 생성 요청을 처리
@@ -46,12 +46,12 @@ public class AuthController {
         
         return ResponseEntity.status(HttpStatus.CREATED)
                         .headers(headers)
-                        .body(new CommonResDto(HttpStatus.CREATED, "로그인 성공", result.data()));
+                        .body(new CommonResDto<>(HttpStatus.CREATED, "로그인 성공", result.data()));
     }
 
     @Operation(summary = "토큰 갱신(공통)")
     @PutMapping("/jwt")
-    public ResponseEntity<CommonResDto> refreshToken(
+    public ResponseEntity<CommonResDto<Object>> refreshToken(
             @RequestHeader(value = "Authorization", required = false) String accessToken) {
         if (accessToken == null) {
             throw new IllegalArgumentException("리프레시 토큰이 필요합니다.");
@@ -79,12 +79,12 @@ public class AuthController {
         
         return ResponseEntity.ok()
                         .headers(headers)
-                        .body(new CommonResDto(HttpStatus.OK, "토큰 갱신 성공", result.data()));
+                        .body(new CommonResDto<>(HttpStatus.OK, "토큰 갱신 성공", result.data()));
     }
 
     @Operation(summary = "로그아웃 요청(공통)")
     @DeleteMapping("/jwt")
-    public ResponseEntity<CommonResDto> deleteToken(
+    public ResponseEntity<CommonResDto<Object>> deleteToken(
             @RequestHeader(value = "Authorization") String accessToken) {
         if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
             throw new IllegalArgumentException("잘못된 Authorization 헤더 형식입니다.");
@@ -102,6 +102,6 @@ public class AuthController {
             throw new CustomException(result.message());
         }
         
-        return ResponseEntity.ok(new CommonResDto(HttpStatus.OK, "로그아웃 성공", result.data()));
+        return ResponseEntity.ok(new CommonResDto<>(HttpStatus.OK, "로그아웃 성공", result.data()));
     }
 }

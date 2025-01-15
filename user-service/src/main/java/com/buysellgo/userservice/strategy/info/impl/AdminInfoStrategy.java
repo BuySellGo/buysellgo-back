@@ -28,8 +28,15 @@ public class AdminInfoStrategy implements InfoStrategy<Map<String, Object>> {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public InfoResult<Map<String, Object>> getOne() {
-        return null;
+    public InfoResult<Map<String, Object>> getOne(String email) {
+        Map<String, Object> data = new HashMap<>();
+        Optional<Admin> adminOptional = adminRepository.findByEmail(email);
+        if(adminOptional.isEmpty()) {   
+            return InfoResult.fail(USER_NOT_FOUND.getValue(),data);
+        }
+        Admin admin = adminOptional.get();
+        data.put(ADMIN_VO.getValue(),admin.toVo());
+        return InfoResult.success(SUCCESS.getValue(),data);
     }
 
     @Override
