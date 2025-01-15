@@ -57,30 +57,36 @@ public class AuthorizationHeaderFilter
 
     private final List<RoutePattern> allowPatterns = Arrays.asList(
             // 모든 메서드 허용
-            new RoutePattern("/sign/user"),
-            new RoutePattern("/sign/seller"),
-            new RoutePattern("/sign/admin"),
-            new RoutePattern("/sign/duplicate"),
-            new RoutePattern("/sign/social"),
-            new RoutePattern("/sign/kakao"),
-            new RoutePattern("/sign/naver"),
-            new RoutePattern("/sign/google"),
-            new RoutePattern("/forget/email"),
-            new RoutePattern("/forget/password"),
-            new RoutePattern("/mail/send"),
-            new RoutePattern("/mail/verify"),
-
+            new RoutePattern("/user-service/sign/user"),
+            new RoutePattern("/user-service/sign/seller"),
+            new RoutePattern("/user-service/sign/admin"),
+            new RoutePattern("/user-service/sign/duplicate"),
+            new RoutePattern("/user-service/sign/social"),
+            new RoutePattern("/user-service/sign/kakao"),
+            new RoutePattern("/user-service/sign/naver"),
+            new RoutePattern("/user-service/sign/google"),
+            new RoutePattern("/user-service/forget/email"),
+            new RoutePattern("/user-service/forget/password"),
 
             // HTTP 메서드별 허용
-            new RoutePattern("/auth/jwt", "POST"),   // 로그인
-            
+            new RoutePattern("/user-service/auth/jwt", "POST"),   // 로그인
+
             // Swagger 관련
+            new RoutePattern("/user-service/v3/api-docs/**"),
             new RoutePattern("/v3/api-docs/**"),
             new RoutePattern("/swagger-ui/**"),
             new RoutePattern("/swagger-resources/**"),
             new RoutePattern("/webjars/**"),
             new RoutePattern("/swagger-ui.html"),
-            new RoutePattern("/swagger-ui-custom.html")
+            new RoutePattern("/swagger-ui-custom.html"),
+
+            // For Swagger test with API Gateway
+            new RoutePattern("/api/v1/hello-user-service"),
+            new RoutePattern("/api/v1/hello-helpdesk-service"),
+            new RoutePattern("/api/v1/hello-promotion-service"),
+            new RoutePattern("/api/v1/hello-statistics-service"),
+            new RoutePattern("/api/v1/hello-delivery-service")
+
     );
 
     public AuthorizationHeaderFilter() {
@@ -96,9 +102,9 @@ public class AuthorizationHeaderFilter
 
             // 허용된 패턴인지 확인
             boolean isAllowed = allowPatterns.stream()
-                    .anyMatch(pattern -> 
-                        antPathMatcher.match(pattern.path, path) && 
-                        (pattern.method == null || pattern.method.equals(method))
+                    .anyMatch(pattern ->
+                            antPathMatcher.match(pattern.path, path) &&
+                                    (pattern.method == null || pattern.method.equals(method))
                     );
 
             if (isAllowed) {
@@ -171,11 +177,11 @@ public class AuthorizationHeaderFilter
     public static class Config {
         private String secretKey;  // JWT 시크릿 키
         private List<String> excludePaths; // 인증 제외 경로
-        
+
         // 기본 생성자
         public Config() {
         }
-        
+
         // 파라미터가 있는 생성자
         public Config(String secretKey, List<String> excludePaths) {
             this.secretKey = secretKey;

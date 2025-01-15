@@ -17,8 +17,8 @@ import java.time.Instant;
 public class SalesStatistics {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "sales_statistics_id")
-    private Long salesStatisticsId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "seller_id")
     private Long sellerId;
@@ -38,10 +38,10 @@ public class SalesStatistics {
     }
 
     public Vo toVo(){
-        return new Vo(salesStatisticsId, sellerId, createdAt, salesAmount);
+        return new Vo(id, sellerId, createdAt, salesAmount);
     }
 
-    private record Vo(Long salesStatisticsId,
+    private record Vo(Long id,
                       Long sellerId,
                       Timestamp createdAt,
                       Long salesAmount) {

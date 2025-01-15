@@ -17,8 +17,8 @@ import java.time.Instant;
 public class Faq {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "faq_id")
-    private Long faqId;
+    @Column(name = "id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faq_group_id")
@@ -45,10 +45,10 @@ public class Faq {
     }
 
     public Vo toVo() {
-        return new Vo(faqId, faqGroup, createdAt, faqTitle, faqContent);
+        return new Vo(id, faqGroup, createdAt, faqTitle, faqContent);
     }
 
-    private record Vo(Long faqId,
+    private record Vo(Long id,
                       FaqGroup faqGroup,
                       Timestamp createdAt,
                       String faqTitle,
