@@ -45,11 +45,11 @@ public class Faq {
     }
 
     public Vo toVo() {
-        return new Vo(id, faqGroup, createdAt, faqTitle, faqContent);
+        return new Vo(id, faqGroup.getId(), createdAt, faqTitle, faqContent);
     }
 
     private record Vo(Long id,
-                      FaqGroup faqGroup,
+                      Long faqGroupId,
                       Timestamp createdAt,
                       String faqTitle,
                       String faqContent) {
