@@ -1,5 +1,6 @@
 package com.buysellgo.helpdeskservice.entity;
 
+import com.buysellgo.helpdeskservice.dto.NoticeRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,12 +43,16 @@ public class Notice {
 
     public static Notice of(Long userId,
                             String title,
+                            Timestamp startDate,
+                            Timestamp endDate,
                             String content) {
         return Notice.builder()
                 .userId(userId)
                 .createdAt(Timestamp.from(Instant.now()))
-                .startDate(Timestamp.from(Instant.now()))
-                .endDate(Timestamp.from(Instant.now().plus(Duration.ofDays(3))))
+//                .startDate(Timestamp.from(Instant.now()))
+                .startDate(startDate)
+//                .endDate(Timestamp.from(Instant.now().plus(Duration.ofDays(3))))
+                .endDate(endDate)
                 .title(title)
                 .content(content)
                 .build();
@@ -58,13 +63,21 @@ public class Notice {
         return new Vo(id, userId, createdAt, startDate, endDate, title, content);
     }
 
-    private record Vo(Long id,
+    public record Vo(Long id,
                       Long userId,
                       Timestamp createdAt,
                       Timestamp startDate,
                       Timestamp endDate,
                       String title,
                       String content) {
+    }
+
+    public void update(NoticeRequestDto noticeRequestDto, long userId) {
+        this.title = noticeRequestDto.getTitle();
+        this.content = noticeRequestDto.getContent();
+        this.startDate = noticeRequestDto.getStartDate();
+        this.endDate = noticeRequestDto.getEndDate();
+        this.userId = userId;
     }
 }
 

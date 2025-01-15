@@ -3,8 +3,11 @@ package com.buysellgo.helpdeskservice.dto;
 import com.buysellgo.helpdeskservice.entity.Notice;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -29,6 +32,22 @@ public class NoticeRequestDto {
     )
     private String title;
 
+    @Schema(title = "공지 시작 시간", example="2025-01-15T01:55:34.756+00:00", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "시작 시간은 필수 입니다.")
+//    @Pattern(
+//            regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?([+-]\\d{2}:\\d{2}|Z)$\n",
+//            message = "2025-01-15T01:55:34.756+00:00 형식을 사용하세요."
+//    )
+    private Timestamp startDate;
+
+    @Schema(title = "공지 종료 시간", example="2025-01-18T01:55:34.756+00:00", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "시작 시간은 필수 입니다.")
+//    @Pattern(
+//            regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?([+-]\\d{2}:\\d{2}|Z)$\n",
+//            message = "2025-01-18T01:55:34.756+00:00 형식을 사용하세요."
+//    )
+    private Timestamp endDate;
+
     @Schema(title = "공지사항 내용", example="23:00~24:00 시스템 일시 중단", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty(message = "공지사항 내용은 필수 입니다.")
     @Pattern(
@@ -38,6 +57,6 @@ public class NoticeRequestDto {
     private String content;
 
     public Notice toEntity(long userId){
-        return Notice.of(userId, title, content);
+        return Notice.of(userId, title, startDate, endDate, content);
     }
 }
