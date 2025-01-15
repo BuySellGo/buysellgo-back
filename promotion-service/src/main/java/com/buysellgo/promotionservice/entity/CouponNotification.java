@@ -17,8 +17,8 @@ import java.time.Instant;
 public class CouponNotification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="coupon_notification_id")
-    private Long couponNotificationId;
+    @Column(name="id")
+    private Long id;
 
     @Column(name = "profile_id")
     private Long profileId;
@@ -49,10 +49,10 @@ public class CouponNotification {
     }
 
     private Vo toVo(){
-        return new Vo(couponNotificationId, profileId, notiContent, notiDatetime, notiReadDateTime);
+        return new Vo(id, profileId, notiContent, notiDatetime, notiReadDateTime);
     }
 
-    private record Vo(Long couponNotificationId,
+    private record Vo(Long id,
                       Long profileId,
                       String notiContent,
                       Timestamp notiDatetime,

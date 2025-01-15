@@ -19,8 +19,8 @@ public class OneToOneInquiryReply {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "onetoone_inquiry_reply_id")
-    private Long onetooneInquiryReplyId;
+    @Column(name = "id")
+    private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "onetoone_inquiry_id", nullable = false)
@@ -51,11 +51,11 @@ public class OneToOneInquiryReply {
     }
 
     public Vo toVo() {
-        return new Vo(onetooneInquiryReplyId, oneToOneInquiry, userId, content, createdAt, updatedAt);
+        return new Vo(id, oneToOneInquiry, userId, content, createdAt, updatedAt);
     }
 
 
-    private record Vo(Long onetooneInquiryReplyId,
+    private record Vo(Long id,
                       OneToOneInquiry oneToOneInquiry,
                       Long userId,
                       String content,

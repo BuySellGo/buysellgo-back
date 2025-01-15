@@ -50,7 +50,15 @@ public class SecurityConfig {
                         "/sign/duplicate","/sign/social","/sign/kakao",
                         "/sign/naver","/sign/google",
                         "/forget/email","/forget/password",
-                        "/swagger-ui/**","/v3/api-docs/**"
+                        "/swagger-ui/**","/v3/api-docs/**",
+                        //for swagger
+                        "/user-service/v3/api-docs/**",
+                        "/user-service/swagger-ui/**",
+                        "/user-service/swagger-ui.html",
+                        "/user-service/swagger-resources/**",
+                        "/user-service/webjars/**",
+                        "/user-service/swagger-ui-custom.html",
+                        "/user-service/api/v1/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/jwt").permitAll()    // 로그인
 //                    .requestMatchers("/**").access(

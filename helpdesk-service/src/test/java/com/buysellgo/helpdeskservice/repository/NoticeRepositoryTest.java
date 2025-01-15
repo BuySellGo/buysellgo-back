@@ -35,6 +35,6 @@ class NoticeRepositoryTest {
         Notice save = noticeRepository.save(notice);
 
         // then
-        assertNotNull(save.getNoticeId(),"공지사항 ID 생성됨.");
+        assertNotNull(save.getId(),"공지사항 ID 생성됨.");
     }
 }

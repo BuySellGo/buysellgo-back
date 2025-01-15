@@ -19,8 +19,8 @@ import java.util.List;
 public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_id")
-    private Long couponId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -54,11 +54,11 @@ public class Coupon {
     }
 
     public Vo toVo(){
-        return new Vo(couponId, createdAt, couponTitle, discountRate, eligibleRecipient);
+        return new Vo(id, createdAt, couponTitle, discountRate, eligibleRecipient);
     }
 
 
-    private record Vo(Long couponId,
+    private record Vo(Long id,
                       Timestamp createdAt,
                       String couponTitle,
                       Integer discountRate,

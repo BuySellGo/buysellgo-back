@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "delivery_id")
-    private Long deliveryId;
+    @Column(name = "id")
+    private Long id;
 
     // tbl_order와 1:1
     @Column(name = "order_id")
@@ -45,10 +45,10 @@ public class Delivery {
     }
 
     public Vo toVo(){
-        return new Vo(deliveryId, orderId, createdAt, deliveryStatus);
+        return new Vo(id, orderId, createdAt, deliveryStatus);
     }
 
-    private record Vo(Long deliveryId,
+    private record Vo(Long id,
                       Long orderId,
                       Timestamp createdAt,
                       DeliveryStatus deliveryStatus) {
