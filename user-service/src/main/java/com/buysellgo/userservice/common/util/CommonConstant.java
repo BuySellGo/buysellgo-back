@@ -27,6 +27,8 @@ public enum CommonConstant {
     SELLER_DEACTIVATED("판매자 비활성화 완료"),
     ADMIN_SIGN_UP_SUCCESS("관리자 회원가입 완료"),
     TYPE_NOT_SUPPORTED("지원하지 않는 로그인 제공자입니다."),
+    NO_CHANGE("업데이트할 값이 없습니다."),
+    UPDATE_SUCCESS("업데이트 성공"),
 
     // 토큰 상수
     BEARER_PREFIX("Bearer "),
