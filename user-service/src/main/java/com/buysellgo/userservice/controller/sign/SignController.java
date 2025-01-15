@@ -4,6 +4,7 @@ import com.buysellgo.userservice.common.configs.SocialLoginProperties;
 import com.buysellgo.userservice.common.dto.CommonResDto;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.common.exception.CustomException;
+import com.buysellgo.userservice.controller.sign.dto.*;
 import com.buysellgo.userservice.strategy.forget.common.ForgetStrategy;
 import com.buysellgo.userservice.strategy.sign.common.SignContext;
 import com.buysellgo.userservice.strategy.sign.dto.*;

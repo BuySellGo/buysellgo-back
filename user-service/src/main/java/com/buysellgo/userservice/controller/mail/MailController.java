@@ -1,6 +1,9 @@
 package com.buysellgo.userservice.controller.mail;
 
 import com.buysellgo.userservice.common.exception.CustomException;
+import com.buysellgo.userservice.controller.mail.dto.MailSendReq;
+import com.buysellgo.userservice.controller.mail.dto.SendType;
+import com.buysellgo.userservice.controller.mail.dto.VerifyCodeReq;
 import com.buysellgo.userservice.service.dto.ServiceRes;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

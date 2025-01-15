@@ -1,23 +1,32 @@
 package com.buysellgo.userservice.controller.info;
 
 import com.buysellgo.userservice.common.dto.CommonResDto;
+import com.buysellgo.userservice.common.entity.Role;
+import com.buysellgo.userservice.common.exception.CustomException;
+import com.buysellgo.userservice.strategy.info.common.InfoContext;
+import com.buysellgo.userservice.strategy.info.common.InfoResult;
+import com.buysellgo.userservice.strategy.info.common.InfoStrategy;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;        
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+
+import com.buysellgo.userservice.controller.info.dto.InfoUpdateReq;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/info")
 @RequiredArgsConstructor
 @Slf4j
 public class InfoController {
+    private final InfoContext infoContext;
+
     @Operation(summary = "회원정보 조회")
     @GetMapping("/one")
     public ResponseEntity<CommonResDto> getOne() {
@@ -38,11 +47,14 @@ public class InfoController {
 
     @Operation(summary = "회원정보 수정")
     @PutMapping("/edit")
-    public ResponseEntity<CommonResDto> edit() {
-        //회원정보를 수정하는 로직
-        //판매자의 정보를 수정할 수 있음
-        //회원의 정보를 수정할 수 있음
-        //회원의 경우 개인정보 수정과 프로필 수정이 분리되어 있음
-        return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "회원정보 수정 성공", null));
+    public ResponseEntity<CommonResDto> edit(@Valid @RequestBody InfoUpdateReq infoUpdateReq,
+                                             @RequestHeader("X-User-Role") Role role,
+                                             @RequestHeader("X-User-Email") String email) {
+        InfoStrategy<Map<String, Object>> strategy = infoContext.getStrategy(role);
+        InfoResult<Map<String, Object>> result = strategy.edit(infoUpdateReq, email);
+        if(!result.success()) {
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "회원정보 수정 성공", result));
     }
 }
