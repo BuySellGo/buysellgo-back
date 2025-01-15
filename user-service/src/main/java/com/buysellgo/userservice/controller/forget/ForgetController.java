@@ -31,7 +31,7 @@ public class ForgetController {
 
     @Operation(summary = "이메일 찾기(이메일 검증)", description = "사용자의 이메일을 검증합니다.")
     @GetMapping("/email")
-    public ResponseEntity<CommonResDto> forgetEmail(
+    public ResponseEntity<CommonResDto<Object>> forgetEmail(
             @Parameter(description = "사용자의 이메일 주소", example = "user@example.com")
             @RequestHeader("X-Email") String email,
             @Parameter(description = "사용자의 역할", example = "USER")
@@ -44,12 +44,12 @@ public class ForgetController {
         if (!result.success()) {
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, result.message(), result.data()));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary = "비밀번호 찾기(임시 비밀번호 발급)", description = "사용자의 비밀번호를 재설정합니다.")
     @PostMapping("/password")
-    public ResponseEntity<CommonResDto> forgetPassword(
+    public ResponseEntity<CommonResDto<Object>> forgetPassword(
             @Parameter(description = "사용자의 이메일 주소", example = "user@example.com")
             @RequestHeader("X-Email") String email,
             @Parameter(description = "사용자의 역할", example = "USER")
@@ -62,7 +62,7 @@ public class ForgetController {
         if (!result.success()) {
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, result.message(), result.data()));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 }
 

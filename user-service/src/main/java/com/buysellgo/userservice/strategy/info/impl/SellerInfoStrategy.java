@@ -29,8 +29,15 @@ public class SellerInfoStrategy implements InfoStrategy<Map<String, Object>> {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public InfoResult<Map<String, Object>> getOne() {
-        return null;
+    public InfoResult<Map<String, Object>> getOne(String email) {
+        Map<String, Object> data = new HashMap<>();
+        Optional<Seller> sellerOptional = sellerRepository.findByEmail(email);
+        if(sellerOptional.isEmpty()) {
+            return InfoResult.fail(USER_NOT_FOUND.getValue(),data);
+        }
+        Seller seller = sellerOptional.get();
+        data.put(SELLER_VO.getValue(),seller.toVo());
+        return InfoResult.success(SUCCESS.getValue(),data);
     }
 
     @Override

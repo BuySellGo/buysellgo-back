@@ -14,15 +14,16 @@ import org.springframework.stereotype.Component;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.strategy.info.common.InfoResult;
 import com.buysellgo.userservice.strategy.info.common.InfoStrategy;
-import org.springframework.security.crypto.password.PasswordEncoder;        
-
+    
 import lombok.RequiredArgsConstructor;
 
 import static com.buysellgo.userservice.common.util.CommonConstant.*;
 import com.buysellgo.userservice.domain.user.Profile;
 
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;    
+import org.springframework.security.crypto.password.PasswordEncoder;    
                 
+
 @Component
 @RequiredArgsConstructor
 public class UserInfoStrategy implements InfoStrategy<Map<String, Object>> {
@@ -31,8 +32,17 @@ public class UserInfoStrategy implements InfoStrategy<Map<String, Object>> {
     private final ProfileRepository profileRepository;
 
     @Override
-    public InfoResult<Map<String, Object>> getOne() {
-        return null;
+    public InfoResult<Map<String, Object>> getOne(String email) {
+        Map<String, Object> data = new HashMap<>();
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if(userOptional.isEmpty()) {
+            return InfoResult.fail(USER_NOT_FOUND.getValue(),data);
+        }
+        User user = userOptional.get();
+        Profile profile = profileRepository.findByUser(user).orElseThrow();
+        data.put(USER_VO.getValue(),user.toVo());
+        data.put(PROFILE_VO.getValue(),profile.toVo());
+        return InfoResult.success(SUCCESS.getValue(),data);
     }
 
     @Override

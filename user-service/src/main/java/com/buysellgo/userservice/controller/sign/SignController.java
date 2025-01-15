@@ -44,7 +44,7 @@ public class SignController {
 
     @Operation(summary = "회원가입 요청(회원)")
     @PostMapping("/user")
-    public ResponseEntity<CommonResDto> userSign(@Valid @RequestBody UserCreateReq req) {
+    public ResponseEntity<CommonResDto  > userSign(@Valid @RequestBody UserCreateReq req) {
         // 회원가입 전략을 가져와서 처리
         UserSignUpDto signUpDto = UserSignUpDto.from(req);
         SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(Role.USER);
