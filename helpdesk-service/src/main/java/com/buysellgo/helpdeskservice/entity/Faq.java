@@ -1,5 +1,8 @@
 package com.buysellgo.helpdeskservice.entity;
 
+import com.buysellgo.helpdeskservice.dto.FaqRequestDto;
+import com.buysellgo.helpdeskservice.dto.NoticeRequestDto;
+import com.buysellgo.helpdeskservice.repository.FaqGroupRepository;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,9 +36,10 @@ public class Faq {
     @Column(name = "faq_content", columnDefinition = "TEXT")
     private String faqContent;
 
-    public static Faq of(FaqGroup faqGroup,
+        public static Faq of(FaqGroup faqGroup,
                          String faqTitle,
                          String faqContent) {
+
         return Faq.builder()
                 .faqGroup(faqGroup)
                 .createdAt(Timestamp.from(Instant.now()))
@@ -53,5 +57,15 @@ public class Faq {
                       Timestamp createdAt,
                       String faqTitle,
                       String faqContent) {
+    }
+
+    public void update(FaqRequestDto faqRequestDto) {
+
+        this.faqTitle = faqRequestDto.getFaqTitle();
+        this.faqContent = faqRequestDto.getFaqContent();
+//        this.faqGroup =
+//                faqGroupRepository.findById(faqGroupId).orElseThrow(
+//                () -> new EntityNotFoundException("FAQ id: {" + id + "} not found")
+//        );
     }
 }
