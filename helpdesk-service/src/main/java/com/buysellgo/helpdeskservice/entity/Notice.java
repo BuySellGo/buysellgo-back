@@ -80,16 +80,3 @@ public class Notice {
         this.userId = userId;
     }
 }
-
-/*
-CREATE TABLE `notice` (
-        `notice_id`	bigint auto_increment primary key	NOT NULL,
-	`user_id`	bigint	NULL,
-	`created_at`	datetime default current_timestamp	NULL,
-	`start_date`	datetime	NULL,
-	`end_date`	datetime	NULL,
-	`title`	varchar(200)	NULL,
-	`content`	text	NULL
-);
-
- */

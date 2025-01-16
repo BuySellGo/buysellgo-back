@@ -29,9 +29,11 @@ class NoticeRepositoryTest {
         Long userId = 1L;
         String title = "공지사항";
         String content = "오늘 돼지 잡는 날입니다.";
+        Timestamp startDate = Timestamp.from(Instant.now());
+        Timestamp endDate = Timestamp.from(Instant.now().plus(Duration.ofDays(3)));
 
         // when
-        Notice notice = Notice.of(userId, title, content);
+        Notice notice = Notice.of(userId, title, startDate, endDate, content);
         Notice save = noticeRepository.save(notice);
 
         // then

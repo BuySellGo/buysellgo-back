@@ -95,36 +95,31 @@ public class FaqService {
         return new PageImpl<>(faqResponseDtoList, pageable, totalCount);
     }
 
-    public Faq editFaq(Long id, FaqRequestDto faqRequestDto) {
-//        QFaq faq = QFaq.faq;
-//        QFaqGroup faqGroup = QFaqGroup.faqGroup;
-//
-//        JPAQuery<Tuple> query = jpaQueryFactory
-//                .select(faq.id,
-//                        faq.faqTitle,
-//                        faq.faqContent,
-//                        faqGroup.id,
-//                        faqGroup.faqGroupTitle,
-//                        faq.createdAt)
-//                .from(faq)
-//                .leftJoin(faq.faqGroup, faqGroup)
-//                .on(faq.id.eq(id));
-//
-//        Tuple tuple = query.fetchOne();
-//        if(tuple == null) {
-//            log.warn("No faq found");
-//            return null;
-//        }
+    public Faq editFaq(Long faqId, FaqRequestDto faqRequestDto) {
 
-        Faq faq = faqRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Faq id: {" + id + "} not found")
+        FaqGroup faqGroup = faqGroupRepository.findById(faqRequestDto.getFaqGroupId()).orElseThrow(
+                () -> new EntityNotFoundException("Faq group not found")
         );
 
-        faq.update(faqRequestDto);
+        Faq faq = faqRepository.findById(faqId).orElseThrow(
+                () -> new EntityNotFoundException("Faq id: {" + faqId + "} not found")
+        );
 
-        Faq saved = faqRepository.save(faq);
+        faq.update(faqRequestDto, faqGroup);
 
-        return saved;
+        Faq savedFaq = faqRepository.save(faq);
+
+        return savedFaq;
+
+    }
+
+    public void faqDelete(Long faqId) {
+
+        Faq faq = faqRepository.findById(faqId).orElseThrow(
+                () -> new EntityNotFoundException("FAQ id: {" + faqId + "} not found")
+        );
+
+        faqRepository.deleteById(faqId);
 
     }
 }

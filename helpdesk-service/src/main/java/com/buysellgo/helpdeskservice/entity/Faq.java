@@ -59,13 +59,11 @@ public class Faq {
                       String faqContent) {
     }
 
-    public void update(FaqRequestDto faqRequestDto) {
+    public void update(FaqRequestDto faqRequestDto, FaqGroup newFaqGroup) {
 
         this.faqTitle = faqRequestDto.getFaqTitle();
         this.faqContent = faqRequestDto.getFaqContent();
-//        this.faqGroup =
-//                faqGroupRepository.findById(faqGroupId).orElseThrow(
-//                () -> new EntityNotFoundException("FAQ id: {" + id + "} not found")
-//        );
+        this.faqGroup = newFaqGroup;
+
     }
 }

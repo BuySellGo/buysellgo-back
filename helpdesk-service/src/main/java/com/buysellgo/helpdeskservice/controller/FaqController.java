@@ -58,14 +58,13 @@ public class FaqController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "FAQ 수정(관리자)")
-    @PutMapping("/edit/{id}")
+    @PutMapping("/edit/{faqId}")
     public ResponseEntity<?> faqEdit(
             @AuthenticationPrincipal TokenUserInfo tokenUserInfo,
             @RequestBody FaqRequestDto faqRequestDto,
-            @PathVariable Long id
-    ) {
+            @PathVariable Long faqId) {
 
-        Faq faq = faqService.editFaq(id, faqRequestDto);
+        Faq faq = faqService.editFaq(faqId, faqRequestDto);
 
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "FAQ 수정 성공", faq.getId());
 
@@ -73,6 +72,18 @@ public class FaqController {
 
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "FAQ 삭제")
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> faqDelete(
+            @AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+            @RequestParam Long faqId) {
 
+        faqService.faqDelete(faqId);
+
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "FAQ 삭제 완료", null);
+
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
 
 }

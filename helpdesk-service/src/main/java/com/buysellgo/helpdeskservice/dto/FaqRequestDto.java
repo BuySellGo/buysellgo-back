@@ -23,17 +23,9 @@ import java.sql.Timestamp;
 @Schema(description = "FAQ 생성 및 업데이트를 위한 DTO")
 public class FaqRequestDto {
 
-//    @Schema(description = "FAQ 그룹 정보", requiredMode = Schema.RequiredMode.REQUIRED)
-//    @NotNull(message = "FAQ 그룹 정보는 필수 입니다.")
-//    private FaqGroup faqGroup;
-
     @Schema(description = "FAQ 그룹 ID", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "FAQ 그룹 ID 정보는 필수 입니다.")
     private Long faqGroupId;
-
-//    @Schema(title = "FAQ 생성 시간", example="2025-01-18T01:55:34.756+00:00", requiredMode = Schema.RequiredMode.REQUIRED)
-//    @NotNull(message = "생성 시간은 필수 입니다.")
-//    private Timestamp createdAt;
 
     @Schema(title = "FAQ 제목", example="배송지 주소 변경 방법", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty(message = "FAQ 제목은 필수 입니다.")
@@ -52,11 +44,12 @@ public class FaqRequestDto {
     private String faqContent;
 
     public Faq toEntity(FaqGroupRepository faqGroupRepository) {
-//        return Faq.of(faqGroup, faqTitle, faqContent);
+
         // FaqGroup 구성
         FaqGroup faqGroup = faqGroupRepository.findById(faqGroupId).orElseThrow(
                 () -> new EntityNotFoundException("FAQ Group id: {" + faqGroupId + "} not found")
         );
+
         return Faq.of(faqGroup, faqTitle, faqContent);
     }
 }
