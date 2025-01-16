@@ -1,7 +1,7 @@
 package com.buysellgo.userservice.strategy.sign.dto;
 
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.controller.dto.CheckDuplicateReq;
+import com.buysellgo.userservice.controller.sign.dto.CheckDuplicateReq;
 
 public record DuplicateDto(
     String email,
