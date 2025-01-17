@@ -74,6 +74,15 @@ public class RedisConfig {
         return new LettuceConnectionFactory(configuration);
     }
 
+    @Bean(name = "verificationRedisFactory")
+    public RedisConnectionFactory verificationRedisConnectionFactory() {
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+        configuration.setHostName(host);
+        configuration.setPort(port);
+        configuration.setDatabase(4); // 4번 DB를 사용
+        return new LettuceConnectionFactory(configuration);
+    }
+
     @Bean(name = "userTemplate")
     public RedisTemplate<String, Object> userRedisTemplate(
             @Qualifier("userRedisFactory") RedisConnectionFactory factory) {
@@ -89,6 +98,12 @@ public class RedisConfig {
     @Bean(name = "adminTemplate")
     public RedisTemplate<String, Object> adminRedisTemplate(
             @Qualifier("adminRedisFactory") RedisConnectionFactory factory) {
+        return createRedisTemplate(factory);
+    }
+
+    @Bean(name = "verificationTemplate")
+    public RedisTemplate<String, Object> verificationTemplate(
+            @Qualifier("verificationRedisFactory") RedisConnectionFactory factory) {
         return createRedisTemplate(factory);
     }
 

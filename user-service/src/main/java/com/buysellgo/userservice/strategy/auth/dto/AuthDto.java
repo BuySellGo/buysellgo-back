@@ -1,8 +1,8 @@
 package com.buysellgo.userservice.strategy.auth.dto;
 
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.controller.dto.JwtCreateReq;
-import com.buysellgo.userservice.controller.dto.KeepLogin;
+import com.buysellgo.userservice.controller.auth.dto.JwtCreateReq;
+import com.buysellgo.userservice.controller.auth.dto.KeepLogin;
 
 
 public record AuthDto(
