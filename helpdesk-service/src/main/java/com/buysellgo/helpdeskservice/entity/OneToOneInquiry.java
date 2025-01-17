@@ -33,6 +33,10 @@ public class OneToOneInquiry {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
+    @OneToOne(mappedBy = "oneToOneInquiry", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private OneToOneInquiryReply oneToOneInquiryReply;
+
     public static OneToOneInquiry of(Long userId,
                                      String content) {
         return OneToOneInquiry.builder()
@@ -47,7 +51,7 @@ public class OneToOneInquiry {
         return new Vo(id, userId, content, createdAt, updatedAt);
     }
 
-    private record Vo(Long id,
+    public record Vo(Long id,
                       Long userId,
                       String content,
                       Timestamp createdAt,
