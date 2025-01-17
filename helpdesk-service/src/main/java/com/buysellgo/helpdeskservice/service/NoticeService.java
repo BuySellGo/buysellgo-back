@@ -32,7 +32,7 @@ public class NoticeService {
         Page<Notice> noticePage = noticeRepository.findAll(pageable);
 
         if(noticePage.isEmpty()){
-           log.warn("No notice fond for the given page request: {}", pageable);
+           log.warn("No notice found for the given page request: {}", pageable);
            return Page.empty();
         }
 //        noticePage.getContent().forEach(notice -> {
