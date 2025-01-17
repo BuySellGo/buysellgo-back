@@ -21,7 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.data.redis.core.RedisTemplate;
 
 
-import static com.buysellgo.userservice.common.util.CommonConstant.*;
+import static com.buysellgo.userservice.util.CommonConstant.*;
 
 @Component
 @Transactional

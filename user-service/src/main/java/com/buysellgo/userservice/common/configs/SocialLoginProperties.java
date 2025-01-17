@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.Getter;
-import static com.buysellgo.userservice.common.util.CommonConstant.*;
+import static com.buysellgo.userservice.util.CommonConstant.*;
 
 
 @Component

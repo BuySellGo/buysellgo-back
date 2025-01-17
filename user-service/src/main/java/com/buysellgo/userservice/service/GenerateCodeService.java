@@ -10,9 +10,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import lombok.RequiredArgsConstructor;
 import com.buysellgo.userservice.service.dto.ServiceRes;    
 import com.buysellgo.userservice.common.entity.Role;
-import com.buysellgo.userservice.common.util.CommonConstant.*;
 
-import static com.buysellgo.userservice.common.util.CommonConstant.SUCCESS;
+import static com.buysellgo.userservice.util.CommonConstant.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
