@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.common.util;
+package com.buysellgo.chatservice.common.util;
 
 
 public enum CommonConstant {
