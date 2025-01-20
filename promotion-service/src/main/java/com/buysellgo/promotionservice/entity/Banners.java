@@ -3,6 +3,8 @@ package com.buysellgo.promotionservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -21,49 +23,50 @@ public class Banners {
     private Long id;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 
     @Column(name = "banner_title", columnDefinition = "varchar(100)")
     private String bannerTitle;
 
     @Column(name= "start_date")
-    private LocalDateTime startDate;
+    private Timestamp startDate;
 
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private Timestamp endDate;
 
-    @Column(name = "image_url", columnDefinition = "varchar(200)")
-    private String imageUrl;
+    @Column(name = "image_path", columnDefinition = "varchar(200)")
+    private String imagePath;
 
     @Column(name = "product_url", columnDefinition = "varchar(200)")
     private String productUrl;
 
     public static Banners of(String bannerTitle,
-                             LocalDateTime startDate,
-                             LocalDateTime endDate,
-                             String imageUrl,
+                             Timestamp startDate,
+                             Timestamp endDate,
+                             String imagePath,
                              String productUrl) {
 
         return Banners.builder()
-                .createdAt(LocalDateTime.now(ZoneId.of("UTC")))
+//                .createdAt(LocalDateTime.now(ZoneId.of("UTC")))
+                .createdAt(Timestamp.from(Instant.now()))
                 .bannerTitle(bannerTitle)
                 .startDate(startDate)
                 .endDate(endDate)
-                .imageUrl(imageUrl)
+                .imagePath(imagePath)
                 .productUrl(productUrl)
                 .build();
     }
 
     public Vo toVo(){
-        return new Vo(id, createdAt, bannerTitle, startDate, endDate, imageUrl, productUrl);
+        return new Vo(id, createdAt, bannerTitle, startDate, endDate, imagePath, productUrl);
     }
 
 
     private record Vo(Long id,
-                      LocalDateTime createdAt,
+                      Timestamp createdAt,
                       String bannerTitle,
-                      LocalDateTime startDate,
-                      LocalDateTime endDate,
+                      Timestamp startDate,
+                      Timestamp endDate,
                       String imageUrl,
                       String productUrl) {
     }
