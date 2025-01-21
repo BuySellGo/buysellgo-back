@@ -20,10 +20,6 @@ public class InquiryReplyRequestDto {
 
     @Schema(title = "Inquiry ID", example="1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "Inquiry ID는 필수입니다.")
-    @Pattern(
-            regexp = "^\\d{1,19}$",
-            message = "데이터 타입이 잘못 되었습니다."
-    )
     private Long oneToOneInquiryId;
 
     @Schema(title = "1:1 문의 답변 내용", example="100인치 TV 구매를 추천합니다.", requiredMode = Schema.RequiredMode.REQUIRED)
