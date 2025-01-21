@@ -63,7 +63,6 @@ public class Banners {
                              Boolean isActivated) {
 
         return Banners.builder()
-//                .createdAt(LocalDateTime.now(ZoneId.of("UTC")))
                 .promotion(promotion)
                 .createdAt(Timestamp.from(Instant.now()))
                 .bannerTitle(bannerTitle)

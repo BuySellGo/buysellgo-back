@@ -14,13 +14,9 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Builder
 public class PromotionRequestDto {
-    //    private Long sellerId;  // TokenUserInfo.getId()
+
     @Schema(title = "Product ID", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "Product ID는 필수입니다.")
-//    @Pattern(
-//            regexp = "^\\d{1,19}$",
-//            message = "데이터 타입이 잘못 되었습니다."
-//    )
     private Long productId;
 
     @Schema(title = "Discount Rate", example = "30", requiredMode = Schema.RequiredMode.REQUIRED)

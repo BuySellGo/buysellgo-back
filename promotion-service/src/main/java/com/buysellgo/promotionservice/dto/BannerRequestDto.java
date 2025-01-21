@@ -49,7 +49,7 @@ public class BannerRequestDto {
     private Boolean isActivated;
 
 //    @Schema(title = "배너 이미지 Path", example = "/Users/playdata2/Pictures/banner.webp", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-////    @NotNull(message = "배너 이미지 Path 는 필수 입니다.")
+//    @NotNull(message = "배너 이미지 Path 는 필수 입니다.")
 //    private MultipartFile bannerImagePath;
 
     public Banners toEntity(String bannerImagePath, PromotionRepository promotionRepository) {
