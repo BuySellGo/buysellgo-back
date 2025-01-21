@@ -8,6 +8,8 @@ spring:
 eureka:
   instance:
     hostname: discovery-service
+  server:
+    response-cache-update-interval-ms: 5000
   client:
     register-with-eureka: false
     fetch-registry: false
