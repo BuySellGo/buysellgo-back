@@ -9,10 +9,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,7 +33,7 @@ public class BannerController {
 
     @Operation(summary = "배너 등록(관리자)")
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/create")
+    @PostMapping(value="/create", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createBanner(
             @AuthenticationPrincipal TokenUserInfo tokenUserInfo,
             @Valid @RequestPart("bannerRequestDto") BannerRequestDto bannerRequestDto,
@@ -126,6 +128,28 @@ public class BannerController {
         Banners banners = bannerService.updateBanner(id, bannerRequestDto, bannerImagePath);
 
         CommonResDto<Long> resDto = new CommonResDto<>(HttpStatus.OK, "배너 수정 성공(관리자)", banners.getId());
+
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "배너 삭제(관리자)")
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteBanner(
+            @AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+            @PathVariable Long id) {
+
+        // 인증된 사용자 정보(sellerId) 확인
+        if (tokenUserInfo == null) {
+            return new ResponseEntity<>(new CommonResDto<>(
+                    HttpStatus.UNAUTHORIZED,
+                    "Unauthorized",
+                    null), HttpStatus.UNAUTHORIZED);
+        }
+
+        bannerService.deleteBanner(id);
+
+        CommonResDto<Object> resDto = new CommonResDto<>(HttpStatus.OK, "배너 삭제 성공", null);
 
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }

@@ -103,6 +103,14 @@ public class BannerService {
 
 
     }
+
+    public void deleteBanner(Long bannerId) {
+        Banners banners = bannersRepository.findById(bannerId).orElseThrow(
+                () -> new EntityNotFoundException("Banner not found with id: " + bannerId)
+        );
+
+        bannersRepository.delete(banners);
+    }
 }
 
 /*
