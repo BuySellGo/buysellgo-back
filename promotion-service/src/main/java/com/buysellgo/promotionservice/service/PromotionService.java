@@ -60,7 +60,7 @@ public class PromotionService {
 
     public void deletePromotion(Long promotionId) {
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(
-                () -> new RuntimeException("Promotion not found for promotionId: " + promotionId)
+                () -> new EntityNotFoundException("Promotion not found for promotionId: " + promotionId)
         );
 
         promotionRepository.deleteById(promotionId);

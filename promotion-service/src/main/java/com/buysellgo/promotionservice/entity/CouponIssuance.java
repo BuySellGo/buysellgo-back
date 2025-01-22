@@ -20,8 +20,8 @@ public class CouponIssuance {
     @Column(name = "id")
     private Long id;
 
-    @Column(name="profile_id")
-    private Long profileId;
+    @Column(name="user_id")
+    private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id", nullable = false)
@@ -31,9 +31,9 @@ public class CouponIssuance {
     private Timestamp createdAt;
 
     // 생성 메서드
-    public static CouponIssuance of(Long profileId, Coupon coupon) {
+    public static CouponIssuance of(Long userId, Coupon coupon) {
         return CouponIssuance.builder()
-                .profileId(profileId)
+                .userId(userId)
                 .coupon(coupon)
                 .createdAt(Timestamp.from(Instant.now()))
                 .build();
@@ -41,12 +41,12 @@ public class CouponIssuance {
 
     // VO 객체로 변환하는 메서드
     public Vo toVo() {
-        return new Vo(id, profileId, coupon.getId(), createdAt);
+        return new Vo(id, userId, coupon.getId(), createdAt);
     }
 
     // DTO 객체로 사용할 VO (Value Object)
-    private record Vo(Long id,
-                      Long profileId,
+    public record Vo(Long id,
+                      Long userId,
                       Long couponId,
                       Timestamp createdAt) {
     }
