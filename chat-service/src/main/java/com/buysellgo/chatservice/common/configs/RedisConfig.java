@@ -10,6 +10,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -31,7 +32,7 @@ public class RedisConfig {
         log.info(REDIS_HOST_LOG_MESSAGE, host);
         configuration.setHostName(host);
         configuration.setPort(port);
-        configuration.setDatabase(0); // 기본 DB 사용
+        configuration.setDatabase(0); // 0번 DB 사용
         return new LettuceConnectionFactory(configuration);
     }
 
