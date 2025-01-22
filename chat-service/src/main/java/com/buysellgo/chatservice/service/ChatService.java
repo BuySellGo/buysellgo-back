@@ -22,15 +22,25 @@ public class ChatService {
     private final KafkaTemplate<String, Message> kafkaTemplate;
 
     public List<Message> getUnreadMessages(String chatRoomId, String receiver) {
-        // 읽지 않은 메세지를 가져오는 메서드       
+        // 채팅방 ID와 읽지 않은 메시지를 기준으로 메시지 목록을 조회합니다.
+        // timestamp를 기준으로 오름차순 정렬하여 시간순으로 메시지를 가져옵니다.
         List<Message> messages = messageRepository.findByChatRoomIdAndReadFalse(chatRoomId, Sort.by(Sort.Direction.ASC, "timestamp")); 
-        // 읽지 않은 메세지를 읽음으로 변경(수신자가 본인인 경우)
+
+        // 조회된 메시지 목록을 순회하면서 수신자가 본인인 메시지를 읽음 처리합니다.
         for (Message message : messages) {
+            // 메시지의 수신자가 파라미터로 전달받은 receiver와 일치하는 경우
             if (message.getReceiver().equals(receiver)) {
+                // 기본적으로 모든 메세지는 읽지 않은 상태로 저장되기 때문에 읽음 상태로 변경합니다.
+                // 읽지 않은 상태로 저장하는 이유는 웹소켓 방식에서 쌍방이 접속했다는 이벤트를 인식하는 것을 구현을 못해서 그렇습니다....
                 message.setRead(true);
+                // 변경된 메시지를 데이터베이스에 저장합니다.
                 messageRepository.save(message);
             }
         }
+        // 조회된 메시지 목록을 반환합니다.
+        // 원래는 카프카를 사용하여 하려고 했는데 
+        // 공통된 채팅방을 웹소켓으로 구독하고 있기 때문에 안읽은 메세지를 확인할시 보내는 쪽에서도 중복하여 메세지가 나는 경우가 있었습니다.
+        // 그래서 카프카를 사용하지 않고 http 메서드로 돌려주는 방식으로 바꿨습니다.
         return messages;
     }
 
