@@ -35,21 +35,23 @@ public class ChatService {
     }
 
     public void sendMessage(Map<String,Object> messageData) { 
-        // 메세지를 보내는 메서드
+        // 새로운 메시지 객체 생성
         Message message = new Message(); 
-        // 채팅방 아이디(메세지 보낸 사람과 받은 사람의 아이디를 조합하여 생성)
+        // 채팅방 ID 설정 (회원쪽 클라이언트에서 회원 아이디로 설정)
         message.setChatRoomId((String) messageData.get("chatRoomId"));
-        // 메세지 보낸 사람
+        // 발신자 ID 설정 
         message.setSender((String) messageData.get("sender"));
-        // 메세지 받은 사람
+        // 수신자 ID 설정 
         message.setReceiver((String) messageData.get("receiver"));
-        // 메세지 내용
+        // 메시지 내용 설정
         message.setContents((String) messageData.get("contents"));
-        // 메세지 보낸 시간
+        // 현재 시간을 타임스탬프로 설정
         message.setTimestamp(System.currentTimeMillis());
-        // 메세지 읽음 여부
+        // 읽음 상태를 false로 초기화
         message.setRead(false);
+        // 메시지를 데이터베이스에 저장
         messageRepository.save(message);
+        // 읽지 않은 메시지를 Kafka 토픽으로 전송
         kafkaTemplate.send("chat-topic-unread", message);
     }
 

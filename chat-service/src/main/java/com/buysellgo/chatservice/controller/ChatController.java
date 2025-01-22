@@ -17,7 +17,7 @@ import com.buysellgo.chatservice.entity.Message;
 @Slf4j
 public class ChatController {
 
-    private final ChatService chatService;
+    private final ChatService chatService;  
 
     @GetMapping("/chat/unread")
     public ResponseEntity<List<Message>> getUnreadMessages(@RequestParam String chatRoomId, @RequestParam String receiver) {
@@ -27,8 +27,10 @@ public class ChatController {
         return ResponseEntity.ok().body(messages);
     }
 
+   
     @MessageMapping("/chat/send")
-    public void sendMessage( Map<String,Object> message) {
+    // @MessageMapping은 WebSocket을 통해 들어오는 메시지를 처리하는 메서드임을 나타냅니다.
+    public void sendMessage(Map<String,Object> message) {
         log.info("/chat/send");
         // 메세지를 보내는 메서드
         chatService.sendMessage(message);
