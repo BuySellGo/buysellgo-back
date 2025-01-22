@@ -34,7 +34,10 @@ public class InquiryController {
 
         // 인증된 사용자 정보 확인
         if (tokenUserInfo == null) {
-            return new ResponseEntity<>(new CommonResDto(HttpStatus.UNAUTHORIZED, "Unauthorized", null), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new CommonResDto(
+                    HttpStatus.UNAUTHORIZED,
+                    "Unauthorized",
+                    null), HttpStatus.UNAUTHORIZED);
         }
 
         OneToOneInquiry oneToOneInquiry
