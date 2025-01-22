@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.buysellgo.userservice.common.util.CommonConstant.*;
+import static com.buysellgo.userservice.util.CommonConstant.*;
 
 @Component
 @Transactional

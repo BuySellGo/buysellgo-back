@@ -24,12 +24,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-import static com.buysellgo.userservice.common.util.CommonConstant.*;
+import static com.buysellgo.userservice.util.CommonConstant.*;
 import com.buysellgo.userservice.strategy.forget.common.ForgetResult;   
 import com.buysellgo.userservice.strategy.forget.common.ForgetContext;
 import com.buysellgo.userservice.strategy.auth.common.AuthContext;
 import com.buysellgo.userservice.strategy.auth.common.AuthResult;
 import com.buysellgo.userservice.strategy.auth.common.AuthStrategy;
+
+import java.util.HashMap;
 
 @Slf4j
 @RestController
@@ -44,7 +46,7 @@ public class SignController {
 
     @Operation(summary = "회원가입 요청(회원)")
     @PostMapping("/user")
-    public ResponseEntity<CommonResDto  > userSign(@Valid @RequestBody UserCreateReq req) {
+    public ResponseEntity<CommonResDto<Map<String,Object>>> userSign(@Valid @RequestBody UserCreateReq req) {
         // 회원가입 전략을 가져와서 처리
         UserSignUpDto signUpDto = UserSignUpDto.from(req);
         SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(Role.USER);
@@ -55,12 +57,12 @@ public class SignController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(new CommonResDto(HttpStatus.CREATED, "회원가입 성공(회원)", result.data()));
+            .body(new CommonResDto<>(HttpStatus.CREATED, "회원가입 성공(회원)", result.data()));
     }
 
     @Operation(summary = "회원가입 요청(판매자)")
     @PostMapping("/seller")
-    public ResponseEntity<CommonResDto> sellerSign(@Valid @RequestBody SellerCreateReq req) {
+    public ResponseEntity<CommonResDto<Map<String,Object>>> sellerSign(@Valid @RequestBody SellerCreateReq req) {
         // 판매자 회원가입 전략을 가져와서 처리
         SellerSignUpDto signUpDto = SellerSignUpDto.from(req);
         SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(Role.SELLER);
@@ -71,12 +73,12 @@ public class SignController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(new CommonResDto(HttpStatus.CREATED, "회원가입 성공(판매자)", result.data()));
+            .body(new CommonResDto<>(HttpStatus.CREATED, "회원가입 성공(판매자)", result.data()));
     }
 
     @Operation(summary = "회원가입 요청(관리자)")
     @PostMapping("/admin")
-    public ResponseEntity<CommonResDto> adminSign(@Valid @RequestBody AdminCreateReq req) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> adminSign(@Valid @RequestBody AdminCreateReq req) {
         // 관리자 회원가입 전략을 가져와서 처리
         AdminSignUpDto signUpDto = AdminSignUpDto.from(req);
         SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(Role.ADMIN);
@@ -87,12 +89,12 @@ public class SignController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(new CommonResDto(HttpStatus.CREATED, "회원가입 성공(관리자)", result.data()));
+            .body(new CommonResDto<>(HttpStatus.CREATED, "회원가입 성공(관리자)", result.data()));
     }
 
     @Operation(summary = "회원탈퇴 요청(회원)")
     @DeleteMapping("/user")
-    public ResponseEntity<CommonResDto> userDelete(
+    public ResponseEntity<CommonResDto<Map<String, Object>>> userDelete(
             @RequestHeader(value = "Authorization", required = true) String accessToken) {
         if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
             throw new IllegalArgumentException("잘못된 Authorization 헤더 형식입니다.");
@@ -107,12 +109,12 @@ public class SignController {
             throw new CustomException(result.message());
         }
         return ResponseEntity.status(HttpStatus.OK)
-            .body(new CommonResDto(HttpStatus.OK, "회원 탈퇴 완료(회원)", result.data()));
+            .body(new CommonResDto<>(HttpStatus.OK, "회원 탈퇴 완료(회원)", result.data()));
     }
 
     @Operation(summary = "회원탈퇴 요청(판매자)")
     @DeleteMapping("/seller")
-    public ResponseEntity<CommonResDto> sellerDelete(
+    public ResponseEntity<CommonResDto<Map<String, Object>>> sellerDelete(
             @RequestHeader(value = "Authorization", required = true) String accessToken){
         if(!accessToken.startsWith(BEARER_PREFIX.getValue())) {
             throw new IllegalArgumentException("잘못된 Authorization 헤더 형식입니다.");
@@ -127,12 +129,12 @@ public class SignController {
             throw new CustomException(result.message());
         }
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new CommonResDto(HttpStatus.OK,"회원 탈퇴 완료(판매자)", result.data()));
+                .body(new CommonResDto<>(HttpStatus.OK,"회원 탈퇴 완료(판매자)", result.data()));
     }
 
     @Operation(summary = "중복 검사")
     @GetMapping("/duplicate")
-    public ResponseEntity<CommonResDto> checkDuplicate(@Valid @RequestBody CheckDuplicateReq req) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> checkDuplicate(@Valid @RequestBody CheckDuplicateReq req) {
         // 중복 검사 전략을 가져와서 처리
         SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(req.role());
         SignResult<Map<String, Object>> result = strategy.duplicate(DuplicateDto.from(req));
@@ -142,13 +144,13 @@ public class SignController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(new CommonResDto(HttpStatus.OK, "중복 검사 완료", result.data()));
+            .body(new CommonResDto<>(HttpStatus.OK, "중복 검사 완료", result.data()));
     }
 
     @Operation(summary = "회원 활성화 및 판매자 승인(관리자)")
     @PutMapping("/activate")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CommonResDto> activate(@RequestBody ActivateReq req) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> activate(@RequestBody ActivateReq req) {
         // 활성화 전략을 가져와서 처리
         SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(req.role());
         SignResult<Map<String, Object>> result = strategy.activate(ActivateDto.from(req));
@@ -158,13 +160,13 @@ public class SignController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(new CommonResDto(HttpStatus.OK, "회원 활성화 및 판매자 승인 완료", result.data()));
+            .body(new CommonResDto<>(HttpStatus.OK, "회원 활성화 및 판매자 승인 완료", result.data()));
     }
 
     @Operation(summary = "회원 비활성화 및 판매자 비활성화(관리자)")
     @PutMapping("/deactivate")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CommonResDto> deactivate(@RequestBody ActivateReq req) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> deactivate(@RequestBody ActivateReq req) {
         // 비활성화 전략을 가져와서 처리
         SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(req.role());
         SignResult<Map<String, Object>> result = strategy.deactivate(ActivateDto.from(req));
@@ -174,26 +176,28 @@ public class SignController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(new CommonResDto(HttpStatus.OK, "회원 비활성화 및 판매자 비활성화 완료", result.data()));
+            .body(new CommonResDto<>(HttpStatus.OK, "회원 비활성화 및 판매자 비활성화 완료", result.data()));
     }
 
     @Operation(summary = "소셜 로그인(회원)")
     @GetMapping("/social")
-    public ResponseEntity<CommonResDto> socialLogin(@RequestBody SocialLoginReq req) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> socialLogin(@RequestBody SocialLoginReq req) {
         // 소셜 로그인 URL을 생성하여 반환
         String redirectUrl = socialLoginProperties.getRedirectUrl(req.provider());
+        Map<String, Object> data = new HashMap<>();
+        data.put("redirectUrl", redirectUrl);
 
         if(redirectUrl.equals(TYPE_NOT_SUPPORTED.getValue())) {
             throw new CustomException(TYPE_NOT_SUPPORTED.getValue());
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(new CommonResDto(HttpStatus.OK, "소셜 로그인 링크 전달", redirectUrl));
+            .body(new CommonResDto<>(HttpStatus.OK, "소셜 로그인 링크 전달", data));
     }
 
     @Operation(summary = "소셜 로그인 콜백(회원)")
     @GetMapping("/{provider}")
-    public ResponseEntity<CommonResDto> socialCallback(@PathVariable String provider, @RequestParam String code) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> socialCallback(@PathVariable String provider, @RequestParam String code) {
         // 소셜 로그인 전략을 가져와서 처리
         SocialLoginStrategy<Map<String,Object>> socialStrategy = socialLoginContext.getStrategy(provider);
         SocialLoginResult<Map<String, Object>> socialResult = socialStrategy.execute(code);
@@ -225,7 +229,7 @@ public class SignController {
 
         return ResponseEntity.status(HttpStatus.OK)
             .headers(headers)
-            .body(new CommonResDto(HttpStatus.OK, provider+" 로그인 완료", authResult.data()));
+            .body(new CommonResDto<>(HttpStatus.OK, provider+" 로그인 완료", authResult.data()));
 
     }
 }

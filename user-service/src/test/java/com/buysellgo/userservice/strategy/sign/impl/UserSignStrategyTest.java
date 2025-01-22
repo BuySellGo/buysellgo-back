@@ -25,7 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.buysellgo.userservice.common.util.CommonConstant.*;
+import static com.buysellgo.userservice.util.CommonConstant.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
