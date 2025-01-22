@@ -26,55 +26,31 @@ public class SwaggerConfig {
             @Value("${openapi.service.title}") String serviceTitle,
             @Value("${openapi.service.version}") String serviceVersion) {
 
-        System.out.println("!@#$%^&*()_!@#$%^&*()!@#$%^&*(@#$%^&*(@#$%^&*(!@#$%^&*(@#$%^&*");
+        System.out.println("SwaggerConfig......");
         log.info("serverUrl={}", url);
+
+        // SecurityScheme 명
+        String jwtSchemeName = "jwtAuth";
+
+        // API 요청 헤더에 인증정보 포함. Security Requirement 정의
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
+
+        // Security Scheme 정의
+        SecurityScheme securityScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER)
+                .name(jwtSchemeName);
+
 
         return new OpenAPI()
                 .servers(List.of(new Server().url(url)))
-                .components(new Components().addSecuritySchemes(
-                    "Bearer",
-                    new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .info(new Info()
                         .title(serviceTitle)
                         .version(serviceVersion)
-                        .description("Statistic Service API"));
+                        .description("Statistics Service API"))
+                .addSecurityItem(securityRequirement)
+                .schemaRequirement(jwtSchemeName, securityScheme);
     }
-
-//    @Bean
-//    public OpenAPI openAPI(){
-//        Info info = new Info()
-//                .title("User Service")
-//                .version("v1")
-//                .description("User Service API");
-//
-//        SecurityScheme jwtSecurityScheme = new SecurityScheme()
-//                .type(SecurityScheme.Type.HTTP)
-//                .scheme("Bearer")
-//                .bearerFormat("JWT")
-//                .in(SecurityScheme.In.HEADER)
-//                .name("Authorization");
-//
-//        SecurityScheme xAuthorizationId = new SecurityScheme()
-//                .type(SecurityScheme.Type.APIKEY)
-//                .in(SecurityScheme.In.HEADER)
-//                .name("X-Authorization-Id");
-//
-//        SecurityRequirement securityRequirement = new SecurityRequirement()
-//                .addList("bearerAuth")
-//                .addList("X-Authorization");
-//
-//        Server server = new Server().url("${openapi.service.url}");
-//
-//        return new OpenAPI()
-//                .info(info)
-//                .components(
-//                        new Components()
-//                                .addSecuritySchemes("bearerAuth", jwtSecurityScheme)
-//                                .addSecuritySchemes("xAuthorization", xAuthorizationId)
-//                )
-//                .security(List.of(SecurityRequirement))
-//                .servers(List.of(server));
-//    }
-
 }
