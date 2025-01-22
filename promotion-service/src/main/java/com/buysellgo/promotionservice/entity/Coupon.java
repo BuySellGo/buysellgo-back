@@ -58,7 +58,7 @@ public class Coupon {
     }
 
 
-    private record Vo(Long id,
+    public record Vo(Long id,
                       Timestamp createdAt,
                       String couponTitle,
                       Integer discountRate,

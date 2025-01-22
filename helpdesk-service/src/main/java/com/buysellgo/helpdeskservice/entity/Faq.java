@@ -36,7 +36,7 @@ public class Faq {
     @Column(name = "faq_content", columnDefinition = "TEXT")
     private String faqContent;
 
-        public static Faq of(FaqGroup faqGroup,
+    public static Faq of(FaqGroup faqGroup,
                          String faqTitle,
                          String faqContent) {
 
@@ -52,11 +52,11 @@ public class Faq {
         return new Vo(id, faqGroup.getId(), createdAt, faqTitle, faqContent);
     }
 
-    private record Vo(Long id,
-                      Long faqGroupId,
-                      Timestamp createdAt,
-                      String faqTitle,
-                      String faqContent) {
+    public record Vo(Long id,
+                     Long faqGroupId,
+                     Timestamp createdAt,
+                     String faqTitle,
+                     String faqContent) {
     }
 
     public void update(FaqRequestDto faqRequestDto, FaqGroup newFaqGroup) {
