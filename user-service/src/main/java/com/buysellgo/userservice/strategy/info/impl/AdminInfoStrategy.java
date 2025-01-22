@@ -21,7 +21,7 @@ import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.strategy.info.common.InfoResult;
 import com.buysellgo.userservice.strategy.info.common.InfoStrategy;
 
-import static com.buysellgo.userservice.common.util.CommonConstant.*;
+import static com.buysellgo.userservice.util.CommonConstant.*;
 import com.buysellgo.userservice.controller.info.dto.UpdateType;
 
 import org.apache.commons.lang3.ObjectUtils;

@@ -17,7 +17,7 @@ import com.buysellgo.userservice.strategy.info.common.InfoStrategy;
     
 import lombok.RequiredArgsConstructor;
 
-import static com.buysellgo.userservice.common.util.CommonConstant.*;
+import static com.buysellgo.userservice.util.CommonConstant.*;
 import com.buysellgo.userservice.domain.user.Profile;
 
 import org.apache.commons.lang3.ObjectUtils;    

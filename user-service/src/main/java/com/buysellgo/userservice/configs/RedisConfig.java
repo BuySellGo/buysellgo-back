@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.common.configs;
+package com.buysellgo.userservice.configs;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

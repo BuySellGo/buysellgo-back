@@ -1,6 +1,6 @@
 package com.buysellgo.userservice.strategy.forget.impl;
 
-import static com.buysellgo.userservice.common.util.CommonConstant.USER_NOT_FOUND;
+import static com.buysellgo.userservice.util.CommonConstant.USER_NOT_FOUND;
 
 import java.util.HashMap;
 import java.util.Map;

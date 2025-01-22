@@ -8,7 +8,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
-import com.buysellgo.userservice.common.configs.EmailConfig;
+import com.buysellgo.userservice.configs.EmailConfig;
 import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor        

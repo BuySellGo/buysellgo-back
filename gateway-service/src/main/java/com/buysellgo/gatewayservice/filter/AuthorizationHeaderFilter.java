@@ -67,6 +67,7 @@ public class AuthorizationHeaderFilter
             new RoutePattern("/sign/google"),
             new RoutePattern("/forget/email"),
             new RoutePattern("/forget/password"),
+            // chat-service
 
             // HTTP 메서드별 허용
             new RoutePattern("/auth/jwt", "POST"),   // 로그인
@@ -99,6 +100,12 @@ public class AuthorizationHeaderFilter
             String path = exchange.getRequest().getURI().getPath();
             String method = exchange.getRequest().getMethod().name();
             AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+            // WebSocket 요청인지 확인(웹소켓은 http가 아니라 websocket이라서 추가)
+            if (exchange.getRequest().getHeaders().containsKey("Upgrade") &&
+                "websocket".equalsIgnoreCase(exchange.getRequest().getHeaders().getFirst("Upgrade"))) {
+                return chain.filter(exchange);
+            }
 
             // 허용된 패턴인지 확인
             boolean isAllowed = allowPatterns.stream()

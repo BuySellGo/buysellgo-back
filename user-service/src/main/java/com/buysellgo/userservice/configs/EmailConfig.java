@@ -1,4 +1,4 @@
-package com.buysellgo.userservice.common.configs;
+package com.buysellgo.userservice.configs;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

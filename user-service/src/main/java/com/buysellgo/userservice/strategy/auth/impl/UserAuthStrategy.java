@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;       
 import com.buysellgo.userservice.repository.ProfileRepository;
 
-import static com.buysellgo.userservice.common.util.CommonConstant.*;
+import static com.buysellgo.userservice.util.CommonConstant.*;
 
 @Transactional
 @Component
