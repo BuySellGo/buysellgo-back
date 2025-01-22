@@ -66,11 +66,23 @@ public class ChatService {
     }
 
     public List<String> getChatRoom(String receiver) {
+        // 채팅방 목록을 저장할 Set 생성
+        // 채팅방 목록은 수신자와 대화한 모든 발신자의 ID 리스트..이기 때문에 중복을 제거하기 위해 Set을 사용합니다.
         Set<String> chatRooms = new HashSet<>();    
+        // 수신자 ID를 기반으로 메시지 목록을 조회
+        // 조회된 메시지 목록을 순회하면서 발신자 ID를 채팅방 목록에 추가
         List<Message> messages = messageRepository.findByReceiver(receiver);
         for (Message message : messages) {
             chatRooms.add(message.getSender());
         }
+        // 채팅방 목록을 반환
         return new ArrayList<>(chatRooms);
+    }
+
+    public List<Message> getChatRoomMessages(String chatRoomId) {
+        // 채팅방 ID를 기반으로 메시지 목록을 조회
+        // 채팅방 메세지는 최신순으로 정렬되어 있기 때문에 Sort.by(Sort.Direction.ASC, "timestamp")를 사용하여 시간순으로 정렬합니다.
+        // 조회된 메시지 목록을 반환
+        return messageRepository.findByChatRoomId(chatRoomId, Sort.by(Sort.Direction.ASC, "timestamp"));
     }
 }

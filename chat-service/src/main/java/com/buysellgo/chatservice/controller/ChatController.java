@@ -11,7 +11,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import com.buysellgo.chatservice.entity.Message;
-import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Operation;      
+import com.buysellgo.chatservice.common.exception.CustomException;              
 
 @RestController
 @RequiredArgsConstructor
@@ -29,6 +30,9 @@ public class ChatController {
         List<Message> messages = chatService.getUnreadMessages(chatRoomId, receiver);
         // 조회된 메시지 목록을 HTTP 200 OK 상태코드와 함께 반환
         // 클라이언트에서는 메세지 목록을 받아서 처리합니다.
+        if (messages.isEmpty()) {
+            throw new CustomException("읽지 않은 메시지가 없습니다.");
+        }
         return ResponseEntity.ok().body(messages);
     }
 
@@ -45,9 +49,28 @@ public class ChatController {
     @GetMapping("/chat/room")
     public ResponseEntity<List<String>> getChatRoom(@RequestParam String receiver) {
         log.info("/chat/room");
-        // 채팅방을 가져오는 메서드
-        // 채팅방 아이디를 반환
+        // 수신자 ID를 기반으로 채팅방 목록을 조회
+        // 현재 서비스에서 이 기능은 관리자만 사용합니다.
+        // 관리자와의 1대1 채팅방이기 때문입니다.
+        // 채팅방 목록은 수신자와 대화한 모든 발신자의 ID 리스트
         List<String> chatRooms = chatService.getChatRoom(receiver);
+        // 조회된 채팅방 목록을 HTTP 200 OK 상태코드와 함께 반환
+        // 클라이언트는 이 목록을 사용하여 채팅방 UI를 구성할 수 있음
+        if (chatRooms.isEmpty()) {
+            throw new CustomException("채팅방이 없습니다.");
+        }
         return ResponseEntity.ok().body(chatRooms);
+    }
+
+    @Operation(summary = "채팅방 조회", description = "채팅방을 조회합니다.")  
+    @GetMapping("/chat/message")
+    public ResponseEntity<List<Message>> getChatRoomMessages(@RequestParam String chatRoomId) {
+        log.info("/chat/message");
+        // 채팅방 ID를 기반으로 메시지 목록을 조회
+        List<Message> messages = chatService.getChatRoomMessages(chatRoomId);
+        if (messages.isEmpty()) {
+            throw new CustomException("채팅방 메시지가 없습니다.");
+        }   
+        return ResponseEntity.ok().body(messages);
     }
 }
