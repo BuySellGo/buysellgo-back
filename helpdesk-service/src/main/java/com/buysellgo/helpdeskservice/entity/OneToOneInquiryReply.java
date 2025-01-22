@@ -24,6 +24,7 @@ public class OneToOneInquiryReply {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "onetoone_inquiry_id", nullable = false)
+    @ToString.Exclude
     private OneToOneInquiry oneToOneInquiry;
 
     @Column(name = "user_id")
@@ -51,12 +52,12 @@ public class OneToOneInquiryReply {
     }
 
     public Vo toVo() {
-        return new Vo(id, oneToOneInquiry, userId, content, createdAt, updatedAt);
+        return new Vo(id, oneToOneInquiry.getId(), userId, content, createdAt, updatedAt);
     }
 
 
     private record Vo(Long id,
-                      OneToOneInquiry oneToOneInquiry,
+                      Long oneToOneInquiryId,
                       Long userId,
                       String content,
                       Timestamp createdAt,
