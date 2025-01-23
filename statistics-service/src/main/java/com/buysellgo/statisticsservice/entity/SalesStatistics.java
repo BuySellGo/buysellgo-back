@@ -29,10 +29,10 @@ public class SalesStatistics {
     @Column(name = "sales_amount")
     private Long salesAmount;
 
-    public static SalesStatistics of(Long sellerId, Long salesAmount) {
+    public static SalesStatistics of(Long sellerId, Timestamp createdAt, Long salesAmount) {
         return SalesStatistics.builder()
                 .sellerId(sellerId)
-                .createdAt(Timestamp.from(Instant.now()))
+                .createdAt(createdAt)
                 .salesAmount(salesAmount)
                 .build();
     }
@@ -41,7 +41,7 @@ public class SalesStatistics {
         return new Vo(id, sellerId, createdAt, salesAmount);
     }
 
-    private record Vo(Long id,
+    public record Vo(Long id,
                       Long sellerId,
                       Timestamp createdAt,
                       Long salesAmount) {

@@ -6,6 +6,8 @@ import com.buysellgo.statisticsservice.entity.AccessStatistics;
 import com.buysellgo.statisticsservice.service.AccessStatisticsService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,13 +24,13 @@ import org.springframework.web.bind.annotation.*;
 public class AccessStatisticsController {
     private final AccessStatisticsService accessStatisticsService;
 
-    @Operation(summary = "회원 접속 통계")
+    @Operation(summary = "회원 접속 통계 기록")
     @PostMapping("/record")
     public ResponseEntity<?> recordAccessStatistics(
             @AuthenticationPrincipal TokenUserInfo tokenUserInfo,
             HttpServletRequest request) {
 
-        // 인증된 사용자 정보(sellerId) 확인
+        // 인증된 사용자 정보 확인
         if (tokenUserInfo == null) {
             return new ResponseEntity<>(new CommonResDto<>(
                     HttpStatus.UNAUTHORIZED,
@@ -96,9 +98,26 @@ public class AccessStatisticsController {
     @GetMapping("/monthly")
     public ResponseEntity<?> monthlyAccessStatistics(
             @AuthenticationPrincipal TokenUserInfo tokenUserInfo,
-            @RequestParam int year, @RequestParam int month) {
+            @RequestParam @Min(2000) int year,
+            @RequestParam @Min(1) @Max(12) int month) {
 
-        accessStatisticsService.getMonthlyAccessStats(year, month)
+        // 인증된 사용자 정보(ADMIN) 확인
+        if (tokenUserInfo == null) {
+            return new ResponseEntity<>(new CommonResDto<>(
+                    HttpStatus.UNAUTHORIZED,
+                    "Unauthorized",
+                    null), HttpStatus.UNAUTHORIZED);
+        }
+        log.info("year: {}, month: {}", year, month);
+
+        AccessStatisticsService.MonthlyAccessStatisticsReport monthlyAccessStats
+                = accessStatisticsService.getMonthlyAccessStats(year, month);
+
+        CommonResDto<AccessStatisticsService.MonthlyAccessStatisticsReport> resDto
+                = new CommonResDto<>(HttpStatus.OK,
+                "월간 접속 통계 현황 조회 성공", monthlyAccessStats);
+
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
 }
