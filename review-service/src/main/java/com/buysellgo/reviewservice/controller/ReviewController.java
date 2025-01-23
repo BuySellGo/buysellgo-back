@@ -37,7 +37,9 @@ public class ReviewController {
 
     @Operation(summary ="리뷰 작성(회원)")
     @PostMapping("/write")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> writeReview(@RequestHeader("Authorization") String accessToken,@Valid @RequestBody ReviewCreateReq req) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> writeReview(@RequestHeader("Authorization") String accessToken,
+    @Valid @RequestBody ReviewCreateReq req) {
+        // 토큰 검증
         if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
             throw new CustomException(INVALID_TOKEN.getValue());
         }
@@ -47,16 +49,17 @@ public class ReviewController {
         TokenUserInfo userInfo = jwtTokenProvider.validateAndGetTokenUserInfo(token);
 
         ReviewStrategy<Map<String, Object>> strategy = reviewContext.getStrategy(userInfo.getRole());
-        ReviewResult<Map<String, Object>> result = strategy.writeReview(req);
+        ReviewResult<Map<String, Object>> result = strategy.writeReview(req, userInfo.getId());
         if(!result.success()){
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 작성 완료", null));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 작성 완료", result.data()));
     }
 
     @Operation(summary ="리뷰 조회(회원,판매자,관리자)")
     @GetMapping("/list/role")
     public ResponseEntity<CommonResDto<Map<String, Object>>> getReview(@RequestHeader("Authorization") String accessToken ) {
+        // 토큰 검증
         if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
             throw new CustomException(INVALID_TOKEN.getValue());
         }
@@ -65,7 +68,7 @@ public class ReviewController {
         String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
         TokenUserInfo userInfo = jwtTokenProvider.validateAndGetTokenUserInfo(token);
         ReviewStrategy<Map<String, Object>> strategy = reviewContext.getStrategy(userInfo.getRole());
-        ReviewResult<Map<String, Object>> result = strategy.getReview(userInfo.getRole());
+        ReviewResult<Map<String, Object>> result = strategy.getReview(userInfo.getId());
         if(!result.success()){
             throw new CustomException(result.message());
         }
@@ -84,7 +87,9 @@ public class ReviewController {
 
     @Operation(summary ="리뷰 수정(회원)")
     @PutMapping("/update")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> updateReview(@RequestHeader("Authorization") String accessToken, @RequestBody ReviewCreateReq req) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> updateReview(@RequestHeader("Authorization") String accessToken, 
+    @Valid @RequestBody ReviewCreateReq req) {
+        // 토큰 검증
         if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
             throw new CustomException(INVALID_TOKEN.getValue());
         }
@@ -93,7 +98,7 @@ public class ReviewController {
         String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
         TokenUserInfo userInfo = jwtTokenProvider.validateAndGetTokenUserInfo(token);
         ReviewStrategy<Map<String, Object>> strategy = reviewContext.getStrategy(userInfo.getRole());
-        ReviewResult<Map<String, Object>> result = strategy.updateReview(req);
+        ReviewResult<Map<String, Object>> result = strategy.updateReview(req, userInfo.getId());
         if(!result.success()){
             throw new CustomException(result.message());
         }
@@ -102,7 +107,9 @@ public class ReviewController {
 
     @Operation(summary ="리뷰 삭제(회원,관리자)")
     @DeleteMapping("/delete")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> deleteReview(@RequestHeader("Authorization") String accessToken, @RequestParam long reviewId) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> deleteReview(@RequestHeader("Authorization") String accessToken, 
+    @RequestParam long reviewId) {
+        // 토큰 검증
         if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
             throw new CustomException(INVALID_TOKEN.getValue());
         }
@@ -121,10 +128,13 @@ public class ReviewController {
     @Operation(summary = "리뷰 활성화(관리자)")
     @PutMapping("/active")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> activeReview(@RequestHeader("Authorization") String accessToken, @RequestParam long reviewId) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> activeReview(@RequestHeader("Authorization") String accessToken, 
+    @RequestParam long reviewId) {
+        // 토큰 검증
         if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
             throw new CustomException(INVALID_TOKEN.getValue());
         }
+
         // 토큰에서 사용자 정보 추출
         String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
         TokenUserInfo userInfo = jwtTokenProvider.validateAndGetTokenUserInfo(token);
@@ -139,10 +149,13 @@ public class ReviewController {
     @Operation(summary = "리뷰 비활성화(관리자)")
     @PutMapping("/inactive")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> inactiveReview(@RequestHeader("Authorization") String accessToken, @RequestParam long reviewId) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> inactiveReview(@RequestHeader("Authorization") String accessToken, 
+    @RequestParam long reviewId) {
+        // 토큰 검증
         if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
             throw new CustomException(INVALID_TOKEN.getValue());
         }
+
         // 토큰에서 사용자 정보 추출
         String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
         TokenUserInfo userInfo = jwtTokenProvider.validateAndGetTokenUserInfo(token);

@@ -8,7 +8,7 @@ spring:
 # Swagger Setting
 openapi:
   service:
-    title: user-service doc
+    title: review-service doc
     version: v1
     url: http://localhost:8000/${spring.application.name}
 springdoc:
@@ -27,9 +27,9 @@ springdoc:
 #  paths-to-match:
 #    - /**
   api-docs:
-    path: /user-service/v3/api-docs
+    path: /review-service/v3/api-docs
   swagger-ui:
-    path: /user-service/swagger-ui.html
+    path: /review-service/swagger-ui.html
 
 # log level setting
 logging:

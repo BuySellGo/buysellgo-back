@@ -4,22 +4,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record ReviewCreateReq(
-    long reviewId,
-    @Schema(description = "사용자 ID")
-    @NotNull(message = "사용자 ID는 필수 입력 항목입니다.")
-    @Pattern(regexp = "^\\d+$", message = "사용자 ID는 숫자만 허용됩니다.")
-    long userId,
     @Schema(description = "상품 ID")
     @NotNull(message = "상품 ID는 필수 입력 항목입니다.")
-    @Pattern(regexp = "^\\d+$", message = "상품 ID는 숫자만 허용됩니다.")
     long productId,
     @Schema(description = "판매자 ID")
     @NotNull(message = "판매자 ID는 필수 입력 항목입니다.")
-    @Pattern(regexp = "^\\d+$", message = "판매자 ID는 숫자만 허용됩니다.")
     long sellerId,
     @Schema(description = "별점")
     @NotNull(message = "별점은 필수 입력 항목입니다.")

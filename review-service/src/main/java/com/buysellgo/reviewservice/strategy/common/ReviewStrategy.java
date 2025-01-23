@@ -14,18 +14,10 @@ public interface ReviewStrategy<T extends Map<String, Object>> {
     /**
      * 역할에 따른 리뷰를 조회합니다.
      *
-     * @param role 조회할 역할입니다.
+     * @param userId 조회할 사용자의 ID입니다.
      * @return 리뷰 조회 결과를 포함하는 ReviewResult입니다.
      */
-    ReviewResult<T> getReview(Role role);
-
-    /**
-     * 상품 ID에 따른 리뷰를 조회합니다. (비로그인 사용자용)
-     *
-     * @param productId 조회할 상품의 ID입니다.
-     * @return 리뷰 조회 결과를 포함하는 ReviewResult입니다.
-     */
-    ReviewResult<T> getReviewGuest(long productId);
+    ReviewResult<T> getReview(long userId);
 
     /**
      * 리뷰를 작성합니다.
@@ -33,7 +25,7 @@ public interface ReviewStrategy<T extends Map<String, Object>> {
      * @param req 리뷰 작성 요청 정보를 포함하는 ReviewCreateReq입니다.
      * @return 리뷰 작성 결과를 포함하는 ReviewResult입니다.
      */
-    ReviewResult<T> writeReview(ReviewCreateReq req);
+    ReviewResult<T> writeReview(ReviewCreateReq req, long userId);
 
     /**
      * 리뷰를 수정합니다.
@@ -41,7 +33,7 @@ public interface ReviewStrategy<T extends Map<String, Object>> {
      * @param req 리뷰 수정 요청 정보를 포함하는 ReviewCreateReq입니다.
      * @return 리뷰 수정 결과를 포함하는 ReviewResult입니다.
      */
-    ReviewResult<T> updateReview(ReviewCreateReq req);
+    ReviewResult<T> updateReview(ReviewCreateReq req, long userId);
 
     /**
      * 리뷰를 삭제합니다.
