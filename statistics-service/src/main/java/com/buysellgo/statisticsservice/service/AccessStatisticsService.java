@@ -1,5 +1,6 @@
 package com.buysellgo.statisticsservice.service;
 
+import com.buysellgo.statisticsservice.dto.AccessStatRequestDto;
 import com.buysellgo.statisticsservice.entity.AccessStatistics;
 import com.buysellgo.statisticsservice.entity.QAccessStatistics;
 import com.buysellgo.statisticsservice.repository.AccessStatisticsRepository;
@@ -27,11 +28,19 @@ public class AccessStatisticsService {
     private final JPAQueryFactory jpaQueryFactory;
 
     // 접속 기록
-    public AccessStatistics addAccessRecord(Long userId, String accessIp) {
+//    public AccessStatistics addAccessRecord(Long userId, String accessIp, Boolean isDto) {
+    public AccessStatistics addAccessRecord(AccessStatRequestDto accessStatRequestDto) {
+
+//        AccessStatistics accessStatistics
+//                = accessStatisticsRepository.save(
+//                        AccessStatistics.of(userId, accessIp, Timestamp.from(Instant.now())));
 
         AccessStatistics accessStatistics
                 = accessStatisticsRepository.save(
-                        AccessStatistics.of(userId, accessIp, Timestamp.from(Instant.now())));
+                AccessStatistics.of(
+                        accessStatRequestDto.getUserId(),
+                        accessStatRequestDto.getAccessIp(),
+                        accessStatRequestDto.getAccessDateTime()));
 
         return accessStatistics;
 

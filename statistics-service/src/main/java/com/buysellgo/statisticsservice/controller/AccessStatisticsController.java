@@ -2,10 +2,12 @@ package com.buysellgo.statisticsservice.controller;
 
 import com.buysellgo.statisticsservice.common.auth.TokenUserInfo;
 import com.buysellgo.statisticsservice.common.dto.CommonResDto;
+import com.buysellgo.statisticsservice.dto.AccessStatRequestDto;
 import com.buysellgo.statisticsservice.entity.AccessStatistics;
 import com.buysellgo.statisticsservice.service.AccessStatisticsService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+
 @RestController
 @RequestMapping("/api/v1/access-stats")
 @RequiredArgsConstructor
@@ -24,8 +29,36 @@ import org.springframework.web.bind.annotation.*;
 public class AccessStatisticsController {
     private final AccessStatisticsService accessStatisticsService;
 
-    @Operation(summary = "회원 접속 통계 기록")
+
+    @Operation(summary = "회원 접속 통계 기록(클라이언트 제공 정보 기반 기록)")
     @PostMapping("/record")
+    public ResponseEntity<?> recordAccessStatistics(
+            @AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+            @RequestBody @Valid AccessStatRequestDto accessStatRequestDto) {
+
+        log.info("Access statistics request DTO: {}", accessStatRequestDto);
+
+        AccessStatistics accessStatistics
+                = accessStatisticsService.addAccessRecord(accessStatRequestDto);
+
+        if (accessStatistics == null) {
+            return new ResponseEntity<>(
+                    new CommonResDto<>(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            "접속 기록 실패",
+                            null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        CommonResDto<Long> resDto
+                = new CommonResDto<>(HttpStatus.CREATED, "접속 기록 성공", accessStatistics.getId());
+
+        return new ResponseEntity<>(resDto, HttpStatus.CREATED);
+    }
+
+
+    @Operation(summary = "회원 접속 통계 기록(서버 제공 정보 기반 기록)")
+    @PostMapping("/record-server")
     public ResponseEntity<?> recordAccessStatistics(
             @AuthenticationPrincipal TokenUserInfo tokenUserInfo,
             HttpServletRequest request) {
@@ -38,10 +71,16 @@ public class AccessStatisticsController {
                     null), HttpStatus.UNAUTHORIZED);
         }
 
-        String accessIp = getClientIp(request);
+        AccessStatRequestDto accessStatRequestDto = new AccessStatRequestDto();
+//        String accessIp = getClientIp(request);
+
+        accessStatRequestDto.setUserId(tokenUserInfo.getId());
+        accessStatRequestDto.setAccessIp(getClientIp(request));
+        accessStatRequestDto.setAccessDateTime(Timestamp.from(Instant.now()));
+
 
         AccessStatistics accessStatistics
-                = accessStatisticsService.addAccessRecord(tokenUserInfo.getId(), accessIp);
+                = accessStatisticsService.addAccessRecord(accessStatRequestDto);
 
         if (accessStatistics == null) {
             return new ResponseEntity<>(
