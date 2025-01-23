@@ -77,16 +77,18 @@ public class SalesStatisticsService {
 
         log.info("getTotalSalesAmount ======================> ");
 
+        JPAQuery<Long> sumQuery;
+
         if (tokenUserInfo.getRole() == Role.SELLER) {
-            JPAQuery<Long> sumQuery = jpaQueryFactory
+            sumQuery = jpaQueryFactory
                     .select(qSalesStatistics.salesAmount.sum())
                     .from(qSalesStatistics)
                     .where(qSalesStatistics.sellerId.eq(tokenUserInfo.getId()));
+        } else {
+            sumQuery = jpaQueryFactory
+                    .select(qSalesStatistics.salesAmount.sum())
+                    .from(qSalesStatistics);
         }
-
-        JPAQuery<Long> sumQuery = jpaQueryFactory
-                .select(qSalesStatistics.salesAmount.sum())
-                .from(qSalesStatistics);
 
         Long totalSalesAmount = sumQuery.fetchOne();
 
@@ -98,8 +100,10 @@ public class SalesStatisticsService {
     private List<DailyStat> getDailyStats(LocalDate startDate, LocalDate endDate, TokenUserInfo tokenUserInfo) {
         QSalesStatistics qSalesStatistics = QSalesStatistics.salesStatistics;
 
-        if(tokenUserInfo.getRole() == Role.SELLER) {
-            JPAQuery<Tuple> query = jpaQueryFactory
+        JPAQuery<Tuple> query;
+
+        if (tokenUserInfo.getRole() == Role.SELLER) {
+            query = jpaQueryFactory
                     .select(
                             Expressions.template(
                                     Date.class, "DATE({0})",
@@ -117,25 +121,26 @@ public class SalesStatisticsService {
                                     Date.class, "DATE({0})",
                                     qSalesStatistics.createdAt
                             ));
-        }
+        } else {
 
-        JPAQuery<Tuple> query = jpaQueryFactory
-                .select(
-                        Expressions.template(
-                                Date.class, "DATE({0})",
-                                qSalesStatistics.createdAt),
-                        qSalesStatistics.salesAmount.sum()
-                )
-                .from(qSalesStatistics)
-                .where(qSalesStatistics.createdAt.between(
-                        Timestamp.valueOf(startDate.atStartOfDay()),
-                        Timestamp.valueOf(endDate.atTime(23, 59, 59))
-                ))
-                .groupBy(
-                        Expressions.template(
-                                Date.class, "DATE({0})",
-                                qSalesStatistics.createdAt
-                        ));
+            query = jpaQueryFactory
+                    .select(
+                            Expressions.template(
+                                    Date.class, "DATE({0})",
+                                    qSalesStatistics.createdAt),
+                            qSalesStatistics.salesAmount.sum()
+                    )
+                    .from(qSalesStatistics)
+                    .where(qSalesStatistics.createdAt.between(
+                            Timestamp.valueOf(startDate.atStartOfDay()),
+                            Timestamp.valueOf(endDate.atTime(23, 59, 59))
+                    ))
+                    .groupBy(
+                            Expressions.template(
+                                    Date.class, "DATE({0})",
+                                    qSalesStatistics.createdAt
+                            ));
+        }
 
         List<Tuple> tupleList = query.fetch();
 
@@ -153,7 +158,7 @@ public class SalesStatisticsService {
     private List<WeeklyStat> getWeeklyStats(LocalDate startDate, LocalDate endDate, TokenUserInfo tokenUserInfo) {
         QSalesStatistics qSalesStatistics = QSalesStatistics.salesStatistics;
 
-        if(tokenUserInfo.getRole() == Role.SELLER) {
+        if (tokenUserInfo.getRole() == Role.SELLER) {
             JPAQuery<Tuple> query = jpaQueryFactory
                     .select(
                             qSalesStatistics.createdAt.week(),

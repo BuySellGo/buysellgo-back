@@ -60,7 +60,7 @@ public class SalesStatisticsController {
     }
 
     @Operation(summary = "월간 매출 통계 현황")
-    @PreAuthorize("hasRole('SELLER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     @GetMapping("/monthly")
     public ResponseEntity<?> monthlySalesStatistics(
             @AuthenticationPrincipal TokenUserInfo tokenUserInfo,
