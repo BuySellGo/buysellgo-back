@@ -1,6 +1,7 @@
 package com.buysellgo.reviewservice.common.auth;
 
 import com.buysellgo.reviewservice.common.entity.Role;
+import com.buysellgo.reviewservice.common.exception.CustomException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+
+import static com.buysellgo.reviewservice.common.util.CommonConstant.BEARER_PREFIX;
+import static com.buysellgo.reviewservice.common.util.CommonConstant.INVALID_TOKEN;
 
 @Component
 @Slf4j
@@ -106,6 +110,16 @@ public class JwtTokenProvider {
             log.error("JWT claims string is empty: {}", e.getMessage());
             throw new JwtException("토큰이 비어있습니다.");
         }
+    }
+
+    public TokenUserInfo getTokenUserInfo(String accessToken) {
+        if (!accessToken.startsWith(BEARER_PREFIX.getValue())) {
+            throw new CustomException(INVALID_TOKEN.getValue());
+        }
+
+        // 토큰에서 사용자 정보 추출
+        String token = accessToken.replace(BEARER_PREFIX.getValue(), "");
+        return validateAndGetTokenUserInfo(token);
     }
 }
 

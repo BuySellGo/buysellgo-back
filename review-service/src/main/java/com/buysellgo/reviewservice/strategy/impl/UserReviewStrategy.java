@@ -13,7 +13,8 @@ import com.buysellgo.reviewservice.repository.ReviewRepository;
 import com.buysellgo.reviewservice.strategy.dto.ReviewDto;
 import com.buysellgo.reviewservice.entity.Review;
 import java.util.HashMap;
-
+import java.util.Optional;
+        
 import static com.buysellgo.reviewservice.common.util.CommonConstant.*;
 
 @Component
@@ -49,7 +50,24 @@ public class UserReviewStrategy implements ReviewStrategy<Map<String,Object>> {
 
     @Override
     public ReviewResult<Map<String, Object>> updateReview(ReviewCreateReq req, long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        Review review = null;
+        try{
+            Optional<Review> reviewOptional = reviewRepository.findByOrderId(req.orderId());
+            if(reviewOptional.isEmpty()){
+                data.put(REVIEW_VO.getValue(), null);
+                return ReviewResult.fail( "리뷰가 존재하지 않습니다.", data);
+            }
+            review = reviewOptional.get();
+            review.setContent(req.content());
+            review.setImage(req.imageUrl());
+            reviewRepository.save(review);
+            data.put(REVIEW_VO.getValue(), review.toVo());
+            return ReviewResult.success("리뷰 수정 완료", data);
+        } catch (Exception e) {
+            data.put(REVIEW_VO.getValue(), null);
+            return ReviewResult.fail( "리뷰 수정 실패", data);
+        }
     }
 
     @Override
