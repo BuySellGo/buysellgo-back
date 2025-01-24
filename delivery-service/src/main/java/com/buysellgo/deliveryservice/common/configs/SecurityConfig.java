@@ -47,33 +47,33 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeHttpRequests(auth -> {
-            auth
+                    auth
 //                    .requestMatchers("/user/list").hasAnyRole("ADMIN")
-                    .requestMatchers(
-                            "/api/v1/hello-delivery-service",
-                            "/sign-up",
-                            "/sign-in",
-                            "/refresh",
-                            "/",
-                            "/health-check",
+                            .requestMatchers(
+                                    "/api/v1/hello-statistics-service",
+                                    "/sign-up",
+                                    "/sign-in",
+                                    "/refresh",
+                                    "/",
+                                    "/health-check",
 //                            "/v3/api-docs/**",
 //                            "/swagger-ui/**",
 //                            "/swagger-resources/**",
 //                            "/webjars/**",
 //                            "/swagger-ui.html",
 //                            "/swagger-ui-custom.html"
-                            "/delivery-service/v3/api-docs/**",
-                            "/delivery-service/swagger-ui/**",
-                            "/delivery-service/swagger-resources/**",
-                            "/delivery-service/webjars/**",
-                            "/delivery-service/swagger-ui.html",
-                            "/delivery-service/swagger-ui-custom.html"
-                    ).permitAll()
+                                    "/statistics-service/v3/api-docs/**",
+                                    "/statistics-service/swagger-ui/**",
+                                    "/statistics-service/swagger-resources/**",
+                                    "/statistics-service/webjars/**",
+                                    "/statistics-service/swagger-ui.html",
+                                    "/statistics-service/swagger-ui-custom.html"
+                            ).permitAll()
 //                    .requestMatchers("/**").access(
 //                            new WebExpressionAuthorizationManager("hasIpAddress('localhost') or hasIpAddress('::1') or hasIpAddress('127.0.0.1')  or hasIpAddress('172.30.67.125')")
 //                    )
-                    .anyRequest().authenticated();
-        })
+                            .anyRequest().authenticated();
+                })
                 // 커스텀 필터를 등록.
                 // 시큐리티에서 기본으로 인증, 인가 처리를 해 주는 UsernamePasswordAuthenticationFilter 전에 내 필터 add
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

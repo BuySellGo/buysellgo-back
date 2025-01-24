@@ -2,13 +2,15 @@ package com.buysellgo.deliveryservice.common.auth;
 
 import com.buysellgo.deliveryservice.common.auth.TokenUserInfo;
 import com.buysellgo.deliveryservice.common.entity.Role;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
@@ -30,6 +32,10 @@ public class JwtTokenProvider {
     @Value("${jwt.expirationRt}")
     private int expirationRt;
 
+    private SecretKey getSigningKey(String secretKey) {
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
     // 토큰 생성 메서드
      /*
@@ -43,10 +49,11 @@ public class JwtTokenProvider {
                 == 서명
             }
      */
-    public String createToken(String email, String role) {
+    public String createToken(String email, String role, long id) {
         // Claims: 페이로드에 들어갈 사용자 정보
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
+        claims.put("id", id);
         Date date = new Date();
 
         return Jwts.builder()
@@ -54,7 +61,7 @@ public class JwtTokenProvider {
                 .setIssuedAt(date)
                 //현재 시간 밀리초에 30분을 더한 시간을 만료시간으로 세팅
                 .setExpiration(new Date(date.getTime() + expiration * 60 * 1000L))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(getSigningKey(secretKey))
                 .compact();
     }
 
@@ -69,7 +76,7 @@ public class JwtTokenProvider {
                 .setIssuedAt(date)
                 //현재 시간 밀리초에 30분을 더한 시간을 만료시간으로 세팅
                 .setExpiration(new Date(date.getTime() + expirationRt * 60 * 1000L))
-                .signWith(SignatureAlgorithm.HS256, secreKeyRt)
+                .signWith(getSigningKey(secreKeyRt))
                 .compact();
     }
 
@@ -83,23 +90,41 @@ public class JwtTokenProvider {
      */
     public TokenUserInfo validateAndGetTokenUserInfo(String token) throws Exception {
 
-        Claims claims = Jwts.parserBuilder()
-                // 토큰 발급자의 발급 당시의 서명을 넣어줌.
-                .setSigningKey(secretKey)
-                // 서명 위조 검사: 위조된 경우에는 예외가 발생합니다.
-                // 위조되지 않았다면 payload를 리턴.
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    // 토큰 발급자의 발급 당시의 서명을 넣어줌.
+                    .setSigningKey(getSigningKey(secretKey))
+                    // 서명 위조 검사: 위조된 경우에는 예외가 발생합니다.
+                    // 위조되지 않았다면 payload를 리턴.
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
 
-        log.info("claims : {}", claims);
+            log.info("claims : {}", claims);
 
-        return TokenUserInfo.builder()
-                .email(claims.getSubject())
-                // 클레임이 get 할 수 있는 타입이 정해져 있어서 Role을 못 꺼냅니다.
-                // 일단 String으로 꺼내고, 다시 Role 타입으로 포장해서 집어 넣겠습니다.
-                .role(Role.valueOf(claims.get("role", String.class)))
-                .build();
+            return TokenUserInfo.builder()
+                    .email(claims.getSubject())
+                    // 클레임이 get 할 수 있는 타입이 정해져 있어서 Role을 못 꺼냅니다.
+                    // 일단 String으로 꺼내고, 다시 Role 타입으로 포장해서 집어 넣겠습니다.
+                    .role(Role.valueOf(claims.get("role", String.class)))
+                    .id(claims.get("id", Long.class))
+                    .build();
+        } catch (ExpiredJwtException e) {
+            log.error("Token expired: {}", e.getMessage());
+            throw new JwtException("만료된 토큰입니다.");
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature: {}", e.getMessage());
+            throw new JwtException("유효하지 않은 토큰 서명입니다.");
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token: {}", e.getMessage());
+            throw new JwtException("유효하지 않은 토큰 형식입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token: {}", e.getMessage());
+            throw new JwtException("지원되지 않는 토큰 형식입니다.");
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty: {}", e.getMessage());
+            throw new JwtException("토큰이 비어있습니다.");
+        }
     }
 }
 
