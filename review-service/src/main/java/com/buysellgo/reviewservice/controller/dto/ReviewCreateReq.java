@@ -13,6 +13,9 @@ public record ReviewCreateReq(
     @Schema(description = "판매자 ID")
     @NotNull(message = "판매자 ID는 필수 입력 항목입니다.")
     long sellerId,
+    @Schema(description = "주문 ID")
+    @NotNull(message = "주문 ID는 필수 입력 항목입니다.")
+    long orderId,
     @Schema(description = "별점")
     @NotNull(message = "별점은 필수 입력 항목입니다.")
     @Min(value = 1, message = "별점은 1 이상이어야 합니다.")

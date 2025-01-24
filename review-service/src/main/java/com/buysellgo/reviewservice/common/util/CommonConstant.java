@@ -48,7 +48,7 @@ public enum CommonConstant {
     INACTIVE_FAILURE("비활성화 실패"),
     GET_FAILURE("조회 실패"),
     WRITE_FAILURE("작성 실패"),
-    
+    REVIEW_VO("reviewVo"),
     // 토큰 상수
     BEARER_PREFIX("Bearer "),
     ACCESS_TOKEN("accessToken"),

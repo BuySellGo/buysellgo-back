@@ -27,6 +27,9 @@ public class Review extends BaseEntity {
     @Column(name = "seller_id", columnDefinition = "bigint", nullable = false, unique = false)
     private long sellerId;
 
+    @Column(name = "order_id", columnDefinition = "bigint", nullable = false, unique = true)
+    private long orderId;
+
     @Column(name = "star_rating", columnDefinition = "int", nullable = false, unique = false)
     private int starRating;
 
@@ -36,11 +39,12 @@ public class Review extends BaseEntity {
     @Column(name = "image", columnDefinition = "varchar(200)", nullable = true, unique = false)
     private String image;
 
-    public static Review of(long userId, long productId, long sellerId, int starRating, String content, String image) {
+    public static Review of(long userId, long productId, long sellerId, long orderId, int starRating, String content, String image) {
         return Review.builder()
                 .userId(userId)
                 .productId(productId)
                 .sellerId(sellerId)
+                .orderId(orderId)
                 .starRating(starRating)
                 .content(content)
                 .image(image)
