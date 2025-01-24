@@ -29,7 +29,7 @@ public class CommonExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<CommonErrorDto> illegalHandler(IllegalArgumentException e){
         log.info("Illegal argument: " + e.getMessage());
-//        e.printStackTrace();
+        e.printStackTrace();
         CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
     }

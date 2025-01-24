@@ -30,11 +30,12 @@ public class AccessStatistics {
     @Column(name = "access_date_time")
     private Timestamp accessDateTime;
 
-    public static AccessStatistics of(Long userId, String accessIp) {
+    public static AccessStatistics of(Long userId, String accessIp, Timestamp accessDateTime) {
         return AccessStatistics.builder()
                 .userId(userId)
                 .accessIp(accessIp)
-                .accessDateTime(Timestamp.from(Instant.now()))
+//                .accessDateTime(Timestamp.from(Instant.now()))
+                .accessDateTime(accessDateTime)
                 .build();
     }
 

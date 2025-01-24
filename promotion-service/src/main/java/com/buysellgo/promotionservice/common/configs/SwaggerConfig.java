@@ -49,7 +49,7 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title(serviceTitle)
                         .version(serviceVersion)
-                        .description("Help Desk Service API"))
+                        .description("Promotion Service API"))
                 .addSecurityItem(securityRequirement)
                 .schemaRequirement(jwtSchemeName, securityScheme);
     }
