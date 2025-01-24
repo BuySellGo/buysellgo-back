@@ -11,5 +11,5 @@ public class TokenUserInfo {
 
     private String email;
     private Role role;
-
+    private long id;
 }

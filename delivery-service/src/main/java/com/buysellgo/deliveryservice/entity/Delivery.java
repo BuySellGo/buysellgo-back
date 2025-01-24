@@ -36,10 +36,10 @@ public class Delivery {
         IN_DELIVERY, DELIVERED
     }
 
-    public static Delivery of(Long orderId, DeliveryStatus deliveryStatus) {
+    public static Delivery of(Long orderId, Timestamp createdAt, DeliveryStatus deliveryStatus) {
         return Delivery.builder()
                 .orderId(orderId)
-                .createdAt(Timestamp.from(Instant.now()))
+                .createdAt(createdAt)
                 .deliveryStatus(deliveryStatus)
                 .build();
     }
@@ -48,7 +48,7 @@ public class Delivery {
         return new Vo(id, orderId, createdAt, deliveryStatus);
     }
 
-    private record Vo(Long id,
+    public record Vo(Long id,
                       Long orderId,
                       Timestamp createdAt,
                       DeliveryStatus deliveryStatus) {
