@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Slf4j
-//@OpenAPIDefinition(info = @io.swagger.v3.oas.annotations.info.Info(title="user service", version="v1", description = "Documentation user service api v1.0"))
+//@OpenAPIDefinition(info = @io.swagger.v3.oas.annotations.info.Info(title="chat service", version="v1", description = "Documentation chat service api v1.0"))
 @OpenAPIDefinition
 @Configuration
 public class SwaggerConfig {
@@ -30,6 +30,6 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title(serviceTitle)
                         .version(serviceVersion)
-                        .description("User Service API"));
+                        .description("Chat Service API"));
     }
 }
