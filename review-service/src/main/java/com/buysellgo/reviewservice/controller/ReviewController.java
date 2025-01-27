@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.buysellgo.reviewservice.common.auth.TokenUserInfo;
@@ -93,37 +92,7 @@ public class ReviewController {
         // 토큰 검증
         TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
         ReviewStrategy<Map<String, Object>> strategy = reviewContext.getStrategy(userInfo.getRole());
-        ReviewResult<Map<String, Object>> result = strategy.deleteReview(reviewId);
-        if(!result.success()){
-            throw new CustomException(result.message());
-        }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
-    }
-
-    @Operation(summary = "리뷰 활성화(관리자)")
-    @PutMapping("/active")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> activeReview(@RequestHeader("Authorization") String accessToken, 
-    @RequestParam long reviewId) {
-        // 토큰 검증
-        TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
-        ReviewStrategy<Map<String, Object>> strategy = reviewContext.getStrategy(userInfo.getRole());
-        ReviewResult<Map<String, Object>> result = strategy.activeReview(reviewId);
-        if(!result.success()){
-            throw new CustomException(result.message());
-        }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
-    }
-
-    @Operation(summary = "리뷰 비활성화(관리자)")
-    @PutMapping("/inactive")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> inactiveReview(@RequestHeader("Authorization") String accessToken, 
-    @RequestParam long reviewId) {
-        // 토큰 검증
-        TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
-        ReviewStrategy<Map<String, Object>> strategy = reviewContext.getStrategy(userInfo.getRole());
-        ReviewResult<Map<String, Object>> result = strategy.inactiveReview(reviewId);
+        ReviewResult<Map<String, Object>> result = strategy.deleteReview(reviewId, userInfo.getId());
         if(!result.success()){
             throw new CustomException(result.message());
         }

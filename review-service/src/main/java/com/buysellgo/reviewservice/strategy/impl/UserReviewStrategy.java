@@ -32,11 +32,11 @@ public class UserReviewStrategy implements ReviewStrategy<Map<String,Object>> {
         List<Review> reviews = reviewRepository.findAllByUserId(userId);
         if(reviews.isEmpty()){
             data.put(REVIEW_VO.getValue(), null);
-            return ReviewResult.fail("리뷰가 존재하지 않습니다.", data);
+            return ReviewResult.fail(REVIEW_NOT_FOUND.getValue(), data);
         }
         List<Review.Vo> reviewVos = reviews.stream().map(Review::toVo).toList();
         data.put(REVIEW_VO.getValue(), reviewVos);
-        return ReviewResult.success("사용자 리뷰 조회 완료", data);
+        return ReviewResult.success(REVIEW_GET_SUCCESS.getValue(), data);
     }
 
     @Override
@@ -52,10 +52,10 @@ public class UserReviewStrategy implements ReviewStrategy<Map<String,Object>> {
             review = Review.of(reviewDto.getUserId(), reviewDto.getProductId(), reviewDto.getSellerId(),reviewDto.getOrderId(), reviewDto.getStarRating(), reviewDto.getContent(), reviewDto.getImage());
             reviewRepository.save(review);
             data.put(REVIEW_VO.getValue(), review.toVo());
-            return ReviewResult.success("리뷰 작성 완료", data);
+            return ReviewResult.success(REVIEW_WRITE_SUCCESS.getValue(), data);
         } catch (Exception e) {
             data.put(REVIEW_VO.getValue(), null);
-            return ReviewResult.fail( "리뷰 작성 실패", data);
+            return ReviewResult.fail( REVIEW_WRITE_FAIL.getValue(), data);
         }
     }
 
@@ -67,7 +67,7 @@ public class UserReviewStrategy implements ReviewStrategy<Map<String,Object>> {
             Optional<Review> reviewOptional = reviewRepository.findByOrderId(req.orderId());
             if(reviewOptional.isEmpty()){
                 data.put(REVIEW_VO.getValue(), null);
-                return ReviewResult.fail( "리뷰가 존재하지 않습니다.", data);
+                return ReviewResult.fail( REVIEW_NOT_FOUND.getValue(), data);
             }
             review = reviewOptional.get();
             review.setContent(req.content());
@@ -82,18 +82,20 @@ public class UserReviewStrategy implements ReviewStrategy<Map<String,Object>> {
     }
 
     @Override
-    public ReviewResult<Map<String, Object>> deleteReview(long reviewId) {
-        return null;
-    }
-
-    @Override
-    public ReviewResult<Map<String, Object>> activeReview(long reviewId) {
-        return null;
-    }
-
-    @Override
-    public ReviewResult inactiveReview(long reviewId) {
-        return null;
+    public ReviewResult<Map<String, Object>> deleteReview(long reviewId, long userId) {
+        Map<String, Object> data = new HashMap<>();
+        Optional<Review> review = reviewRepository.findById(reviewId);
+        if(review.isEmpty()){
+            data.put(REVIEW_VO.getValue(), null);
+            return ReviewResult.fail( REVIEW_NOT_FOUND.getValue(), data);
+        }
+        if(review.get().getUserId() != userId){
+            data.put(REVIEW_VO.getValue(), null);
+            return ReviewResult.fail( REVIEW_DELETE_PERMISSION_DENIED.getValue(), data);
+        }
+        reviewRepository.delete(review.get());
+        data.put(REVIEW_VO.getValue(), review.get().toVo());
+        return ReviewResult.success(REVIEW_DELETE_SUCCESS.getValue(), data);
     }
 
     @Override
