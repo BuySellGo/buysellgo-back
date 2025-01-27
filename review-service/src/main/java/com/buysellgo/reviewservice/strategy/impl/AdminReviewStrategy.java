@@ -9,17 +9,29 @@ import org.springframework.transaction.annotation.Transactional;
 import com.buysellgo.reviewservice.common.entity.Role;
 import com.buysellgo.reviewservice.controller.dto.ReviewCreateReq;
 import com.buysellgo.reviewservice.strategy.common.ReviewResult;
+import com.buysellgo.reviewservice.entity.Review;
+import com.buysellgo.reviewservice.repository.ReviewRepository;
+import java.util.HashMap;
+import java.util.List;
+import static com.buysellgo.reviewservice.common.util.CommonConstant.*;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 @Transactional  
 public class AdminReviewStrategy implements ReviewStrategy<Map<String, Object>> {
-
+    private final ReviewRepository reviewRepository;
     @Override
     public ReviewResult<Map<String, Object>> getReview(long userId) { 
-        // 관리자의 경우 모든 리뷰를 조회해야 함
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        List<Review> reviews = reviewRepository.findAll();
+        if(reviews.isEmpty()){
+            data.put(REVIEW_VO.getValue(), null);
+            return ReviewResult.fail("리뷰가 존재하지 않습니다.", data);
+        }
+        List<Review.Vo> reviewVos = reviews.stream().map(Review::toVo).toList();
+        data.put(REVIEW_VO.getValue(), reviewVos);
+        return ReviewResult.success("모든 리뷰 조회 완료", data);
     }
 
     @Override
