@@ -63,8 +63,8 @@ public class ReviewController {
 
     @Operation(summary ="리뷰 조회(상품별, 로그인 안한 유저도 조회 가능)")
     @GetMapping("/list/guest")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> getReviewGuest(@RequestParam long sellerId) {
-        ServiceResult<Map<String, Object>> result = reviewService.getReviewGuest(sellerId);
+    public ResponseEntity<CommonResDto<Map<String, Object>>> getReviewGuest(@RequestParam long productId) {
+        ServiceResult<Map<String, Object>> result = reviewService.getReviewGuest(productId);
         if(!result.success()){
             throw new CustomException(result.message());
         }
