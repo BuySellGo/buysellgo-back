@@ -59,7 +59,7 @@ public class ReviewController {
         if(!result.success()){
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 조회 완료", null));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 조회 완료", result.data()));
     }
 
     @Operation(summary ="리뷰 조회(상품별, 로그인 안한 유저도 조회 가능)")
