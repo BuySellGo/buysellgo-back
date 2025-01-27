@@ -10,17 +10,32 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import com.buysellgo.reviewservice.repository.ReviewRepository;
+import com.buysellgo.reviewservice.entity.Review;
+import java.util.HashMap;
+import java.util.List;  
+
+import static com.buysellgo.reviewservice.common.util.CommonConstant.*;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 @Transactional  
 public class SellerReviewStrategy implements ReviewStrategy<Map<String, Object>> {  
+    private final ReviewRepository reviewRepository;        
+
 
     @Override
     public ReviewResult<Map<String, Object>> getReview(long userId) {     
-        //판매자의 경우 자기 자신이 판매하고 있는 상품을 조회해 와야 함
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        List<Review> reviews = reviewRepository.findAllBySellerId(userId);
+        if(reviews.isEmpty()){
+            data.put(REVIEW_VO.getValue(), null);
+            return ReviewResult.fail("리뷰가 존재하지 않습니다.", data);
+        }
+        List<Review.Vo> reviewVos = reviews.stream().map(Review::toVo).toList();
+        data.put(REVIEW_VO.getValue(), reviewVos);
+        return ReviewResult.success("판매자 리뷰 조회 완료", data);
     }
 
     @Override

@@ -46,7 +46,7 @@ public class ReviewController {
         if(!result.success()){
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 작성 완료", result.data()));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary ="리뷰 조회(회원,판매자,관리자)")
@@ -59,7 +59,7 @@ public class ReviewController {
         if(!result.success()){
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 조회 완료", null));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary ="리뷰 조회(상품별, 로그인 안한 유저도 조회 가능)")
@@ -69,7 +69,7 @@ public class ReviewController {
         if(!result.success()){
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 조회 완료", null));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary ="리뷰 수정(회원)")
@@ -83,7 +83,7 @@ public class ReviewController {
         if(!result.success()){
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 수정 완료", result.data()));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary ="리뷰 삭제(회원,관리자)")
@@ -97,7 +97,7 @@ public class ReviewController {
         if(!result.success()){
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 삭제 완료", null));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary = "리뷰 활성화(관리자)")
@@ -112,7 +112,7 @@ public class ReviewController {
         if(!result.success()){
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 활성화 완료", null));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary = "리뷰 비활성화(관리자)")
@@ -127,7 +127,7 @@ public class ReviewController {
         if(!result.success()){
             throw new CustomException(result.message());
         }
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "리뷰 비활성화 완료", null));
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 }
 
