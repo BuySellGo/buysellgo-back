@@ -13,6 +13,8 @@ import com.buysellgo.reviewservice.entity.Review;
 import com.buysellgo.reviewservice.repository.ReviewRepository;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+
 import static com.buysellgo.reviewservice.common.util.CommonConstant.*;
 
 @Component
@@ -27,11 +29,11 @@ public class AdminReviewStrategy implements ReviewStrategy<Map<String, Object>> 
         List<Review> reviews = reviewRepository.findAll();
         if(reviews.isEmpty()){
             data.put(REVIEW_VO.getValue(), null);
-            return ReviewResult.fail("리뷰가 존재하지 않습니다.", data);
+            return ReviewResult.fail(REVIEW_NOT_FOUND.getValue(), data);
         }
         List<Review.Vo> reviewVos = reviews.stream().map(Review::toVo).toList();
         data.put(REVIEW_VO.getValue(), reviewVos);
-        return ReviewResult.success("모든 리뷰 조회 완료", data);
+        return ReviewResult.success(REVIEW_GET_SUCCESS.getValue(), data);
     }
 
     @Override
@@ -47,21 +49,16 @@ public class AdminReviewStrategy implements ReviewStrategy<Map<String, Object>> 
     }
 
     @Override
-    public ReviewResult<Map<String, Object>> deleteReview(long reviewId) {
-        // 리뷰 삭제 권한은 회원과 관리자만 함
-        return null;
-    }
-
-    @Override
-    public ReviewResult<Map<String, Object>> activeReview(long reviewId) {
-        // 리뷰 활성화 권한은 관리자만 함
-        return null;
-    }
-
-    @Override
-    public ReviewResult<Map<String, Object>> inactiveReview(long reviewId) {
-        // 리뷰 비활성화 권한은 관리자만 함
-        return null;
+    public ReviewResult<Map<String, Object>> deleteReview(long reviewId, long userId) {
+        Map<String, Object> data = new HashMap<>();
+        Optional<Review> review = reviewRepository.findById(reviewId);
+        if(review.isEmpty()){
+            data.put(REVIEW_VO.getValue(), null);
+            return ReviewResult.fail(REVIEW_NOT_FOUND.getValue(), data);
+        }
+        reviewRepository.delete(review.get());
+        data.put(REVIEW_VO.getValue(), review.get().toVo());
+        return ReviewResult.success(REVIEW_DELETE_SUCCESS.getValue(), data);
     }
 
     @Override

@@ -41,24 +41,7 @@ public interface ReviewStrategy<T extends Map<String, Object>> {
      * @param reviewId 삭제할 리뷰의 ID입니다.
      * @return 리뷰 삭제 결과를 포함하는 ReviewResult입니다.
      */
-    ReviewResult<T> deleteReview(long reviewId);
-
-    /**
-     * 리뷰를 활성화합니다.
-     *
-     * @param reviewId 활성화할 리뷰의 ID입니다.
-     * @return 리뷰 활성화 결과를 포함하는 ReviewResult입니다.
-     */
-    ReviewResult<T> activeReview(long reviewId);
-
-    /**
-     * 리뷰를 비활성화합니다.
-     *
-     * @param reviewId 비활성화할 리뷰의 ID입니다.
-     * @return 리뷰 비활성화 결과를 포함하는 ReviewResult입니다.
-     */
-    ReviewResult<T> inactiveReview(long reviewId);
-
+    ReviewResult<T> deleteReview(long reviewId, long userId);
     /**
      * 주어진 역할을 이 전략이 지원하는지 여부를 결정합니다.
      *

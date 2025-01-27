@@ -31,11 +31,11 @@ public class SellerReviewStrategy implements ReviewStrategy<Map<String, Object>>
         List<Review> reviews = reviewRepository.findAllBySellerId(userId);
         if(reviews.isEmpty()){
             data.put(REVIEW_VO.getValue(), null);
-            return ReviewResult.fail("리뷰가 존재하지 않습니다.", data);
+            return ReviewResult.fail(REVIEW_NOT_FOUND.getValue(), data);
         }
         List<Review.Vo> reviewVos = reviews.stream().map(Review::toVo).toList();
         data.put(REVIEW_VO.getValue(), reviewVos);
-        return ReviewResult.success("판매자 리뷰 조회 완료", data);
+        return ReviewResult.success(REVIEW_GET_SUCCESS.getValue(), data);   
     }
 
     @Override
@@ -51,20 +51,8 @@ public class SellerReviewStrategy implements ReviewStrategy<Map<String, Object>>
     }
 
     @Override
-    public ReviewResult<Map<String, Object>> deleteReview(long reviewId) {
+    public ReviewResult<Map<String, Object>> deleteReview(long reviewId, long userId) {
         // 리뷰 삭제 권한은 회원과 관리자만 함
-        return null;
-    }
-
-    @Override
-    public ReviewResult<Map<String, Object>> activeReview(long reviewId) {
-        // 리뷰 활성화 관리자만 함
-        return null;
-    }
-
-    @Override
-    public ReviewResult<Map<String, Object>> inactiveReview(long reviewId) {
-        // 리뷰 비활성화 권리자만 함
         return null;
     }
 
