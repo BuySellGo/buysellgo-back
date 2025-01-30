@@ -25,7 +25,7 @@ class QnaRepositoryTest {
     @Test
     @DisplayName("Qna를 생성해본다.")
     void createQna() {
-        qnaRepository.save(Qna.of(1L, 1L, true, "질문"));
+        qnaRepository.save(Qna.of(1L, 1L, 1L, true, "질문"));
         assertEquals(1, qnaRepository.findAll().size());
     }
 

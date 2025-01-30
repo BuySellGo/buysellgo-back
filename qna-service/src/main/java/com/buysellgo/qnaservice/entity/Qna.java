@@ -21,6 +21,9 @@ public class Qna extends BaseEntity {
     @Column(name = "userId", columnDefinition = "bigint", nullable = false, unique = false)
     private long userId;
 
+    @Column(name = "productId", columnDefinition = "bigint", nullable = false, unique = false)
+    private long productId;
+
     @Column(name = "sellerId", columnDefinition = "bigint", nullable = false, unique = false)
     private long sellerId;
 
@@ -33,9 +36,10 @@ public class Qna extends BaseEntity {
     @OneToOne(mappedBy = "qna", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private QnaReply reply;
 
-    public static Qna of(long userId, long sellerId, boolean isPrivate, String content) {
+    public static Qna of(long userId, long productId, long sellerId, boolean isPrivate, String content) {
         return Qna.builder()
                 .userId(userId)
+                .productId(productId)
                 .sellerId(sellerId)
                 .isPrivate(isPrivate)
                 .content(content)
@@ -43,12 +47,13 @@ public class Qna extends BaseEntity {
     }
 
     public Vo toVo(){
-        return new Vo(qnaId, userId, sellerId, isPrivate, content, version, createdAt, updatedAt);
+        return new Vo(qnaId, userId, productId, sellerId, isPrivate, content, version, createdAt, updatedAt);
     }
 
     public record Vo(
             long qnaId,
             long userId,
+            long productId,
             long sellerId,
             boolean isPrivate,
             String content,

@@ -38,7 +38,7 @@ class ReplyRepositoryTest {
     @Test
     @DisplayName("Reply를 생성해본다.")
     void createReply() {    
-        Qna qna = qnaRepository.save(Qna.of(1L, 1L, true, "질문")); 
+        Qna qna = qnaRepository.save(Qna.of(1L, 1L, 1L, true, "질문")); 
         replyRepository.save(QnaReply.of(qna, 1L, "답변"));
         assertEquals(1, replyRepository.findAll().size());
     }
@@ -76,7 +76,7 @@ class ReplyRepositoryTest {
     @DisplayName("Reply를 생성하고 Qna를 삭제해본다.")
     void deleteQnaWithReply() {
         // Qna 저장하여 영속 상태로 만든다
-        Qna qna = Qna.of(1L, 1L, true, "질문");
+        Qna qna = Qna.of(1L, 1L, 1L, true, "질문");
         qnaRepository.save(qna);  // Qna를 영속 상태로 저장
 
         // Qna가 저장된 후에 QnaReply 저장

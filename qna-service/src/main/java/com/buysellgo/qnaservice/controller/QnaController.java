@@ -26,9 +26,21 @@ public class QnaController {
         return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 작성 완료", null));  
     }
 
+    @Operation(summary ="Qna 수정")
+    @PutMapping("/update")
+    public ResponseEntity<CommonResDto<Map<String, Object>>> updateQna(){
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 수정 완료", null));  
+    }
+
     @Operation(summary ="Qna 조회(회원,판매자,관리자)")
     @GetMapping("/list")
     public ResponseEntity<CommonResDto<Map<String, Object>>> getQna(){
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 조회 완료", null));  
+    }
+
+    @Operation(summary ="Qna 조회(비회원)")
+    @GetMapping("/list/guest")
+    public ResponseEntity<CommonResDto<Map<String, Object>>> getQnaGuest(){
         return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 조회 완료", null));  
     }
 
@@ -42,5 +54,11 @@ public class QnaController {
     @PostMapping("/answer")
     public ResponseEntity<CommonResDto<Map<String, Object>>> createAnswer(){
         return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 답변 작성 완료", null));  
+    }
+
+    @Operation(summary ="Qna 답변 수정(판매자)")
+    @PutMapping("/answer/update")
+    public ResponseEntity<CommonResDto<Map<String, Object>>> updateAnswer(){
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 답변 수정 완료", null));  
     }
 }
