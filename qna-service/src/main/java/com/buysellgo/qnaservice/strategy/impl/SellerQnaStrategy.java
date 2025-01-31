@@ -31,7 +31,9 @@ public class SellerQnaStrategy implements QnaStrategy<Map<String, Object>> {
 
     @Override
     public QnaResult<Map<String, Object>> createQna(QnaReq req, long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put(QNA_VO.getValue(), "판매자는 Qna를 작성할 수 없습니다.");
+        return QnaResult.fail(NOT_SUPPORTED.getValue(), data);
     }
 
     @Override
@@ -51,13 +53,17 @@ public class SellerQnaStrategy implements QnaStrategy<Map<String, Object>> {
     }
 
     @Override
-    public QnaResult<Map<String, Object>> updateQna(QnaReq req, long userId) {
-        return null;
+    public QnaResult<Map<String, Object>> updateQna(QnaReq req, long userId, long qnaId) {
+        Map<String, Object> data = new HashMap<>();
+        data.put(QNA_VO.getValue(), "판매자는 Qna를 수정할 수 없습니다.");
+        return QnaResult.fail(NOT_SUPPORTED.getValue(), data);
     }
 
     @Override
     public QnaResult<Map<String, Object>> deleteQna(long qnaId, long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put(QNA_VO.getValue(), "판매자는 Qna를 삭제할 수 없습니다.");
+        return QnaResult.fail(NOT_SUPPORTED.getValue(), data);
     }
 
     @Override
@@ -83,8 +89,26 @@ public class SellerQnaStrategy implements QnaStrategy<Map<String, Object>> {
     }
 
     @Override
-    public QnaResult<Map<String, Object>> updateReply(ReplyReq req, long userId) {
-        return null;
+    public QnaResult<Map<String, Object>> updateReply(ReplyReq req, long userId, long replyId) {
+        Map<String, Object> data = new HashMap<>();
+        try{
+            Optional<QnaReply> replyOptional = replyRepository.findById(replyId);
+            if(replyOptional.isEmpty()){
+                return QnaResult.fail(REPLY_NOT_FOUND.getValue(), data);
+            }
+            QnaReply reply = replyOptional.get();
+            if(reply.getSellerId() != userId){
+                return QnaResult.fail(REPLY_UPDATE_PERMISSION_DENIED.getValue(), data);
+            }
+            ReplyDto replyDto = ReplyDto.from(req, userId);
+            reply.setContent(replyDto.getContent());
+            replyRepository.save(reply);
+            data.put(REPLY_VO.getValue(), reply.toVo());
+            return QnaResult.success(REPLY_UPDATE_SUCCESS.getValue(), data);
+        } catch (Exception e) {
+            data.put(REPLY_VO.getValue(), e.getMessage());
+            return QnaResult.fail(REPLY_UPDATE_FAIL.getValue(), data);
+        }
     }
 
     @Override

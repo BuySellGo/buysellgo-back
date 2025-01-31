@@ -17,6 +17,7 @@ import com.buysellgo.qnaservice.strategy.dto.QnaDto;
 import com.buysellgo.qnaservice.repository.QnaRepository;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import static com.buysellgo.qnaservice.common.util.CommonConstant.*;
 
 @Component
@@ -58,23 +59,60 @@ public class UserQnaStrategy implements QnaStrategy<Map<String, Object>> {
     }
 
     @Override
-    public QnaResult<Map<String, Object>> updateQna(QnaReq req, long userId) {
-        return null;
+    public QnaResult<Map<String, Object>> updateQna(QnaReq req, long userId, long qnaId) {
+        Map<String, Object> data = new HashMap<>();
+        try{
+            Optional<Qna> qnaOptional = qnaRepository.findById(qnaId);
+            if(qnaOptional.isEmpty()){
+                return QnaResult.fail(QNA_NOT_FOUND.getValue(), data);
+            }
+            Qna qna = qnaOptional.get();
+            if(qna.getUserId() != userId){
+                return QnaResult.fail(QNA_UPDATE_PERMISSION_DENIED.getValue(), data);
+            }
+            QnaDto qnaDto = QnaDto.from(req, userId);
+            qna.setPrivate(qnaDto.isPrivate());
+            qna.setContent(qnaDto.getContent());
+            qnaRepository.save(qna);
+            data.put(QNA_VO.getValue(), qna.toVo());
+            return QnaResult.success(QNA_UPDATE_SUCCESS.getValue(), data);  
+        } catch (Exception e) {
+            data.put(QNA_VO.getValue(), e.getMessage());
+            return QnaResult.fail(QNA_UPDATE_FAIL.getValue(), data);
+        }
     }
 
     @Override
     public QnaResult<Map<String, Object>> deleteQna(long qnaId, long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        try{
+            Optional<Qna> qna = qnaRepository.findById(qnaId);
+            if(qna.isEmpty()){
+                return QnaResult.fail(QNA_NOT_FOUND.getValue(), data);
+            }
+            if(qna.get().getUserId() != userId){
+                return QnaResult.fail(QNA_DELETE_PERMISSION_DENIED.getValue(), data);
+            }
+            qnaRepository.deleteById(qnaId);
+            return QnaResult.success(QNA_DELETE_SUCCESS.getValue(), data);
+        } catch (Exception e) {
+            data.put(QNA_VO.getValue(), e.getMessage());
+            return QnaResult.fail(QNA_DELETE_FAIL.getValue(), data);
+        }
     }   
 
     @Override
     public QnaResult<Map<String, Object>> createReply(ReplyReq req, long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put(REPLY_VO.getValue(), "회원은 답변을 작성할 수 없습니다.");
+        return QnaResult.fail(NOT_SUPPORTED.getValue(), data);
     }
 
     @Override
-    public QnaResult<Map<String, Object>> updateReply(ReplyReq req, long userId) {
-        return null;
+    public QnaResult<Map<String, Object>> updateReply(ReplyReq req, long userId, long replyId) {
+        Map<String, Object> data = new HashMap<>();
+        data.put(REPLY_VO.getValue(), "회원은 답변을 수정할 수 없습니다.");
+        return QnaResult.fail(NOT_SUPPORTED.getValue(), data);
     }
 
     @Override
