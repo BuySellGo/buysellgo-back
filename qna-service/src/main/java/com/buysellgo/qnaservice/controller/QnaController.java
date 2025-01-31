@@ -1,29 +1,43 @@
 package com.buysellgo.qnaservice.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
 import com.buysellgo.qnaservice.common.dto.CommonResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Map;
-import org.springframework.web.bind.annotation.DeleteMapping;   
-import org.springframework.web.bind.annotation.GetMapping;
 
+import jakarta.validation.Valid;
+import com.buysellgo.qnaservice.common.auth.JwtTokenProvider;
+import com.buysellgo.qnaservice.strategy.common.QnaContext;
+import com.buysellgo.qnaservice.service.QnaService;
+import com.buysellgo.qnaservice.common.auth.TokenUserInfo;
+import com.buysellgo.qnaservice.strategy.common.QnaStrategy;
+import com.buysellgo.qnaservice.strategy.common.QnaResult;
+import com.buysellgo.qnaservice.controller.dto.QnaReq;
+import com.buysellgo.qnaservice.common.exception.CustomException;
 @RequestMapping("/qna")
 @RequiredArgsConstructor
 @Slf4j
 @RestController
 public class QnaController {
-    
+    private final QnaService qnaService;
+    private final QnaContext qnaContext;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary ="Qna 작성(회원)")
     @PostMapping("/question")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> createQna(){
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 작성 완료", null));  
+    public ResponseEntity<CommonResDto<Map<String, Object>>> createQna(@RequestHeader("Authorization") String accessToken,
+    @Valid @RequestBody QnaReq req){
+        TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
+        QnaStrategy<Map<String, Object>> strategy = qnaContext.getStrategy(userInfo.getRole());
+        QnaResult<Map<String, Object>> result = strategy.createQna(req, userInfo.getId());
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary ="Qna 수정")
