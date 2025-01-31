@@ -19,7 +19,7 @@ public class QnaReply extends BaseEntity {
     @Column(name = "qna_reply_id", columnDefinition = "bigint", nullable = false, unique = true)
     private long qnaReplyId;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_id", columnDefinition = "bigint", nullable = false, unique = true)
     private Qna qna;
 
