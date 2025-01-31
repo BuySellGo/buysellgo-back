@@ -18,6 +18,8 @@ import com.buysellgo.qnaservice.entity.QnaReply;
 import com.buysellgo.qnaservice.repository.QnaRepository;
 import com.buysellgo.qnaservice.repository.ReplyRepository;
 import com.buysellgo.qnaservice.strategy.dto.ReplyDto;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -34,7 +36,18 @@ public class SellerQnaStrategy implements QnaStrategy<Map<String, Object>> {
 
     @Override
     public QnaResult<Map<String, Object>> getQna(long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        try{
+            List<Qna> qnaList = qnaRepository.findBySellerId(userId);
+            if(qnaList.isEmpty()){
+                return QnaResult.fail(QNA_NOT_FOUND.getValue(), data);
+            }
+            data.put(QNA_VO.getValue(), qnaList.stream().map(Qna::toVo).toList());
+            return QnaResult.success(QNA_LIST_SUCCESS.getValue(), data);
+        } catch (Exception e) {
+            data.put(QNA_VO.getValue(), e.getMessage());
+            return QnaResult.fail(QNA_LIST_FAIL.getValue(), data);
+        }
     }
 
     @Override

@@ -47,7 +47,8 @@ public class SecurityConfig {
 //                    .requestMatchers("/user/list").hasAnyRole("ADMIN")
                 .requestMatchers(
                         "/swagger-ui/**","/v3/api-docs/**",
-                        "/qna-service/v3/api-docs"
+                        "/qna-service/v3/api-docs",
+                        "/qna/list/guest"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/jwt").permitAll()    // 로그인
 //                    .requestMatchers("/**").access(

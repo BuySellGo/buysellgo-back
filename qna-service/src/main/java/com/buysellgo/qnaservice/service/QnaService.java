@@ -3,8 +3,7 @@ package com.buysellgo.qnaservice.service;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.buysellgo.qnaservice.repository.QnaRepository;
-import com.buysellgo.qnaservice.repository.ReplyRepository;
+import com.buysellgo.qnaservice.repository.QnaRepository;   
 import com.buysellgo.qnaservice.entity.Qna;
 import com.buysellgo.qnaservice.service.dto.ServiceResult;
 import java.util.Map;
@@ -20,7 +19,6 @@ import static com.buysellgo.qnaservice.common.util.CommonConstant.*;
 public class QnaService {
 
     private final QnaRepository qnaRepository;
-    private final ReplyRepository replyRepository;
 
     public ServiceResult<Map<String, Object>> getQnaGuest(long productId){
         //프로덕트 아이디 받아서 상품에 관한 큐엔에이 문답 조회(프라이베이트한 큐엔에이 아니라면)
@@ -31,7 +29,8 @@ public class QnaService {
             data.put(QNA_VO.getValue(), null);
             return ServiceResult.fail(QNA_NOT_FOUND.getValue(), data);
         }
-        data.put(QNA_VO.getValue(), qnaList.stream().map(Qna::toVo).toList());
+        data.put(QNA_VO.getValue(), qnaList.stream().map(Qna::toVoGuest).toList());
         return ServiceResult.success(QNA_LIST_SUCCESS.getValue(), data);
     }
 }
+
