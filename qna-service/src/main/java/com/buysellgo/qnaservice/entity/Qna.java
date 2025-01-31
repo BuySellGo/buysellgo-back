@@ -1,10 +1,14 @@
 package com.buysellgo.qnaservice.entity;
 
 import com.buysellgo.qnaservice.common.entity.BaseEntity;
+
+import io.netty.util.internal.ObjectUtil;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+
+import org.apache.commons.lang3.ObjectUtils;
 
 @Entity
 @Getter
@@ -47,7 +51,7 @@ public class Qna extends BaseEntity {
     }
 
     public Vo toVo(){
-        return new Vo(qnaId, userId, productId, sellerId, isPrivate, content, version, createdAt, updatedAt);
+        return new Vo(qnaId, userId, productId, sellerId, isPrivate, content, ObjectUtils.isNotEmpty(reply) ? reply.toVo() : "reply not found", version, createdAt, updatedAt);
     }
 
     public record Vo(
@@ -57,6 +61,7 @@ public class Qna extends BaseEntity {
             long sellerId,
             boolean isPrivate,
             String content,
+            Object reply,
             long version,
             Timestamp createdAt,
             Timestamp updatedAt

@@ -17,7 +17,9 @@ import com.buysellgo.qnaservice.common.auth.TokenUserInfo;
 import com.buysellgo.qnaservice.strategy.common.QnaStrategy;
 import com.buysellgo.qnaservice.strategy.common.QnaResult;
 import com.buysellgo.qnaservice.controller.dto.QnaReq;
+import com.buysellgo.qnaservice.controller.dto.ReplyReq;
 import com.buysellgo.qnaservice.common.exception.CustomException;
+
 @RequestMapping("/qna")
 @RequiredArgsConstructor
 @Slf4j
@@ -41,15 +43,28 @@ public class QnaController {
     }
 
     @Operation(summary ="Qna 수정")
-    @PutMapping("/update")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> updateQna(){
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 수정 완료", null));  
+    @PutMapping("/question/update")
+    public ResponseEntity<CommonResDto<Map<String, Object>>> updateQna(@RequestHeader("Authorization") String accessToken,
+    @Valid @RequestBody QnaReq req){
+        TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
+        QnaStrategy<Map<String, Object>> strategy = qnaContext.getStrategy(userInfo.getRole());
+        QnaResult<Map<String, Object>> result = strategy.updateQna(req, userInfo.getId());
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary ="Qna 조회(회원,판매자,관리자)")
     @GetMapping("/list")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> getQna(){
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 조회 완료", null));  
+    public ResponseEntity<CommonResDto<Map<String, Object>>> getQna(@RequestHeader("Authorization") String accessToken){
+        TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
+        QnaStrategy<Map<String, Object>> strategy = qnaContext.getStrategy(userInfo.getRole());
+        QnaResult<Map<String, Object>> result = strategy.getQna(userInfo.getId());
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary ="Qna 조회(비회원)")
@@ -60,19 +75,40 @@ public class QnaController {
 
     @Operation(summary ="Qna 삭제(회원,관리자)")
     @DeleteMapping("/delete")   
-    public ResponseEntity<CommonResDto<Map<String, Object>>> deleteQna(){
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 삭제 완료", null));  
+    public ResponseEntity<CommonResDto<Map<String, Object>>> deleteQna(@RequestHeader("Authorization") String accessToken,
+    @RequestParam Long qnaId){
+        TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
+        QnaStrategy<Map<String, Object>> strategy = qnaContext.getStrategy(userInfo.getRole());
+        QnaResult<Map<String, Object>> result = strategy.deleteQna(qnaId, userInfo.getId());
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary ="Qna 답변 작성(판매자)")
     @PostMapping("/answer")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> createAnswer(){
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 답변 작성 완료", null));  
+    public ResponseEntity<CommonResDto<Map<String, Object>>> createAnswer(@RequestHeader("Authorization") String accessToken,
+    @Valid @RequestBody ReplyReq req){
+        TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
+        QnaStrategy<Map<String, Object>> strategy = qnaContext.getStrategy(userInfo.getRole());
+        QnaResult<Map<String, Object>> result = strategy.createReply(req, userInfo.getId());
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 
     @Operation(summary ="Qna 답변 수정(판매자)")
     @PutMapping("/answer/update")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> updateAnswer(){
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 답변 수정 완료", null));  
+    public ResponseEntity<CommonResDto<Map<String, Object>>> updateAnswer(@RequestHeader("Authorization") String accessToken,
+    @Valid @RequestBody ReplyReq req){
+        TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
+        QnaStrategy<Map<String, Object>> strategy = qnaContext.getStrategy(userInfo.getRole());
+        QnaResult<Map<String, Object>> result = strategy.updateReply(req, userInfo.getId());
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));
     }
 }
