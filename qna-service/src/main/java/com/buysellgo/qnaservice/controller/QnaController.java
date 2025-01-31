@@ -19,7 +19,7 @@ import com.buysellgo.qnaservice.strategy.common.QnaResult;
 import com.buysellgo.qnaservice.controller.dto.QnaReq;
 import com.buysellgo.qnaservice.controller.dto.ReplyReq;
 import com.buysellgo.qnaservice.common.exception.CustomException;
-
+import com.buysellgo.qnaservice.service.dto.ServiceResult;
 @RequestMapping("/qna")
 @RequiredArgsConstructor
 @Slf4j
@@ -69,8 +69,12 @@ public class QnaController {
 
     @Operation(summary ="Qna 조회(비회원)")
     @GetMapping("/list/guest")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> getQnaGuest(){
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "Qna 조회 완료", null));  
+    public ResponseEntity<CommonResDto<Map<String, Object>>> getQnaGuest(@RequestParam Long productId){
+        ServiceResult<Map<String, Object>> result = qnaService.getQnaGuest(productId);
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, result.message(), result.data()));  
     }
 
     @Operation(summary ="Qna 삭제(회원,관리자)")

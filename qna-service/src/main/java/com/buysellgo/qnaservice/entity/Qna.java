@@ -51,7 +51,15 @@ public class Qna extends BaseEntity {
     }
 
     public Vo toVo(){
-        return new Vo(qnaId, userId, productId, sellerId, isPrivate, content, ObjectUtils.isNotEmpty(reply) ? reply.toVo() : "reply not found", version, createdAt, updatedAt);
+        return new Vo(qnaId, userId, productId, sellerId, isPrivate, content, getObject(), version, createdAt, updatedAt);
+    }
+
+    public Vo toVoGuest(){
+        return new Vo(qnaId, userId, productId, sellerId, isPrivate,isPrivate ? "비공개" : content ,isPrivate ? "비공개" : getObject(), version, createdAt, updatedAt);
+    }
+
+    private Object getObject() {
+        return ObjectUtils.isNotEmpty(reply) ? reply.toVo() : "reply not found";
     }
 
     public record Vo(

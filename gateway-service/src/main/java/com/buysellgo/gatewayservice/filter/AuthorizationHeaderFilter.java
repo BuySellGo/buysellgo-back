@@ -70,6 +70,8 @@ public class AuthorizationHeaderFilter
             new RoutePattern("/forget/password"),
             // review-service
             new RoutePattern("/review/list/guest"),
+            // qna-service
+            new RoutePattern("/qna/list/guest"),
             // HTTP 메서드별 허용
             new RoutePattern("/auth/jwt", "POST"),   // 로그인
 

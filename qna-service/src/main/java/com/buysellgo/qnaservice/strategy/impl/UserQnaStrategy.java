@@ -16,6 +16,7 @@ import com.buysellgo.qnaservice.entity.Qna;
 import com.buysellgo.qnaservice.strategy.dto.QnaDto;
 import com.buysellgo.qnaservice.repository.QnaRepository;
 import java.util.HashMap;
+import java.util.List;
 import static com.buysellgo.qnaservice.common.util.CommonConstant.*;
 
 @Component
@@ -42,7 +43,18 @@ public class UserQnaStrategy implements QnaStrategy<Map<String, Object>> {
 
     @Override
     public QnaResult<Map<String, Object>> getQna(long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        try{
+            List<Qna> qnaList = qnaRepository.findByUserId(userId);
+            if(qnaList.isEmpty()){
+                return QnaResult.fail(QNA_NOT_FOUND.getValue(), data);
+            }
+            data.put(QNA_VO.getValue(), qnaList.stream().map(Qna::toVo).toList());
+            return QnaResult.success(QNA_LIST_SUCCESS.getValue(), data);
+        } catch (Exception e) {
+            data.put(QNA_VO.getValue(), e.getMessage());
+            return QnaResult.fail(QNA_LIST_FAIL.getValue(), data);
+        }
     }
 
     @Override
