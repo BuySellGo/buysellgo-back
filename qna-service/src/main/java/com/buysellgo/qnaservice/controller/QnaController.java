@@ -45,10 +45,10 @@ public class QnaController {
     @Operation(summary ="Qna 수정")
     @PutMapping("/question/update")
     public ResponseEntity<CommonResDto<Map<String, Object>>> updateQna(@RequestHeader("Authorization") String accessToken,
-    @Valid @RequestBody QnaReq req){
+    @Valid @RequestBody QnaReq req, @RequestParam long qnaId){
         TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
         QnaStrategy<Map<String, Object>> strategy = qnaContext.getStrategy(userInfo.getRole());
-        QnaResult<Map<String, Object>> result = strategy.updateQna(req, userInfo.getId());
+        QnaResult<Map<String, Object>> result = strategy.updateQna(req, userInfo.getId(), qnaId);
         if(!result.success()){
             throw new CustomException(result.message());
         }
@@ -106,10 +106,10 @@ public class QnaController {
     @Operation(summary ="Qna 답변 수정(판매자)")
     @PutMapping("/answer/update")
     public ResponseEntity<CommonResDto<Map<String, Object>>> updateAnswer(@RequestHeader("Authorization") String accessToken,
-    @Valid @RequestBody ReplyReq req){
+    @Valid @RequestBody ReplyReq req, @RequestParam long replyId){
         TokenUserInfo userInfo = jwtTokenProvider.getTokenUserInfo(accessToken);
         QnaStrategy<Map<String, Object>> strategy = qnaContext.getStrategy(userInfo.getRole());
-        QnaResult<Map<String, Object>> result = strategy.updateReply(req, userInfo.getId());
+        QnaResult<Map<String, Object>> result = strategy.updateReply(req, userInfo.getId(), replyId);
         if(!result.success()){
             throw new CustomException(result.message());
         }

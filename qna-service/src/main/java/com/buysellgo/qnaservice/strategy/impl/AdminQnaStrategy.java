@@ -24,7 +24,9 @@ public class AdminQnaStrategy implements QnaStrategy<Map<String, Object>> {
 
     @Override
     public QnaResult<Map<String, Object>> createQna(QnaReq req, long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put(QNA_VO.getValue(), "Admin은 Qna를 작성할 수 없습니다.");
+        return QnaResult.fail(NOT_SUPPORTED.getValue(), data);
     }
 
     @Override
@@ -44,23 +46,36 @@ public class AdminQnaStrategy implements QnaStrategy<Map<String, Object>> {
     }   
 
     @Override
-    public QnaResult<Map<String, Object>> updateQna(QnaReq req, long userId) {
-        return null;
+    public QnaResult<Map<String, Object>> updateQna(QnaReq req, long userId, long qnaId) {
+        Map<String, Object> data = new HashMap<>();
+        data.put(QNA_VO.getValue(), "Admin은 Qna를 수정할 수 없습니다.");
+        return QnaResult.fail(NOT_SUPPORTED.getValue(), data);
     }
 
     @Override
     public QnaResult<Map<String, Object>> deleteQna(long qnaId, long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        try{
+            qnaRepository.deleteById(qnaId);
+            return QnaResult.success(QNA_DELETE_SUCCESS.getValue(), data);
+        } catch (Exception e) {
+            data.put(QNA_VO.getValue(), e.getMessage());
+            return QnaResult.fail(QNA_DELETE_FAIL.getValue(), data);
+        }
     }
 
     @Override
     public QnaResult<Map<String, Object>> createReply(ReplyReq req, long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        data.put(REPLY_VO.getValue(), "Admin은 답변을 작성할 수 없습니다.");
+        return QnaResult.fail(NOT_SUPPORTED.getValue(), data);
     }
 
     @Override
-    public QnaResult<Map<String, Object>> updateReply(ReplyReq req, long userId) {
-        return null;
+    public QnaResult<Map<String, Object>> updateReply(ReplyReq req, long userId, long replyId) {
+        Map<String, Object> data = new HashMap<>();
+        data.put(REPLY_VO.getValue(), "Admin은 답변을 수정할 수 없습니다.");
+        return QnaResult.fail(NOT_SUPPORTED.getValue(), data);
     }
 
     @Override

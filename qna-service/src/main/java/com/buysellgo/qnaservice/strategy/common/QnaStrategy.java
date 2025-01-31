@@ -20,9 +20,10 @@ public interface QnaStrategy<T extends Map<String, Object>> {
      *
      * @param req Qna 수정 요청 정보를 포함하는 QnaReq입니다.
      * @param userId 수정할 사용자의 ID입니다.
+     * @param qnaId 수정할 Qna의 ID입니다.
      * @return Qna 수정 결과를 포함하는 QnaResult입니다.
      */
-    QnaResult<T> updateQna(QnaReq req, long userId);
+    QnaResult<T> updateQna(QnaReq req, long userId, long qnaId);
 
     /**
      * Qna를 조회합니다.
@@ -55,9 +56,10 @@ public interface QnaStrategy<T extends Map<String, Object>> {
      *
      * @param req 답변 수정 요청 정보를 포함하는 ReplyReq입니다.
      * @param userId 답변을 수정할 사용자의 ID입니다.
+     * @param replyId 수정할 답변의 ID입니다.
      * @return 답변 수정 결과를 포함하는 QnaResult입니다.
      */
-    QnaResult<T> updateReply(ReplyReq req, long userId);
+    QnaResult<T> updateReply(ReplyReq req, long userId, long replyId);
 
     /**
      * 주어진 역할을 이 전략이 지원하는지 여부를 결정합니다.
