@@ -12,6 +12,7 @@
     <file type="web" url="file://$PROJECT_DIR$/payment-service" />
     <file type="web" url="file://$PROJECT_DIR$/product-service" />
     <file type="web" url="file://$PROJECT_DIR$/promotion-service" />
+    <file type="web" url="file://$PROJECT_DIR$/qna-service" />
     <file type="web" url="file://$PROJECT_DIR$/review-service" />
     <file type="web" url="file://$PROJECT_DIR$/statistics-service" />
     <file type="web" url="file://$PROJECT_DIR$/user-service" />
