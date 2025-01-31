@@ -59,6 +59,8 @@ public enum CommonConstant {
     REVIEW_DELETE_PERMISSION_DENIED("리뷰 삭제 권한이 없습니다."),
     REVIEW_WRITE_PERMISSION_DENIED("리뷰 작성 권한이 없습니다."),
     REVIEW_UPDATE_PERMISSION_DENIED("리뷰 수정 권한이 없습니다."),
+    QNA_CREATE_SUCCESS("Qna 작성 완료"),
+    QNA_CREATE_FAIL("Qna 작성 실패"),
     // 토큰 상수
     BEARER_PREFIX("Bearer "),
     ACCESS_TOKEN("accessToken"),
@@ -70,6 +72,7 @@ public enum CommonConstant {
     SELLER_VO("sellerVo"),
     ADMIN_VO("adminVo"),
     PROFILE_VO("profileVo"),
+    QNA_VO("qnaVo"),
     SUCCESS("success"),
     FAILURE("failure"),
 

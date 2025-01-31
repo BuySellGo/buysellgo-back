@@ -46,9 +46,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
 //                    .requestMatchers("/user/list").hasAnyRole("ADMIN")
                 .requestMatchers(
-                        "/review/list/guest",
                         "/swagger-ui/**","/v3/api-docs/**",
-                        "/review-service/v3/api-docs"
+                        "/qna-service/v3/api-docs"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/jwt").permitAll()    // 로그인
 //                    .requestMatchers("/**").access(
