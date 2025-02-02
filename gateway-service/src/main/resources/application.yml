@@ -235,6 +235,30 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/review-service/(?<segment>.*), /$\{segment}
 
+        # qna-service
+        - id: qna-service-api-docs
+          uri: lb://QNA-SERVICE
+          predicates:
+            - Path=/qna-service/v3/api-docs
+            - Method=GET
+
+        - id: qna-service
+          uri: lb://QNA-SERVICE
+          predicates:
+            - Path=/qna-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/qna-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: qna-service
+          uri: lb://QNA-SERVICE
+          predicates:
+            - Path=/qna-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/qna-service/(?<segment>.*), /$\{segment}
+
 #        - id: openapi-proxy
 #          uri: http://localhost:8000
 #          predicates:
@@ -349,3 +373,6 @@ springdoc:
       - url: /review-service/v3/api-docs
         name: Review Service
       #        primaryName: Review Service
+      - url: /qna-service/v3/api-docs
+        name: Qna Service
+      #        primaryName: Qna Service

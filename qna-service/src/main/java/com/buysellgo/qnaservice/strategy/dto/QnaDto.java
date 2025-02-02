@@ -1,6 +1,6 @@
-package com.buysellgo.reviewservice.strategy.dto;
+package com.buysellgo.qnaservice.strategy.dto;
 
-import com.buysellgo.reviewservice.controller.dto.ReviewCreateReq;
+import com.buysellgo.qnaservice.controller.dto.QnaReq;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,24 +13,20 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewDto {
+public class QnaDto {
     private long userId;
     private long productId;
     private long sellerId;
-    private long orderId;
-    private int starRating;
+    private boolean isPrivate;
     private String content;
-    private String image;
 
-    public static ReviewDto from(ReviewCreateReq req, long userId){
-        return ReviewDto.builder()
+    public static QnaDto from(QnaReq req, long userId){
+        return QnaDto.builder()
                 .userId(userId)
                 .productId(req.productId())
                 .sellerId(req.sellerId())
-                .orderId(req.orderId())
-                .starRating(req.starRating())
+                .isPrivate(req.isPrivate())
                 .content(req.content())
-                .image(req.imageUrl())
                 .build();
     }
 }
