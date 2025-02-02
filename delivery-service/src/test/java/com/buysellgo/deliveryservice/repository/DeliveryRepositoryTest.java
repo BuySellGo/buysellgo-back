@@ -1,6 +1,7 @@
 package com.buysellgo.deliveryservice.repository;
 
 import com.buysellgo.deliveryservice.entity.Delivery;
+import com.buysellgo.deliveryservice.entity.Delivery.DeliveryStatus;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+
+import static com.buysellgo.deliveryservice.entity.Delivery.DeliveryStatus.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -23,9 +28,10 @@ class DeliveryRepositoryTest {
     void createDeliveryTest() {
         // given
         Long orderId = 1L;
+        DeliveryStatus deliveryStatus = IN_DELIVERY;
 
         // when
-        Delivery delivery = deliveryRepository.save(Delivery.of(orderId, Delivery.DeliveryStatus.IN_DELIVERY));
+        Delivery delivery = deliveryRepository.save(Delivery.of(orderId, Timestamp.from(Instant.now()), deliveryStatus));
 
         // then
         assertNotNull(delivery);
