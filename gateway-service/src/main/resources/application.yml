@@ -59,24 +59,6 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
-        # product-service
-        - id: product-service
-          uri: lb://PRODUCT-SERVICE
-          predicates:
-            - Path=/product-service/**
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/product-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
-
-        - id: product-service
-          uri: lb://PRODUCT-SERVICE
-          predicates:
-            - Path=/product-service/actuator/**
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/product-service/(?<segment>.*), /$\{segment}
-
         # helpdesk-service
         - id: helpdesk-service-api-docs
           uri: lb://HELPDESK-SERVICE
@@ -259,6 +241,102 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/qna-service/(?<segment>.*), /$\{segment}
 
+        # order-service
+        - id: order-service-api-docs
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/v3/api-docs
+            - Method=GET
+
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
+
+        # product-service
+        - id: product-service-api-docs
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product-service/v3/api-docs
+            - Method=GET
+
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/product-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/product-service/(?<segment>.*), /$\{segment}
+
+          # payment-service
+        - id: payment-service-api-docs
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment-service/v3/api-docs
+            - Method=GET
+
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/payment-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/payment-service/(?<segment>.*), /$\{segment}
+
+          # search-service
+        - id: search-service-api-docs
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/search-service/v3/api-docs
+            - Method=GET
+
+        - id: search-service
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/search-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/search-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: search-service
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/search-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/search-service/(?<segment>.*), /$\{segment}
+
 #        - id: openapi-proxy
 #          uri: http://localhost:8000
 #          predicates:
@@ -349,12 +427,6 @@ springdoc:
       - url: /user-service/v3/api-docs
         name: User Service # 사용자 서비스 이름
       #        primaryName: User Service
-      - url: /product-service/v3/api-docs
-        name: Product Service
-      #        primaryName: Order Service
-      - url: /order-service/v3/api-docs
-        name: Order Service
-      #        primaryName: Order Service
       - url: /helpdesk-service/v3/api-docs
         name: HelpDesk Service
       #        primaryName: HelpDesk Service
@@ -376,3 +448,15 @@ springdoc:
       - url: /qna-service/v3/api-docs
         name: Qna Service
       #        primaryName: Qna Service
+      - url: /order-service/v3/api-docs
+        name: Order Service
+      #        primaryName: Order Service
+      - url: /product-service/v3/api-docs
+        name: Product Service
+      #        primaryName: Product Service
+      - url: /payment-service/v3/api-docs
+        name: Payment Service
+      #        primaryName: Payment Service
+      - url: /search-service/v3/api-docs
+        name: Search Service
+      #        primaryName: Search Service
