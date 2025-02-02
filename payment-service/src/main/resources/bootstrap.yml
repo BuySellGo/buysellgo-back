@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: payment-service # application.yml보다 우선순위가 높은 설정 파일과 읽을 설정 파일 등록
+  cloud:
+    config:
+      uri: http://localhost:8888
+      profile: junit

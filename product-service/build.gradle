@@ -1,0 +1,129 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.buysellgo'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', "2024.0.0")
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Spring Cloud 환경에서 server to server 요청을 처리해 주는 feign client 라이브러리
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // 쿼리 파라미터 추가 외부 로그 남기기
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+
+    // json web token 라이브러리
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+    // spring-boot-starter-mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    // 자바 언어를 통해 smtp 통신을 할 수 있게 하는 라이브러리
+    implementation 'jakarta.mail:jakarta.mail-api:2.1.2'
+
+    // 마이바티스 라이브러리
+    // Spring Boot 3에서는 mybatis 3.x 버전으로 진행하세요.
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+    // S3 파일 연동
+    implementation 'io.awspring.cloud:spring-cloud-aws-s3:3.0.2'
+
+    // jasypt 암호화
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+    // querydsl
+    implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // swagger mvc
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+//    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0"
+
+    // swagger mvc
+//    implementation 'org.springdoc:springdoc-openapi-webflux-core:1.7.0'
+//    implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.7.0'
+//    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.0"
+//    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api'  // Springdoc OpenAPI 의존성
+
+    // https://mvnrepository.com/artifact/io.minio/minio
+    implementation 'io.minio:minio:8.5.15'
+
+
+
+
+
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+/**
+ //querydsl 추가 시작
+ //queryDsl은 내부적으로 Entity 클래스를 인식해서 그와 비슷한 모양의 QClass를 제작합니다.
+ //이 QClass를 이용해서 Entity의 타입을 검증할 수 있고, 그에 맞는 쿼리문을 builder 형태로
+ //제작합니다.
+ //밑에 작성된 내용은 QClass의 생성 디렉토리 지정 및 프로젝트 build 시 컴파일 명령문 등을
+ //세팅해 놓은 코드입니다.
+ */
+def querydslDir = "src/main/generated"
+
+sourceSets {
+    main.java.srcDirs += [ querydslDir ]
+}
+
+tasks.withType(JavaCompile) {
+    options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
+}
+
+clean.doLast {
+    file(querydslDir).deleteDir()
+}
+
