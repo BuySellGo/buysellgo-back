@@ -20,8 +20,11 @@ public class CouponNotification {
     @Column(name="id")
     private Long id;
 
-    @Column(name = "profile_id")
-    private Long profileId;
+//    @Column(name = "profile_id")
+//    private Long profileId;
+//
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -35,25 +38,25 @@ public class CouponNotification {
     @Column(name = "noti_read_datetime")
     private Timestamp notiReadDateTime;
 
-    public static CouponNotification of(Long profileId,
+    public static CouponNotification of(Long userId,
                                         String notiContent,
-                                        Timestamp notiDatetime,
-                                        Timestamp notiReadDateTime) {
+                                        Timestamp notiDatetime){
+//                                        Timestamp notiReadDateTime) {
         return CouponNotification.builder()
-                .profileId(profileId)
+                .userId(userId)
                 .createdAt(Timestamp.from(Instant.now()))
                 .notiContent(notiContent)
                 .notiDatetime(notiDatetime)
-                .notiReadDateTime(notiReadDateTime)
+//                .notiReadDateTime(notiReadDateTime)
                 .build();
     }
 
     private Vo toVo(){
-        return new Vo(id, profileId, notiContent, notiDatetime, notiReadDateTime);
+        return new Vo(id, userId, notiContent, notiDatetime, notiReadDateTime);
     }
 
     private record Vo(Long id,
-                      Long profileId,
+                      Long userId,
                       String notiContent,
                       Timestamp notiDatetime,
                       Timestamp notiReadDateTime) {

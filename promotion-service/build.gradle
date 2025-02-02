@@ -80,6 +80,13 @@ dependencies {
     // swagger mvc
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
+    // batch
+    // Spring Boot Starter for Batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+//    implementation 'mysql:mysql-connector-java'
+//    implementation 'org.springframework.batch:spring-batch-core:5.0.0'
+//    implementation 'org.springframework.boot:spring-boot-starter-transaction'
+
 }
 
 dependencyManagement {
