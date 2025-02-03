@@ -26,7 +26,7 @@ class CartRepositoryTest {
     @Test   
     @DisplayName("장바구니를 생성해본다.")  
     void createCart(){
-        cartRepository.save(Cart.of("1", "1", "product1", 1, 10000));
+        cartRepository.save(Cart.of("1", "1", "product1", "1", "company1", 1, 10000));
         assertEquals(1, cartRepository.findAll().size());
     }
 
