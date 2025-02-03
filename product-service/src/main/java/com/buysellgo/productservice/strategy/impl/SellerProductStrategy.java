@@ -86,7 +86,25 @@ public class SellerProductStrategy implements ProductStrategy<Map<String, Object
 
     @Override
     public ProductResult<Map<String, Object>> deleteProduct(long productId, long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        try{
+            Optional<Product> product = productRepository.findById(productId);
+            if(product.isEmpty()){
+                return ProductResult.fail(PRODUCT_NOT_FOUND.getValue(), data);
+            }
+            if(product.get().getSellerId() != userId){
+                return ProductResult.fail(PRODUCT_DELETE_PERMISSION_DENIED.getValue(), data);
+            }
+            productRepository.delete(product.get());
+            data.put(PRODUCT_VO.getValue(), product.get().toVo());
+            return ProductResult.success(PRODUCT_DELETE_SUCCESS.getValue(), data);
+
+        } catch (Exception e) {
+            data.put(PRODUCT_VO.getValue(), e.getMessage());
+            return ProductResult.fail(PRODUCT_DELETE_FAIL.getValue(), data);
+        }
+        
+
     }
 
     @Override

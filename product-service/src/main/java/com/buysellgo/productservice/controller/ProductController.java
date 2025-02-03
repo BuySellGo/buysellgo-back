@@ -83,9 +83,14 @@ public class ProductController {
 
     @Operation(summary ="상품 삭제")
     @DeleteMapping("/delete")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> deleteProduct(){
-        //상품 삭제는 판매자와 관리자만 가능
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "상품 삭제 완료", null));
+    public ResponseEntity<CommonResDto<Map<String, Object>>> deleteProduct(@RequestHeader("Authorization") String token, @RequestParam("productId") long productId){
+        TokenUserInfo tokenUserInfo = jwtTokenProvider.getTokenUserInfo(token);
+        ProductStrategy<Map<String, Object>> strategy = productContext.getStrategy(tokenUserInfo.getRole());
+        ProductResult<Map<String, Object>> result = strategy.deleteProduct(productId, tokenUserInfo.getId());
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "상품 삭제 완료", result.data()));
     }
 
 

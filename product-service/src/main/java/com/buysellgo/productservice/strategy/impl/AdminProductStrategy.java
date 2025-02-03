@@ -8,8 +8,23 @@ import com.buysellgo.productservice.strategy.common.ProductResult;
 import java.util.Map;
 import java.util.HashMap;
 import static com.buysellgo.productservice.common.util.CommonConstant.*;
+import com.buysellgo.productservice.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
+import com.buysellgo.productservice.entity.Product;
+import java.util.Optional;
+
 @Component
+@RequiredArgsConstructor
+@Slf4j
+@Transactional
+
 public class AdminProductStrategy implements ProductStrategy<Map<String, Object>> {
+
+
+    private final ProductRepository productRepository;
+
 
 
     @Override
@@ -29,7 +44,20 @@ public class AdminProductStrategy implements ProductStrategy<Map<String, Object>
 
     @Override
     public ProductResult<Map<String, Object>> deleteProduct(long productId, long userId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        try{
+            Optional<Product> product = productRepository.findById(productId);
+            if(product.isEmpty()){
+                return ProductResult.fail(PRODUCT_NOT_FOUND.getValue(), data);
+            }
+            data.put(PRODUCT_VO.getValue(), product.get().toVo());
+            productRepository.deleteById(productId);
+            return ProductResult.success(PRODUCT_DELETE_SUCCESS.getValue(), data);
+        } catch (Exception e) {
+            data.put(PRODUCT_VO.getValue(), e.getMessage());
+            return ProductResult.fail(PRODUCT_DELETE_FAIL.getValue(), data);
+        }
+
     }
 
     @Override

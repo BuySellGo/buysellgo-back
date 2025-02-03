@@ -90,6 +90,7 @@ public enum CommonConstant {
     PRODUCT_DUPLICATED("상품 이름이 중복됩니다."),
     PRODUCT_NOT_FOUND("상품을 찾을 수 없습니다."),
     PRODUCT_UPDATE_PERMISSION_DENIED("상품 수정 권한이 없습니다."),
+    PRODUCT_DELETE_PERMISSION_DENIED("상품 삭제 권한이 없습니다."),
     // 토큰 상수
     BEARER_PREFIX("Bearer "),
 
