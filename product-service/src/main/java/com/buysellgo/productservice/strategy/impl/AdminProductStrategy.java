@@ -67,6 +67,9 @@ public class AdminProductStrategy implements ProductStrategy<Map<String, Object>
         Map<String, Object> data = new HashMap<>();
         try{
             List<Product> products = productRepository.findAll();
+            if(products.isEmpty()){
+                return ProductResult.fail(PRODUCT_LIST_EMPTY.getValue(), data);
+            }
             data.put(PRODUCT_VO.getValue(), products.stream().map(Product::toVo).toList());
             return ProductResult.success(PRODUCT_LIST_SUCCESS.getValue(), data);
 
