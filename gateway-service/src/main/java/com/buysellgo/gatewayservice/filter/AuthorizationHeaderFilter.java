@@ -72,6 +72,9 @@ public class AuthorizationHeaderFilter
             new RoutePattern("/review/list/guest"),
             // qna-service
             new RoutePattern("/qna/list/guest"),
+            // product-service
+            new RoutePattern("/product/detail"),
+            new RoutePattern("/product/list/guest"),
             // HTTP 메서드별 허용
             new RoutePattern("/auth/jwt", "POST"),   // 로그인
 

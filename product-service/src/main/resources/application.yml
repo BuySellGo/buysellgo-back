@@ -1,0 +1,43 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: product-service
+
+# Swagger Setting
+openapi:
+  service:
+    title: product-service doc
+    version: v1
+    url: http://localhost:8000/${spring.application.name}
+springdoc:
+#  default-consumes-media-type: application/json
+#  default-produces-media-type: application/json
+#  api-docs:
+#    enabled: true
+#    path: /v3/api-docs
+#  swagger-ui:
+#    enabled: true
+#    path: /swagger-ui.html
+#    config-url: /v3/api-docs/swagger-config
+#    urls:
+#      - url: /v3/api-docs
+#        name: API
+#  paths-to-match:
+#    - /**
+  api-docs:
+    path: /product-service/v3/api-docs
+  swagger-ui:
+    path: /product-service/swagger-ui.html
+
+# log level setting
+logging:
+  level:
+    logging:
+      level:
+        root: info
+        org.hibernate.orm.jdbc.bind: info
+        org.hibernate.SQL: info
+        springframework.cloud.config: info
+        com.buysellgo: info
