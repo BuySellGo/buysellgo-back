@@ -34,7 +34,15 @@ public interface ProductStrategy<T extends Map<String, Object>> {
     ProductResult<T> deleteProduct(long productId, long userId);
 
     /**
+     * 상품 목록을 조회합니다.
+     *
+     * @return 상품 목록을 포함하는 ProductResult입니다.
+     */
+    ProductResult<T> getProductList(long userId);
+
+    /**
      * 주어진 역할을 이 전략이 지원하는지 여부를 결정합니다.
+
      *
      * @param role 확인할 역할입니다.
      * @return 지원 여부를 나타내는 boolean 값입니다.

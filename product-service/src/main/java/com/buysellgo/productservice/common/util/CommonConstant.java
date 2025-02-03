@@ -91,8 +91,11 @@ public enum CommonConstant {
     PRODUCT_NOT_FOUND("상품을 찾을 수 없습니다."),
     PRODUCT_UPDATE_PERMISSION_DENIED("상품 수정 권한이 없습니다."),
     PRODUCT_DELETE_PERMISSION_DENIED("상품 삭제 권한이 없습니다."),
+    PRODUCT_LIST_SUCCESS("상품 목록 조회 완료"),
+    PRODUCT_LIST_FAIL("상품 목록 조회 실패"),
     // 토큰 상수
     BEARER_PREFIX("Bearer "),
+
 
 
     ACCESS_TOKEN("accessToken"),

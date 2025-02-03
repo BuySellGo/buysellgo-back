@@ -14,11 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import com.buysellgo.productservice.entity.Product;
 import java.util.Optional;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
+
 
 public class AdminProductStrategy implements ProductStrategy<Map<String, Object>> {
 
@@ -61,8 +63,23 @@ public class AdminProductStrategy implements ProductStrategy<Map<String, Object>
     }
 
     @Override
+    public ProductResult<Map<String, Object>> getProductList(long userId) {
+        Map<String, Object> data = new HashMap<>();
+        try{
+            List<Product> products = productRepository.findAll();
+            data.put(PRODUCT_VO.getValue(), products.stream().map(Product::toVo).toList());
+            return ProductResult.success(PRODUCT_LIST_SUCCESS.getValue(), data);
+
+        } catch (Exception e) {
+            data.put(PRODUCT_VO.getValue(), e.getMessage());
+            return ProductResult.fail(PRODUCT_LIST_FAIL.getValue(), data);
+        }
+    }
+
+    @Override
     public boolean supports(Role role) {
         return role == Role.ADMIN;
     }
+
 
 }

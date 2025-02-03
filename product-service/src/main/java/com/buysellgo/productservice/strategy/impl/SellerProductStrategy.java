@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
-
+import java.util.List;
 @Slf4j
 @Transactional
 @Component
@@ -103,14 +103,26 @@ public class SellerProductStrategy implements ProductStrategy<Map<String, Object
             data.put(PRODUCT_VO.getValue(), e.getMessage());
             return ProductResult.fail(PRODUCT_DELETE_FAIL.getValue(), data);
         }
-        
-
     }
 
+    @Override
+    public ProductResult<Map<String, Object>> getProductList(long userId) {
+        Map<String, Object> data = new HashMap<>();
+        try{
+            List<Product> products = productRepository.findAllBySellerId(userId);
+            data.put(PRODUCT_VO.getValue(), products.stream().map(Product::toVo).toList());
+            return ProductResult.success(PRODUCT_LIST_SUCCESS.getValue(), data);
+        } catch (Exception e) {
+
+            data.put(PRODUCT_VO.getValue(), e.getMessage());
+            return ProductResult.fail(PRODUCT_LIST_FAIL.getValue(), data);
+        }
+    }
     @Override
     public boolean supports(Role role) {
         return role == Role.SELLER;
     }
+
 
 
     

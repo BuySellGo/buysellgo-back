@@ -54,10 +54,17 @@ public class ProductController {
 
     @Operation(summary ="상품 전체 조회")
     @GetMapping("/list")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> getProduct(){
-        // 상품 조회는 역할에 상관없이 가능
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "상품 조회 완료", null));
+    public ResponseEntity<CommonResDto<Map<String, Object>>> getProduct(@RequestHeader("Authorization") String token){
+        TokenUserInfo tokenUserInfo = jwtTokenProvider.getTokenUserInfo(token);
+        ProductStrategy<Map<String, Object>> strategy = productContext.getStrategy(tokenUserInfo.getRole());
+        ProductResult<Map<String, Object>> result = strategy.getProductList(tokenUserInfo.getId());
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "상품 조회 완료", result.data()));
     }
+
 
     @Operation(summary ="상품 상세 조회")
     @GetMapping("/detail")
