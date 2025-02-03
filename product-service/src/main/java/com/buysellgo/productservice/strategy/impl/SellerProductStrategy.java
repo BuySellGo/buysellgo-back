@@ -14,10 +14,13 @@ import com.buysellgo.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
+
 @Slf4j
 @Transactional
 @Component
 @RequiredArgsConstructor
+
 
 public class SellerProductStrategy implements ProductStrategy<Map<String, Object>> {
 
@@ -45,8 +48,41 @@ public class SellerProductStrategy implements ProductStrategy<Map<String, Object
 
     @Override
     public ProductResult<Map<String, Object>> updateProduct(ProductReq req, long userId, long productId) {
-        return null;
+        Map<String, Object> data = new HashMap<>();
+        try{
+            ProductDto productDto = ProductDto.from(req, userId);
+            
+            Optional<Product> product = productRepository.findById(productId);
+            if(product.isEmpty()){
+                return ProductResult.fail(PRODUCT_NOT_FOUND.getValue(), data);
+            }
+            if(product.get().getSellerId() != userId){
+                return ProductResult.fail(PRODUCT_UPDATE_PERMISSION_DENIED.getValue(), data);
+            }
+            product.get().setProductName(productDto.getProductName());
+            product.get().setPrice(productDto.getPrice());
+            product.get().setCompanyName(productDto.getCompanyName());
+            product.get().setProductImage(productDto.getProductImage());
+            product.get().setDescription(productDto.getDescription());
+            product.get().setProductStock(productDto.getProductStock());
+
+            product.get().setDiscountRate(productDto.getDiscountRate());
+            product.get().setDeliveryFee(productDto.getDeliveryFee());
+            product.get().setMainCategory(productDto.getMainCategory());
+            product.get().setSubCategory(productDto.getSubCategory());
+            product.get().setSeason(productDto.getSeason());
+            productRepository.save(product.get());
+
+
+            data.put(PRODUCT_VO.getValue(), product.get().toVo());
+            return ProductResult.success(PRODUCT_UPDATE_SUCCESS.getValue(), data);
+        } catch (Exception e) {
+            data.put(PRODUCT_VO.getValue(), e.getMessage());
+            return ProductResult.fail(PRODUCT_UPDATE_FAIL.getValue(), data);
+        }
+
     }
+
 
     @Override
     public ProductResult<Map<String, Object>> deleteProduct(long productId, long userId) {

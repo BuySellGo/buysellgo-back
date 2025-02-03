@@ -22,6 +22,9 @@ import com.buysellgo.productservice.common.auth.TokenUserInfo;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.buysellgo.productservice.common.exception.CustomException;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -37,11 +40,12 @@ public class ProductController {
 
     @Operation(summary ="상품 생성")
     @PostMapping("/create") 
-    public ResponseEntity<CommonResDto<Map<String, Object>>> createProduct(@RequestHeader("Authorization") String token, @RequestBody ProductReq req){
+    public ResponseEntity<CommonResDto<Map<String, Object>>> createProduct(@RequestHeader("Authorization") String token, @Valid @RequestBody ProductReq req){
         TokenUserInfo tokenUserInfo = jwtTokenProvider.getTokenUserInfo(token);
         ProductStrategy<Map<String, Object>> strategy = productContext.getStrategy(tokenUserInfo.getRole());
         ProductResult<Map<String, Object>> result = strategy.createProduct(req, tokenUserInfo.getId());
         if(!result.success()){
+
             throw new CustomException(result.message());
         }
         return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "상품 생성 완료", result.data()));
@@ -65,10 +69,16 @@ public class ProductController {
 
     @Operation(summary ="상품 수정")
     @PutMapping("/update")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> updateProduct(){
-        //상품 수정은 판매자만 가능
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "상품 수정 완료", null));
+    public ResponseEntity<CommonResDto<Map<String, Object>>> updateProduct(@RequestHeader("Authorization") String token,@RequestParam("productId") long productId,@Valid @RequestBody ProductReq req){
+        TokenUserInfo tokenUserInfo = jwtTokenProvider.getTokenUserInfo(token);
+        ProductStrategy<Map<String, Object>> strategy = productContext.getStrategy(tokenUserInfo.getRole());
+        ProductResult<Map<String, Object>> result = strategy.updateProduct(req, tokenUserInfo.getId(), productId);
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "상품 수정 완료", result.data()));
     }
+
 
 
     @Operation(summary ="상품 삭제")
