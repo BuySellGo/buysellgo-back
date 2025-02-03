@@ -53,9 +53,14 @@ public class Order extends BaseEntity {
     @Builder.Default
     private OrderStatus status = OrderStatus.PENDING;
 
+    @Column(name = "group_id", columnDefinition = "bigint", nullable = false, unique = false)
+    private long groupId;
 
 
-    public static Order of(String productId, String productName, String sellerId, String companyName, String userId, int quantity, int totalPrice, String memo, PaymentMethod paymentMethod) {
+
+
+
+    public static Order of(String productId, String productName, String sellerId, String companyName, String userId, int quantity, int totalPrice, String memo, PaymentMethod paymentMethod, long groupId) {
         return Order.builder()
                 .productId(productId)
                 .productName(productName)
@@ -66,12 +71,16 @@ public class Order extends BaseEntity {
                 .totalPrice(totalPrice)
                 .memo(memo)
                 .paymentMethod(paymentMethod)
+                .groupId(groupId)
                 .build();
+
     }
 
+
     public Vo toVo(){
-        return new Vo(orderId, productId, productName, sellerId, companyName, userId, quantity, totalPrice, memo, paymentMethod, status, version, createdAt, updatedAt);
+        return new Vo(orderId, productId, productName, sellerId, companyName, userId, quantity, totalPrice, memo, paymentMethod, status, groupId, version, createdAt, updatedAt);
     }
+
 
 
     public record Vo(
@@ -86,6 +95,7 @@ public class Order extends BaseEntity {
         String memo,
         PaymentMethod paymentMethod,
         OrderStatus status,
+        Long groupId,
         long version,
         Timestamp createdAt,
         Timestamp updatedAt

@@ -12,13 +12,16 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.buysellgo.orderservice.entity.Order;
 import com.buysellgo.orderservice.entity.OrderStatus;
 import com.buysellgo.orderservice.entity.PaymentMethod;
-
+import com.buysellgo.orderservice.entity.OrderGroup;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 
 class OrderRepositoryTest {
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderGroupRepository orderGroupRepository;
 
     @BeforeEach
     void setUp(){
@@ -28,9 +31,11 @@ class OrderRepositoryTest {
     @Test
     @DisplayName("주문을 생성해본다.")
     void createOrder(){
-        orderRepository.save(Order.of("1", "product1", "1", "company1", "1", 1, 10000, "memo", PaymentMethod.CREDIT_CARD));
+        OrderGroup orderGroup = orderGroupRepository.save(OrderGroup.builder().build());
+        orderRepository.save(Order.of("1", "product1", "1", "company1", "1", 1, 10000, "memo", PaymentMethod.CREDIT_CARD, orderGroup.getGroupId()));
         assertEquals(1, orderRepository.findAll().size());
     }
+
 
     @Test
     @DisplayName("주문을 조회해본다.")
