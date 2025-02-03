@@ -12,19 +12,39 @@ import com.buysellgo.productservice.common.dto.CommonResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.GetMapping;  
+import com.buysellgo.productservice.strategy.common.ProductContext;
+import com.buysellgo.productservice.strategy.common.ProductStrategy;
+import com.buysellgo.productservice.strategy.common.ProductResult;
+import com.buysellgo.productservice.common.auth.JwtTokenProvider;
+import com.buysellgo.productservice.controller.dto.ProductReq;
+import com.buysellgo.productservice.common.auth.TokenUserInfo;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestBody;
+import com.buysellgo.productservice.common.exception.CustomException;
+
+
+
+
 @Slf4j
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
-public class ProductController {
+public class ProductController {    
+    private final ProductContext productContext;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     @Operation(summary ="상품 생성")
     @PostMapping("/create") 
-    public ResponseEntity<CommonResDto<Map<String, Object>>> createProduct(){
-        //상품 생성은 판매자만 가능
-        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "상품 생성 완료", null));
+    public ResponseEntity<CommonResDto<Map<String, Object>>> createProduct(@RequestHeader("Authorization") String token, @RequestBody ProductReq req){
+        TokenUserInfo tokenUserInfo = jwtTokenProvider.getTokenUserInfo(token);
+        ProductStrategy<Map<String, Object>> strategy = productContext.getStrategy(tokenUserInfo.getRole());
+        ProductResult<Map<String, Object>> result = strategy.createProduct(req, tokenUserInfo.getId());
+        if(!result.success()){
+            throw new CustomException(result.message());
+        }
+        return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "상품 생성 완료", result.data()));
     }
 
 

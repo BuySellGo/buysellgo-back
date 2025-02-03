@@ -81,10 +81,18 @@ public enum CommonConstant {
     REPLY_UPDATE_PERMISSION_DENIED("답변 수정 권한이 없습니다."),
     REPLY_DELETE_PERMISSION_DENIED("답변 삭제 권한이 없습니다."),
     NOT_SUPPORTED("지원하지 않는 기능입니다."),
+    PRODUCT_CREATE_SUCCESS("상품 생성 완료"),
+    PRODUCT_CREATE_FAIL("상품 생성 실패"),
+    PRODUCT_UPDATE_SUCCESS("상품 수정 완료"),
+    PRODUCT_UPDATE_FAIL("상품 수정 실패"),
+    PRODUCT_DELETE_SUCCESS("상품 삭제 완료"),
+    PRODUCT_DELETE_FAIL("상품 삭제 실패"),
+    PRODUCT_DUPLICATED("상품 이름이 중복됩니다."),
     // 토큰 상수
     BEARER_PREFIX("Bearer "),
     ACCESS_TOKEN("accessToken"),
     
+
     // 응답 키값 상수
     EMAIL("email"),
     ROLE("role"),
@@ -94,8 +102,10 @@ public enum CommonConstant {
     PROFILE_VO("profileVo"),
     QNA_VO("qnaVo"),
     REPLY_VO("replyVo"),
+    PRODUCT_VO("productVo"),
     SUCCESS("success"),
     FAILURE("failure"),
+
 
 
     // 숫자 상수

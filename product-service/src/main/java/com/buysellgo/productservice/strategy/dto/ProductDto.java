@@ -18,13 +18,10 @@ import lombok.Builder;
 public class ProductDto {
     private String productName;
     private int price;
-
     private String companyName;
+    private long sellerId;
     private String productImage;
     private String description;
-
-
-
     private int productStock;
     private int discountRate;
     private int deliveryFee;
@@ -32,11 +29,12 @@ public class ProductDto {
     private SubCategory subCategory;
     private Season season;
 
-    public static ProductDto from(ProductReq req) {
+    public static ProductDto from(ProductReq req, long sellerId) {
         return ProductDto.builder()
             .productName(req.productName())
             .price(req.price())
             .companyName(req.companyName())
+            .sellerId(sellerId)
             .productImage(req.productImage())
             .description(req.description())
             .productStock(req.productStock())
