@@ -13,5 +13,4 @@ public record OrderStatusUpdateReq(
     OrderStatus orderStatus
 
 ) {
-
 }

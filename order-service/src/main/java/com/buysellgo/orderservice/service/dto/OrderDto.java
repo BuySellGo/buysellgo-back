@@ -7,13 +7,12 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-
+import com.buysellgo.orderservice.entity.Cart;
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class OrderDto {
     long productId;
     String productName;
@@ -38,4 +37,19 @@ public class OrderDto {
             .paymentMethod(req.paymentMethod())
             .build();
     }   
+
+    public static OrderDto from(Cart cart, String memo, PaymentMethod paymentMethod){
+        return OrderDto.builder()
+            .productId(cart.getProductId())
+            .productName(cart.getProductName())
+            .sellerId(cart.getSellerId())
+            .companyName(cart.getCompanyName())
+            .userId(cart.getUserId())
+            .quantity(cart.getQuantity())
+            .totalPrice(cart.getPrice()*cart.getQuantity())
+            .memo(memo)
+            .paymentMethod(paymentMethod)
+            .build();
+    }
+    
 }

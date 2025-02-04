@@ -67,7 +67,6 @@ public class Order extends BaseEntity {
                 .sellerId(sellerId)
                 .companyName(companyName)
                 .userId(userId)
-
                 .quantity(quantity)
                 .totalPrice(totalPrice)
                 .memo(memo)

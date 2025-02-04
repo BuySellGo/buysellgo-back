@@ -21,19 +21,22 @@ public class Cart extends BaseEntity {
     private long cartId;
 
     @Column(name = "user_id", columnDefinition = "bigint", nullable = true, unique = false)
-    private String userId;
+    private long userId;
+
 
     @Column(name = "product_id", columnDefinition = "bigint", nullable = true, unique = false)
-    private String productId;
+    private long productId;
+
 
     @Column(name = "product_name", columnDefinition = "varchar(100)", nullable = true, unique = false)
     private String productName;
 
     @Column(name = "seller_id", columnDefinition = "bigint", nullable = true, unique = false)
-    private String sellerId;
+    private long sellerId;
 
     @Column(name = "company_name", columnDefinition = "varchar(100)", nullable = true, unique = false)
     private String companyName;
+
 
     @Column(name = "quantity", columnDefinition = "int", nullable = true, unique = false)
     private int quantity;
@@ -41,13 +44,10 @@ public class Cart extends BaseEntity {
     @Column(name = "price", columnDefinition = "int", nullable = true, unique = false)
     private int price;
 
-    @Column(name = "group_id", columnDefinition = "bigint", nullable = false, unique = false)
-    private long groupId;
 
 
 
-
-    public static Cart of(String userId, String productId, String productName, String sellerId, String companyName, int quantity, int price, long groupId){
+    public static Cart of(long userId, long productId, String productName, long sellerId, String companyName, int quantity, int price){
         return Cart.builder()
                 .userId(userId)
                 .productId(productId)
@@ -56,28 +56,30 @@ public class Cart extends BaseEntity {
                 .companyName(companyName)
                 .quantity(quantity)
                 .price(price)
-                .groupId(groupId)
                 .build();
+
 
     }
 
     public Vo toVo(){
-        return new Vo(cartId, userId, productId, productName, sellerId, companyName, quantity, price, groupId, version, createdAt, updatedAt);
+        return new Vo(cartId, userId, productId, productName, sellerId, companyName, quantity, price, version, createdAt, updatedAt);
     }
     
+
     public record Vo(
         long cartId,
-        String userId,
-        String productId,
+        long userId,
+        long productId,
         String productName,
-        String sellerId,
+        long sellerId,
         String companyName,
         int quantity,
         int price,
-        long groupId,
+
         long version,
         Timestamp createdAt,
         Timestamp updatedAt
+
 
 
     ) {}
