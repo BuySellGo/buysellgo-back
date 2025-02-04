@@ -18,10 +18,13 @@ import com.buysellgo.orderservice.entity.OrderGroup;
 import static com.buysellgo.orderservice.common.util.CommonConstant.*;
 
 import com.buysellgo.orderservice.controller.dto.OrderStatusUpdateReq;
+import org.springframework.data.domain.Sort;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
+
 
 
 
@@ -58,15 +61,13 @@ public class OrderService {
         Map<String, Object> data = new HashMap<>();
         try{
             if(role.equals(Role.USER)){
-                List<Order> orders = orderRepository.findAllByUserId(userId);
+                List<Order> orders = orderRepository.findAllByUserId(userId, Sort.by(Sort.Direction.DESC, "createdAt"));
                 List<Order.Vo> orderVos = orders.stream().map(Order::toVo).toList();
-                orderVos.sort(Comparator.comparing(Order.Vo::createdAt).reversed());
                 data.put(ORDER_LIST_SUCCESS.getValue(), orderVos);
                 return ServiceResult.success("USER"+ORDER_LIST_SUCCESS.getValue(), data);
             } else if(role.equals(Role.ADMIN)){
-                List<Order> orders = orderRepository.findAll();
+                List<Order> orders = orderRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
                 List<Order.Vo> orderVos = orders.stream().map(Order::toVo).toList();
-                orderVos.sort(Comparator.comparing(Order.Vo::createdAt).reversed());
                 data.put(ORDER_LIST_SUCCESS.getValue(), orderVos);
                 return ServiceResult.success("ADMIN"+ORDER_LIST_SUCCESS.getValue(), data);
             } else {
@@ -88,6 +89,7 @@ public class OrderService {
             } else {
                 order.get().setStatus(req.orderStatus());
                 orderRepository.save(order.get());
+                data.put(ORDER_UPDATE_SUCCESS.getValue(), order.get().toVo());
                 return ServiceResult.success(ORDER_UPDATE_SUCCESS.getValue(), data);
             }
         }catch(Exception e){
