@@ -81,10 +81,38 @@ public enum CommonConstant {
     REPLY_UPDATE_PERMISSION_DENIED("답변 수정 권한이 없습니다."),
     REPLY_DELETE_PERMISSION_DENIED("답변 삭제 권한이 없습니다."),
     NOT_SUPPORTED("지원하지 않는 기능입니다."),
+    PAYMENT_METHOD_REGISTER_SUCCESS("결제 수단 등록 성공"),
+    PAYMENT_METHOD_REGISTER_FAIL("결제 수단 등록 실패"),
+    PAYMENT_METHOD_LIST_SUCCESS("결제 수단 목록 조회 성공"),
+    PAYMENT_METHOD_LIST_FAIL("결제 수단 목록 조회 실패"),
+    PAYMENT_METHOD_NOT_FOUND("결제 수단을 찾을 수 없습니다."),
+    PAYMENT_METHOD_UPDATE_SUCCESS("결제 수단 수정 성공"),
+    PAYMENT_METHOD_UPDATE_FAIL("결제 수단 수정 실패"),
+    PAYMENT_METHOD_UPDATE_PERMISSION_DENIED("결제 수단 수정 권한이 없습니다."),
+    PAYMENT_METHOD_DELETE_SUCCESS("결제 수단 삭제 성공"),
+    PAYMENT_METHOD_DELETE_FAIL("결제 수단 삭제 실패"),
+    PAYMENT_METHOD_DELETE_PERMISSION_DENIED("결제 수단 삭제 권한이 없습니다."),
+    PAYMENT_CREATE_SUCCESS("결제 생성 성공"),
+    PAYMENT_CREATE_FAIL("결제 생성 실패"),
+    PAYMENT_HISTORY_SUCCESS("결제 내역 조회 성공"),
+    PAYMENT_HISTORY_FAIL("결제 내역 조회 실패"),
+    PAYMENT_STATUS_UPDATE_SUCCESS("결제 상태 수정 성공"),
+    PAYMENT_STATUS_UPDATE_FAIL("결제 상태 수정 실패"),
+    PAYMENT_NOT_FOUND("결제를 찾을 수 없습니다."),
+    PAYMENT_ALREADY_EXISTS("이미 결제가 존재합니다."),
     // 토큰 상수
+
+
+
+
+
+
+
+
     BEARER_PREFIX("Bearer "),
     ACCESS_TOKEN("accessToken"),
     
+
     // 응답 키값 상수
     EMAIL("email"),
     ROLE("role"),
@@ -92,6 +120,8 @@ public enum CommonConstant {
     SELLER_VO("sellerVo"),
     ADMIN_VO("adminVo"),
     PROFILE_VO("profileVo"),
+    PAYMENT_METHOD_VO("paymentMethodVo"),
+    PAYMENT_VO("paymentVo"),
     QNA_VO("qnaVo"),
     REPLY_VO("replyVo"),
     SUCCESS("success"),
