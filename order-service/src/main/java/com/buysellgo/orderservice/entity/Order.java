@@ -21,19 +21,19 @@ public class Order extends BaseEntity {
     private Long orderId;
 
     @Column(name = "product_id", columnDefinition = "bigint", nullable = true, unique = false)
-    private String productId;
+    private long productId;
 
     @Column(name = "product_name", columnDefinition = "varchar(100)", nullable = true, unique = false)
     private String productName;
 
     @Column(name = "seller_id", columnDefinition = "bigint", nullable = true, unique = false)
-    private String sellerId;
+    private long sellerId;
 
     @Column(name = "company_name", columnDefinition = "varchar(100)", nullable = true, unique = false)
     private String companyName;
 
     @Column(name = "user_id", columnDefinition = "bigint", nullable = true, unique = false)
-    private String userId;
+    private long userId;
 
     @Column(name = "quantity", columnDefinition = "int", nullable = true, unique = false)
     private int quantity;
@@ -60,13 +60,14 @@ public class Order extends BaseEntity {
 
 
 
-    public static Order of(String productId, String productName, String sellerId, String companyName, String userId, int quantity, int totalPrice, String memo, PaymentMethod paymentMethod, long groupId) {
+    public static Order of(long productId, String productName, long sellerId, String companyName, long userId, int quantity, int totalPrice, String memo, PaymentMethod paymentMethod, long groupId) {
         return Order.builder()
                 .productId(productId)
                 .productName(productName)
                 .sellerId(sellerId)
                 .companyName(companyName)
                 .userId(userId)
+
                 .quantity(quantity)
                 .totalPrice(totalPrice)
                 .memo(memo)
@@ -85,17 +86,17 @@ public class Order extends BaseEntity {
 
     public record Vo(
         long orderId,
-        String productId,
+        long productId,
         String productName,
-        String sellerId,
+        long sellerId,
         String companyName,
-        String userId,
+        long userId,
         int quantity,
         int totalPrice,
         String memo,
         PaymentMethod paymentMethod,
         OrderStatus status,
-        Long groupId,
+        long groupId,
         long version,
         Timestamp createdAt,
         Timestamp updatedAt
