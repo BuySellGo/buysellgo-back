@@ -31,7 +31,7 @@ class OrderRepositoryTest {
     @Test
     @DisplayName("주문을 생성해본다.")
     void createOrder(){
-        OrderGroup orderGroup = orderGroupRepository.save(OrderGroup.builder().build());
+        OrderGroup orderGroup = orderGroupRepository.save(OrderGroup.of(1));
         orderRepository.save(Order.of("1", "product1", "1", "company1", "1", 1, 10000, "memo", PaymentMethod.CREDIT_CARD, orderGroup.getGroupId()));
         assertEquals(1, orderRepository.findAll().size());
     }

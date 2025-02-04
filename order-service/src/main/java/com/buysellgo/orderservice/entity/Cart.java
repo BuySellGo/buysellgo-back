@@ -35,16 +35,19 @@ public class Cart extends BaseEntity {
     @Column(name = "company_name", columnDefinition = "varchar(100)", nullable = true, unique = false)
     private String companyName;
 
-
     @Column(name = "quantity", columnDefinition = "int", nullable = true, unique = false)
     private int quantity;
-
 
     @Column(name = "price", columnDefinition = "int", nullable = true, unique = false)
     private int price;
 
+    @Column(name = "group_id", columnDefinition = "bigint", nullable = false, unique = false)
+    private long groupId;
 
-    public static Cart of(String userId, String productId, String productName, String sellerId, String companyName, int quantity, int price){
+
+
+
+    public static Cart of(String userId, String productId, String productName, String sellerId, String companyName, int quantity, int price, long groupId){
         return Cart.builder()
                 .userId(userId)
                 .productId(productId)
@@ -53,12 +56,13 @@ public class Cart extends BaseEntity {
                 .companyName(companyName)
                 .quantity(quantity)
                 .price(price)
+                .groupId(groupId)
                 .build();
 
     }
 
     public Vo toVo(){
-        return new Vo(cartId, userId, productId, productName, sellerId, companyName, quantity, price, version, createdAt, updatedAt);
+        return new Vo(cartId, userId, productId, productName, sellerId, companyName, quantity, price, groupId, version, createdAt, updatedAt);
     }
     
     public record Vo(
@@ -70,9 +74,11 @@ public class Cart extends BaseEntity {
         String companyName,
         int quantity,
         int price,
+        long groupId,
         long version,
         Timestamp createdAt,
         Timestamp updatedAt
+
 
     ) {}
 }
