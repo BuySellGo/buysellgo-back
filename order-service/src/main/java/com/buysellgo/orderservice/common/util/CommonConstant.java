@@ -81,10 +81,38 @@ public enum CommonConstant {
     REPLY_UPDATE_PERMISSION_DENIED("답변 수정 권한이 없습니다."),
     REPLY_DELETE_PERMISSION_DENIED("답변 삭제 권한이 없습니다."),
     NOT_SUPPORTED("지원하지 않는 기능입니다."),
+    ORDER_CREATE_SUCCESS("주문 생성 성공"),
+    ORDER_CREATE_FAIL("주문 생성 실패"),
+    ORDER_LIST_SUCCESS("주문 목록 조회 성공"),
+    ORDER_LIST_FAIL("주문 목록 조회 실패"),
+    ORDER_UPDATE_SUCCESS("주문 상태 업데이트 성공"),
+    ORDER_UPDATE_FAIL("주문 상태 업데이트 실패"),
+    ORDER_NOT_FOUND("주문을 찾을 수 없습니다."),
+    CART_ADD_SUCCESS("장바구니 추가 성공"),
+    CART_ADD_FAIL("장바구니 추가 실패"),
+    CART_LIST_SUCCESS("장바구니 목록 조회 성공"),
+    CART_LIST_FAIL("장바구니 목록 조회 실패"),
+    CART_NOT_FOUND("장바구니를 찾을 수 없습니다."),
+    CART_UPDATE_SUCCESS("장바구니 수량 업데이트 성공"),
+    CART_UPDATE_FAIL("장바구니 수량 업데이트 실패"),
+    CART_DELETE_SUCCESS("장바구니 삭제 성공"),
+    CART_DELETE_FAIL("장바구니 삭제 실패"),
+    CART_ORDER_SUCCESS("장바구니 주문 성공"),
+    CART_ORDER_FAIL("장바구니 주문 실패"),
+    CART_NOT_AUTHORIZED("장바구니 권한이 없습니다."),
     // 토큰 상수
     BEARER_PREFIX("Bearer "),
     ACCESS_TOKEN("accessToken"),
+
+
+
     
+
+
+
+
+
+
     // 응답 키값 상수
     EMAIL("email"),
     ROLE("role"),
@@ -94,8 +122,12 @@ public enum CommonConstant {
     PROFILE_VO("profileVo"),
     QNA_VO("qnaVo"),
     REPLY_VO("replyVo"),
+    ORDER_VO("orderVo"),
+    CART_VO("cartVo"),
     SUCCESS("success"),
     FAILURE("failure"),
+
+
 
 
     // 숫자 상수
