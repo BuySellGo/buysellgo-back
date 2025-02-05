@@ -16,15 +16,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.List;
+import org.springframework.kafka.core.KafkaTemplate;        
+    
 @Slf4j
 @Transactional
 @Component
 @RequiredArgsConstructor
-
-
 public class SellerProductStrategy implements ProductStrategy<Map<String, Object>> {
 
     private final ProductRepository productRepository;
+    private final KafkaTemplate<String, Product> kafkaTemplate;
 
     
     @Override
@@ -37,6 +38,7 @@ public class SellerProductStrategy implements ProductStrategy<Map<String, Object
             }
             Product product = productRepository.save(Product.of(productDto.getProductName(), productDto.getPrice(), productDto.getCompanyName(), productDto.getSellerId(), productDto.getProductImage(), productDto.getDescription(), productDto.getProductStock(), productDto.getDiscountRate(), productDto.getDeliveryFee(), productDto.getMainCategory(), productDto.getSubCategory(), productDto.getSeason()));
             data.put(PRODUCT_VO.getValue(), product.toVo());
+            kafkaTemplate.send("product-create", product);
             return ProductResult.success(PRODUCT_CREATE_SUCCESS.getValue(), data);
         } catch (Exception e) {
             data.put(PRODUCT_VO.getValue(), e.getMessage());

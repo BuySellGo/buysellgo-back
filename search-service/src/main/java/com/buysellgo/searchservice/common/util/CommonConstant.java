@@ -81,10 +81,28 @@ public enum CommonConstant {
     REPLY_UPDATE_PERMISSION_DENIED("답변 수정 권한이 없습니다."),
     REPLY_DELETE_PERMISSION_DENIED("답변 삭제 권한이 없습니다."),
     NOT_SUPPORTED("지원하지 않는 기능입니다."),
+    PRODUCT_DOCUMENT_CREATE_SUCCESS("상품 문서 생성 완료"),
+    PRODUCT_DOCUMENT_CREATE_FAIL("상품 문서 생성 실패"),
+    PRODUCT_DOCUMENT_UPDATE_SUCCESS("상품 문서 수정 완료"),
+    PRODUCT_DOCUMENT_UPDATE_FAIL("상품 문서 수정 실패"),
+    PRODUCT_DOCUMENT_NOT_FOUND("상품 문서를 찾을 수 없습니다."),
+    PRODUCT_DOCUMENT_SEARCH_SUCCESS("상품 문서 검색 완료"),
+    PRODUCT_DOCUMENT_SEARCH_FAIL("상품 문서 검색 실패"),
+    PRODUCT_DOCUMENT_MAIN_CATEGORY_SEARCH_SUCCESS("메인 카테고리별 상품 문서 검색 완료"),
+    PRODUCT_DOCUMENT_MAIN_CATEGORY_SEARCH_FAIL("메인 카테고리별 상품 문서 검색 실패"),
+    PRODUCT_DOCUMENT_SUB_CATEGORY_SEARCH_SUCCESS("서브 카테고리별 상품 문서 검색 완료"),
+    PRODUCT_DOCUMENT_SUB_CATEGORY_SEARCH_FAIL("서브 카테고리별 상품 문서 검색 실패"),   
+    PRODUCT_DOCUMENT_DELETE_SUCCESS("상품 문서 삭제 완료"),
+    PRODUCT_DOCUMENT_DELETE_FAIL("상품 문서 삭제 실패"),
+    PRODUCT_DOCUMENT_SEASON_SEARCH_SUCCESS("시즌별 상품 문서 검색 완료"),
+    PRODUCT_DOCUMENT_SEASON_SEARCH_FAIL("시즌별 상품 문서 검색 실패"),
     // 토큰 상수
+
     BEARER_PREFIX("Bearer "),
     ACCESS_TOKEN("accessToken"),
     
+
+
     // 응답 키값 상수
     EMAIL("email"),
     ROLE("role"),
