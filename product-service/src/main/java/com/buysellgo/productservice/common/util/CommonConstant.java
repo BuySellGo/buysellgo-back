@@ -96,6 +96,10 @@ public enum CommonConstant {
     PRODUCT_DETAIL_SUCCESS("상품 상세 조회 완료"),
     PRODUCT_DETAIL_FAIL("상품 상세 조회 실패"),
     PRODUCT_LIST_EMPTY("상품 목록이 없습니다."),
+    PRODUCT_QUANTITY_UPDATE_SUCCESS("상품 수량 업데이트 완료"),
+    PRODUCT_QUANTITY_UPDATE_FAIL("상품 수량 업데이트 실패"),
+    PRODUCT_QUANTITY_RESTORE_SUCCESS("상품 수량 복원 완료"),
+    PRODUCT_QUANTITY_RESTORE_FAIL("상품 수량 복원 실패"),
     // 토큰 상수
 
     BEARER_PREFIX("Bearer "),

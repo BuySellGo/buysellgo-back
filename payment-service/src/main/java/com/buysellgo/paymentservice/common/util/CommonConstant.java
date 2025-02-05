@@ -100,7 +100,10 @@ public enum CommonConstant {
     PAYMENT_STATUS_UPDATE_FAIL("결제 상태 수정 실패"),
     PAYMENT_NOT_FOUND("결제를 찾을 수 없습니다."),
     PAYMENT_ALREADY_EXISTS("이미 결제가 존재합니다."),
+    PRODUCT_QUANTITY_UPDATE_FAIL("상품 수량 업데이트 실패"),
+    ORDER_STATUS_UPDATE_FAIL("주문 상태 업데이트 실패"),
     // 토큰 상수
+
 
 
 

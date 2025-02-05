@@ -19,7 +19,7 @@ import static com.buysellgo.orderservice.common.util.CommonConstant.*;
 
 import com.buysellgo.orderservice.controller.dto.OrderStatusUpdateReq;
 import org.springframework.data.domain.Sort;
-
+import com.buysellgo.orderservice.entity.OrderStatus;
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -97,5 +97,51 @@ public class OrderService {
             return ServiceResult.fail(ORDER_UPDATE_FAIL.getValue(), data);
         }
     }
+
+    public ServiceResult<Map<String, Object>> updateOrderStatusSuccess(Long orderId){
+        Map<String, Object> data = new HashMap<>();
+        try{
+            Optional<Order> order = orderRepository.findById(orderId);
+            if(order.isEmpty()){
+                log.info("주문 상태 업데이트 실패: 주문 없음");
+                return ServiceResult.fail(ORDER_NOT_FOUND.getValue(), data);
+            }
+            order.get().setStatus(OrderStatus.CONFIRMED);
+            orderRepository.save(order.get());
+            data.put(ORDER_UPDATE_SUCCESS.getValue(), order.get().toVo());
+            log.info("주문 상태 업데이트 완료: {}", order.get().toVo());
+            return ServiceResult.success(ORDER_UPDATE_SUCCESS.getValue(), data);
+        }catch(Exception e){
+            data.put(FAILURE.getValue(), e.getMessage());
+            log.info("주문 상태 업데이트 실패: {}", e.getMessage());
+            return ServiceResult.fail(ORDER_UPDATE_FAIL.getValue(), data);
+        }
+    }
+
+
+    public ServiceResult<Map<String, Object>> updateOrderStatusCancelled(Long orderId){
+        Map<String, Object> data = new HashMap<>();
+        try{
+            Optional<Order> order = orderRepository.findById(orderId);
+            if(order.isEmpty()){
+                log.info("주문 상태 업데이트 실패: 주문 없음");
+                return ServiceResult.fail(ORDER_NOT_FOUND.getValue(), data);
+            }
+            order.get().setStatus(OrderStatus.CANCELLED);
+            orderRepository.save(order.get());
+            data.put(ORDER_UPDATE_SUCCESS.getValue(), order.get().toVo());
+
+            log.info("주문 상태 업데이트 완료: {}", order.get().toVo());
+            return ServiceResult.success(ORDER_UPDATE_SUCCESS.getValue(), data);
+
+        }catch(Exception e){
+            data.put(FAILURE.getValue(), e.getMessage());
+            log.info("주문 상태 업데이트 실패: {}", e.getMessage());
+            return ServiceResult.fail(ORDER_UPDATE_FAIL.getValue(), data);
+        }
+
+
+    }
+
 
 }
