@@ -89,6 +89,10 @@ dependencies {
     // https://mvnrepository.com/artifact/io.minio/minio
     implementation 'io.minio:minio:8.5.15'
 
+    //kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
 
 
 

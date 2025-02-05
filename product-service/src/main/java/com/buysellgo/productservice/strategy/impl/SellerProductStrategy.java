@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.List;
 import org.springframework.kafka.core.KafkaTemplate;        
-    
+
 @Slf4j
 @Transactional
 @Component
@@ -77,6 +77,7 @@ public class SellerProductStrategy implements ProductStrategy<Map<String, Object
 
 
             data.put(PRODUCT_VO.getValue(), product.get().toVo());
+            kafkaTemplate.send("product-update", product.get());
             return ProductResult.success(PRODUCT_UPDATE_SUCCESS.getValue(), data);
         } catch (Exception e) {
             data.put(PRODUCT_VO.getValue(), e.getMessage());
@@ -99,8 +100,8 @@ public class SellerProductStrategy implements ProductStrategy<Map<String, Object
             }
             productRepository.delete(product.get());
             data.put(PRODUCT_VO.getValue(), product.get().toVo());
+            kafkaTemplate.send("product-delete", product.get());
             return ProductResult.success(PRODUCT_DELETE_SUCCESS.getValue(), data);
-
         } catch (Exception e) {
             data.put(PRODUCT_VO.getValue(), e.getMessage());
             return ProductResult.fail(PRODUCT_DELETE_FAIL.getValue(), data);

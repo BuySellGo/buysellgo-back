@@ -18,7 +18,7 @@ public class KafkaConsumerConfig {
     private final AccessStatisticsService accessStatisticsService;
     private final SalesStatisticsService salesStatisticsService;
 
-    @KafkaListener(topics = "access-statistics", groupId = "stat-group")
+    @KafkaListener(topics = "access-statistics", groupId = "statistics-group")
     public void consumeAccessRecord(String accessStatMessage) {
         // 메시지를 JSON으로 변환하여 DB에 저장
         try {
@@ -32,7 +32,7 @@ public class KafkaConsumerConfig {
         }
     }
 
-    @KafkaListener(topics = "sales-statistics", groupId = "stat-group")
+    @KafkaListener(topics = "sales-statistics", groupId = "statistics-group")
     public void consumeSalesRecord(String salesStatMessage) {
         // 메시지를 JSON으로 변환하여 DB에 저장
         try {
