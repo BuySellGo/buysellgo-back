@@ -1,5 +1,6 @@
 package com.buysellgo.orderservice.service;
 
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,19 +25,11 @@ import com.buysellgo.orderservice.entity.OrderStatus;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-
-
-
-
-
-
-
-
-
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderGroupRepository orderGroupRepository;
+    private final KafkaTemplate<String,Object> kafkaTemplate;
 
 
     public ServiceResult<Map<String, Object>> createOrder(long userId, OrderCreateReq req){
@@ -100,6 +93,7 @@ public class OrderService {
 
     public ServiceResult<Map<String, Object>> updateOrderStatusSuccess(Long orderId){
         Map<String, Object> data = new HashMap<>();
+        Map<String, Object> salesStat = new HashMap<>();
         try{
             Optional<Order> order = orderRepository.findById(orderId);
             if(order.isEmpty()){
@@ -110,6 +104,12 @@ public class OrderService {
             orderRepository.save(order.get());
             data.put(ORDER_UPDATE_SUCCESS.getValue(), order.get().toVo());
             log.info("주문 상태 업데이트 완료: {}", order.get().toVo());
+
+            salesStat.put("sellerId", order.get().toVo().sellerId());
+            salesStat.put("createdAt", order.get().toVo().createdAt());
+            salesStat.put("salesAmount",order.get().toVo().totalPrice());
+            kafkaTemplate.send("sales-statistics", salesStat);
+
             return ServiceResult.success(ORDER_UPDATE_SUCCESS.getValue(), data);
         }catch(Exception e){
             data.put(FAILURE.getValue(), e.getMessage());
