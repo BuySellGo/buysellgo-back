@@ -9,6 +9,7 @@ import com.buysellgo.userservice.repository.AdminRepository;
 import com.buysellgo.userservice.strategy.auth.common.AuthResult;
 import com.buysellgo.userservice.strategy.auth.common.AuthStrategy;
 import com.buysellgo.userservice.strategy.auth.dto.AuthDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -33,7 +34,7 @@ public class AdminAuthStrategy implements AuthStrategy<Map<String, Object>> {
     private final RedisTemplate<String, Object> adminTemplate;
     
     @Override
-    public AuthResult<Map<String, Object>> createJwt(AuthDto dto) {
+    public AuthResult<Map<String, Object>> createJwt(AuthDto dto, HttpServletRequest request) {
         Optional<Admin> adminOptional = adminRepository.findByEmail(dto.email());
         
         if (adminOptional.isEmpty()) {

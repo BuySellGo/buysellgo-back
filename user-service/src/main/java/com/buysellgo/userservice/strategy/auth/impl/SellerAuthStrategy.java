@@ -8,6 +8,7 @@ import com.buysellgo.userservice.repository.SellerRepository;
 import com.buysellgo.userservice.strategy.auth.common.AuthResult;
 import com.buysellgo.userservice.strategy.auth.common.AuthStrategy;
 import com.buysellgo.userservice.strategy.auth.dto.AuthDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ public class SellerAuthStrategy implements AuthStrategy<Map<String, Object>> {
     private final RedisTemplate<String, Object> sellerTemplate;
     
     @Override
-    public AuthResult<Map<String, Object>> createJwt(AuthDto dto) {
+    public AuthResult<Map<String, Object>> createJwt(AuthDto dto, HttpServletRequest request) {
         Optional<Seller> sellerOptional = sellerRepository.findByEmail(dto.email());
         
         if (sellerOptional.isEmpty()) {

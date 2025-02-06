@@ -9,12 +9,16 @@ import com.buysellgo.userservice.repository.UserRepository;
 import com.buysellgo.userservice.strategy.auth.common.AuthResult;
 import com.buysellgo.userservice.strategy.auth.common.AuthStrategy;
 import com.buysellgo.userservice.strategy.auth.dto.AuthDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
+
+import java.sql.Timestamp;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
@@ -32,9 +36,11 @@ public class UserAuthStrategy implements AuthStrategy<Map<String, Object>> {
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> userTemplate;
     private final ProfileRepository profileRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     
     @Override
-    public AuthResult<Map<String, Object>> createJwt(AuthDto dto) {
+    public AuthResult<Map<String, Object>> createJwt(AuthDto dto, HttpServletRequest request) {
+        Map<String, Object> accessStat = new HashMap<>();
         Optional<User> userOptional = userRepository.findByEmail(dto.email());
         
         if (userOptional.isEmpty()) {
@@ -61,6 +67,12 @@ public class UserAuthStrategy implements AuthStrategy<Map<String, Object>> {
                 expirationHours,
                 TimeUnit.HOURS
         );
+        String ip = getClientIp(request);
+        accessStat.put("userId", user.toVo().userId());
+        accessStat.put("accessDateTime", new Timestamp(System.currentTimeMillis()));
+        accessStat.put("accessIp", ip);
+        kafkaTemplate.send("access-statistics",accessStat);
+
 
         return AuthResult.success(accessToken, data);
     }
@@ -131,5 +143,25 @@ public class UserAuthStrategy implements AuthStrategy<Map<String, Object>> {
     @Override
     public boolean supports(Role role) {
         return Role.USER.equals(role);
+    }
+
+    public String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 } 

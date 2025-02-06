@@ -9,6 +9,7 @@ import com.buysellgo.userservice.strategy.auth.common.AuthStrategy;
 import com.buysellgo.userservice.strategy.auth.common.AuthResult;
 import com.buysellgo.userservice.strategy.auth.dto.AuthDto;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Map;
 
 import static com.buysellgo.userservice.util.CommonConstant.*;
@@ -30,11 +32,11 @@ public class AuthController {
 
     @Operation(summary = "로그인 요청(공통)")
     @PostMapping("/jwt")
-    public ResponseEntity<CommonResDto<Object>> createJwt(@Valid @RequestBody JwtCreateReq req) {
+    public ResponseEntity<CommonResDto<Object>> createJwt(@Valid @RequestBody JwtCreateReq req, HttpServletRequest request) {
         // 사용자의 역할에 맞는 인증 전략을 가져옴
         AuthStrategy<Map<String, Object>> strategy = authContext.getStrategy(req.role());
         // JWT 생성 요청을 처리
-        AuthResult<Map<String, Object>> result = strategy.createJwt(AuthDto.from(req));
+        AuthResult<Map<String, Object>> result = strategy.createJwt(AuthDto.from(req), request);
 
         if(!result.success()){
             throw new CustomException(result.message());
@@ -104,4 +106,6 @@ public class AuthController {
         
         return ResponseEntity.ok(new CommonResDto<>(HttpStatus.OK, "로그아웃 성공", result.data()));
     }
+
+
 }
