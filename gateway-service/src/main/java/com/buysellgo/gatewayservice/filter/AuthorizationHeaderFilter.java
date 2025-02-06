@@ -75,8 +75,11 @@ public class AuthorizationHeaderFilter
             // product-service
             new RoutePattern("/product/detail"),
             new RoutePattern("/product/list/guest"),
+            // search-service
+            new RoutePattern("/search/**"),
             // HTTP 메서드별 허용
             new RoutePattern("/auth/jwt", "POST"),   // 로그인
+
 
             // Swagger 관련
             new RoutePattern("/user-service/v3/api-docs/**"),

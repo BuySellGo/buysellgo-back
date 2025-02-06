@@ -80,6 +80,10 @@ dependencies {
     // swagger mvc
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
+    //kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
 }
 
 dependencyManagement {

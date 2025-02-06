@@ -2,6 +2,8 @@ package com.buysellgo.userservice.strategy.auth.common;
 
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.strategy.auth.dto.AuthDto;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Map;
 
 /**
@@ -18,7 +20,7 @@ public interface AuthStrategy<T extends Map<String, Object>> {
      * @param dto 인증 정보를 포함하는 AuthDto입니다.
      * @return JWT 생성 결과를 포함하는 AuthResult입니다.
      */
-    AuthResult<T> createJwt(AuthDto dto);
+    AuthResult<T> createJwt(AuthDto dto, HttpServletRequest request);
 
     /**
      * 주어진 토큰을 사용하여 JWT를 갱신합니다.

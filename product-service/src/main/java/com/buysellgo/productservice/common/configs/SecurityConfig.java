@@ -48,7 +48,8 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/swagger-ui/**","/v3/api-docs/**",
                         "/product/detail","/product/list/guest",
-                        "/product-service/v3/api-docs"
+                        "/product-service/v3/api-docs",
+                        "/product/quantity"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/jwt").permitAll()    // 로그인
 //                    .requestMatchers("/**").access(

@@ -2,25 +2,20 @@ package com.buysellgo.orderservice.controller;
 
 import com.buysellgo.orderservice.controller.dto.OrderCreateReq;
 import com.buysellgo.orderservice.controller.dto.OrderStatusUpdateReq;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.buysellgo.orderservice.common.dto.CommonResDto;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+
 import java.util.Map;
 import org.springframework.security.access.prepost.PreAuthorize;
 import com.buysellgo.orderservice.service.OrderService;
 import com.buysellgo.orderservice.service.dto.ServiceResult;
 import com.buysellgo.orderservice.common.auth.JwtTokenProvider;
 import com.buysellgo.orderservice.common.auth.TokenUserInfo;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestBody;
 import com.buysellgo.orderservice.common.exception.CustomException;
 import jakarta.validation.Valid;
 
@@ -71,6 +66,16 @@ public class OrderController {
         }
         return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "주문 상태 업데이트 완료", result.data()));
 
+    }
+
+    @PutMapping("/status/success")
+    public ServiceResult<Map<String, Object>> updateOrderStatusSuccess(@RequestParam Long orderId){
+        return orderService.updateOrderStatusSuccess(orderId);
+    }
+
+    @PutMapping("/status/cancelled")
+    public ServiceResult<Map<String, Object>> updateOrderStatusCancelled(@RequestParam Long orderId){
+        return orderService.updateOrderStatusCancelled(orderId);
     }
 
 

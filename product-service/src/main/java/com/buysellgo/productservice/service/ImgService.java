@@ -1,20 +1,21 @@
-package com.buysellgo.userservice.service;
+package com.buysellgo.productservice.service;
 
-import com.buysellgo.userservice.service.dto.ServiceRes;
+import com.buysellgo.productservice.service.dto.ServiceResult;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.multipart.MultipartFile;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import java.util.Map;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
 import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -43,7 +44,7 @@ public class ImgService {
                 .build();
     }
 
-    public ServiceRes<Map<String, Object>> upload(MultipartFile file) {
+    public ServiceResult<Map<String, Object>> upload(MultipartFile file) {
         Map<String, Object> data = new HashMap<>();
         try {
             String objectName = file.getOriginalFilename();
@@ -60,15 +61,15 @@ public class ImgService {
             // S3 퍼블릭 URL 생성
             String url = "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + objectName;
             data.put("url", url);
-            return ServiceRes.success("파일 업로드 성공", data);
+            return ServiceResult.success("파일 업로드 성공", data);
         } catch (Exception e) {
             log.error("Error uploading object: {}", e.getMessage(), e);
             data.put("error", e.getMessage());
-            return ServiceRes.fail("파일 업로드 실패", data);
+            return ServiceResult.fail("파일 업로드 실패", data);
         }
     }
 
-    public ServiceRes<Map<String, Object>> delete(String filePath) {
+    public ServiceResult<Map<String, Object>> delete(String filePath) {
         Map<String, Object> data = new HashMap<>();
         try {
             log.info("Received filePath: {}", filePath);
@@ -84,11 +85,11 @@ public class ImgService {
                             .build()
             );
     
-            return ServiceRes.success("파일 삭제 성공", data);
+            return ServiceResult.success("파일 삭제 성공", data);
         } catch (Exception e) {
             log.error("Error deleting object: {}", e.getMessage(), e);
             data.put("error", e.getMessage());
-            return ServiceRes.fail("파일 삭제 실패", data);
+            return ServiceResult.fail("파일 삭제 실패", data);
         }
     }
 }

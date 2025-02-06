@@ -116,5 +116,18 @@ public class ProductController {
         return ResponseEntity.ok().body(new CommonResDto<>(HttpStatus.OK, "상품 삭제 완료", result.data()));
     }
 
+    @Operation(summary ="상품 수량 업데이트(feign client)")
+    @PutMapping("/quantity")
+    public ServiceResult<Map<String, Object>> updateProductQuantity(@RequestParam("productId") long productId, @RequestParam("quantity") int quantity){
+        return productService.updateProductQuantity(productId, quantity);
+    }
+
+    @Operation(summary ="상품 수량 복원(feign client)")
+    @PutMapping("/quantity/restore")
+    public ServiceResult<Map<String, Object>> restoreProductQuantity(@RequestParam("productId") long productId, @RequestParam("quantity") int quantity){
+        return productService.restoreProductQuantity(productId, quantity);
+    }
+
+
 
 }
