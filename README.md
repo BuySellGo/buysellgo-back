@@ -10,7 +10,7 @@
 ### 3.2. 팀원: 김민우(Full-Stack), 정재훈(Back-end, Infra), 김성철
 ### 3.3. 기술스택
 #### 3.3.1. 프런트엔드
-<img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=REACT&logoColor=white">
+<img src="https://img.shields.io/badge/svelte-FF3E00?style=for-the-badge&logo=svelte&logoColor=white">
 
 #### 3.3.2. 백엔드
 <img src="https://img.shields.io/badge/Java-F7DF1E?style=for-the-badge&logo=coffeescript&logoColor=white"> <img src="https://img.shields.io/badge/spring boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white">
