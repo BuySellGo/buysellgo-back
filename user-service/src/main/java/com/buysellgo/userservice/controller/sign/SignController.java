@@ -5,6 +5,7 @@ import com.buysellgo.userservice.common.dto.CommonResDto;
 import com.buysellgo.userservice.common.entity.Role;
 import com.buysellgo.userservice.common.exception.CustomException;
 import com.buysellgo.userservice.controller.sign.dto.*;
+import com.buysellgo.userservice.domain.user.LoginType;
 import com.buysellgo.userservice.strategy.forget.common.ForgetStrategy;
 import com.buysellgo.userservice.strategy.sign.common.SignContext;
 import com.buysellgo.userservice.strategy.sign.dto.*;
@@ -15,6 +16,7 @@ import com.buysellgo.userservice.strategy.social.common.SocialLoginContext;
 import com.buysellgo.userservice.strategy.social.common.SocialLoginResult;
 import com.buysellgo.userservice.strategy.social.common.SocialLoginStrategy;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,8 @@ import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import static com.buysellgo.userservice.util.CommonConstant.*;
@@ -43,6 +47,7 @@ public class SignController {
     private final SocialLoginProperties socialLoginProperties;
     private final ForgetContext forgetContext;
     private final AuthContext authContext;
+    private String socialLoginUrl;
 
     @Operation(summary = "회원가입 요청(회원)")
     @PostMapping("/user")
@@ -181,9 +186,10 @@ public class SignController {
 
     @Operation(summary = "소셜 로그인(회원)")
     @GetMapping("/social")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> socialLogin(@RequestBody SocialLoginReq req) {
+    public ResponseEntity<CommonResDto<Map<String, Object>>> socialLogin(@RequestParam LoginType provider, @RequestParam String url) {
+        socialLoginUrl = url;
         // 소셜 로그인 URL을 생성하여 반환
-        String redirectUrl = socialLoginProperties.getRedirectUrl(req.provider());
+        String redirectUrl = socialLoginProperties.getRedirectUrl(provider);
         Map<String, Object> data = new HashMap<>();
         data.put("redirectUrl", redirectUrl);
 
@@ -197,7 +203,7 @@ public class SignController {
 
     @Operation(summary = "소셜 로그인 콜백(회원)")
     @GetMapping("/{provider}")
-    public ResponseEntity<CommonResDto<Map<String, Object>>> socialCallback(@PathVariable String provider, @RequestParam String code) {
+    public void socialCallback(@PathVariable String provider, @RequestParam String code, HttpServletResponse response) throws IOException {
         // 소셜 로그인 전략을 가져와서 처리
         SocialLoginStrategy<Map<String,Object>> socialStrategy = socialLoginContext.getStrategy(provider);
         SocialLoginResult<Map<String, Object>> socialResult = socialStrategy.execute(code);
@@ -224,12 +230,11 @@ public class SignController {
             throw new CustomException(authResult.message());
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, BEARER_PREFIX.getValue() + authResult.message());
+        // 리다이렉트 URL 설정
+        String token = URLEncoder.encode(authResult.message(), "UTF-8");
+        String data = URLEncoder.encode(authResult.data().toString(), "UTF-8");
+        String redirectUrl = socialLoginUrl + "?token=" + token + "&data=" + data;
 
-        return ResponseEntity.status(HttpStatus.OK)
-            .headers(headers)
-            .body(new CommonResDto<>(HttpStatus.OK, provider+" 로그인 완료", authResult.data()));
-
+        response.sendRedirect(redirectUrl);
     }
 }

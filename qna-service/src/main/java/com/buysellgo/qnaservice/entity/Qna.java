@@ -55,7 +55,7 @@ public class Qna extends BaseEntity {
     }
 
     public Vo toVoGuest(){
-        return new Vo(qnaId, userId, productId, sellerId, isPrivate,isPrivate ? "비공개" : content ,isPrivate ? "비공개" : getObject(), version, createdAt, updatedAt);
+        return new Vo(qnaId, userId, productId, sellerId, isPrivate, content , getObject(), version, createdAt, updatedAt);
     }
 
     private Object getObject() {
