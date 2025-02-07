@@ -101,8 +101,6 @@
 
 ![](https://velog.velcdn.com/images/deer0123/post/d0a60443-5aa3-42f4-b119-edafe1b49a74/image.png)
 
-![](https://velog.velcdn.com/images/deer0123/post/c9b5941c-a5b5-4ebe-8748-a9a3129a77a5/image.png)
-
 ![](https://velog.velcdn.com/images/deer0123/post/ad57a45d-2be5-43b4-8ae6-f0c872ef5559/image.png)
 
 ![](https://velog.velcdn.com/images/deer0123/post/00a295d0-b945-47a8-bda5-953fecebe2d3/image.png)
