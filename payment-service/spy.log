@@ -1,0 +1,2 @@
+1738828811416|19|statement|connection 15|url jdbc:mysql://localhost:3306/buysellgo_junit?serverTimezone=Asia/Seoul&createDatabaseIfNotExist=true&Unicode=true|     drop table if exists tbl_pay_method|     drop table if exists tbl_pay_method
+1738828811436|12|statement|connection 15|url jdbc:mysql://localhost:3306/buysellgo_junit?serverTimezone=Asia/Seoul&createDatabaseIfNotExist=true&Unicode=true|     drop table if exists tbl_payment|     drop table if exists tbl_payment

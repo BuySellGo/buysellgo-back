@@ -24,6 +24,10 @@ spring:
               - 'Authorization'
               - 'X-Requested-With'
             allow-credentials: true # 자격 증명 허용 여부
+            exposed-headers:
+              - 'Content-Type' # 허용할 HTTP 헤더
+              - 'Authorization'
+              - 'X-Requested-With'
       default-filters:
         - name: GlobalFilter
           args:

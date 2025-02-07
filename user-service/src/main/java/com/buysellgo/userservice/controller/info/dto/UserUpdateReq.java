@@ -16,7 +16,7 @@ public class UserUpdateReq extends InfoUpdateReq{
     @NotNull(message = "업데이트 유형은 필수 입니다.")
     private final UpdateType type;
 
-    @Size(min = 3, max = 50)
+    @Size(min = 1, max = 50)
     @Schema(description = "닉네임 변경", example = "홍길동")
     private final String username;
 

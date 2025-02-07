@@ -66,6 +66,8 @@ public class AuthorizationHeaderFilter
             new RoutePattern("/sign/kakao"),
             new RoutePattern("/sign/naver"),
             new RoutePattern("/sign/google"),
+            new RoutePattern("/mail/send"),
+            new RoutePattern("/mail/verify"),
             new RoutePattern("/forget/email"),
             new RoutePattern("/forget/password"),
             // review-service

@@ -51,6 +51,7 @@ public class SecurityConfig {
                         "/sign/naver","/sign/google",
                         "/forget/email","/forget/password",
                         "/swagger-ui/**","/v3/api-docs/**",
+                        "/mail/send","/mail/verify",
                         //for swagger
                         "/user-service/v3/api-docs/**",
                         "/user-service/swagger-ui/**",

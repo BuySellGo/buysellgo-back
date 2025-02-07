@@ -133,7 +133,7 @@ public class SignController {
     }
 
     @Operation(summary = "중복 검사")
-    @GetMapping("/duplicate")
+    @PostMapping("/duplicate")
     public ResponseEntity<CommonResDto<Map<String, Object>>> checkDuplicate(@Valid @RequestBody CheckDuplicateReq req) {
         // 중복 검사 전략을 가져와서 처리
         SignStrategy<Map<String, Object>> strategy = signContext.getStrategy(req.role());
