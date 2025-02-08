@@ -28,7 +28,7 @@ class ProductRepositoryTest {
     @Test
     @DisplayName("상품을 생성해본다.")
     void createProduct() {
-        productRepository.save(Product.of("상품1", 10000, "회사1", 1L, "https://example.com/image.jpg", "상품1 설명", 100, 10, 3000, MainCategory.FASHION, SubCategory.WOMENS_CLOTHING, Season.SPRING));
+        productRepository.save(Product.of("상품1", 10000, "회사1", 1L, "https://example.com/image.jpg", "상품1 설명", 100, 10, 3000, MainCategory.FASHION, SubCategory.WOMANS_CLOTHING, Season.SPRING));
         assertEquals(1, productRepository.findAll().size());
     }
 

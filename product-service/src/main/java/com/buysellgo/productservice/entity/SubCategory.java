@@ -3,7 +3,7 @@ package com.buysellgo.productservice.entity;
 public enum SubCategory {
     // 패션 관련 서브카테고리
     MENS_CLOTHING, // 남성의류
-    WOMENS_CLOTHING, // 여성의류
+    WOMANS_CLOTHING, // 여성의류
     KIDS_CLOTHING, // 아동복
     SHOES, // 신발
     BAGS, // 가방
