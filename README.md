@@ -10,7 +10,7 @@
 ### 3.2. 팀원: 김민우(Full-Stack), 정재훈(Back-end, Infra), 김성철
 ### 3.3. 기술스택
 #### 3.3.1. 프런트엔드
-<img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=REACT&logoColor=white">
+<img src="https://img.shields.io/badge/svelte-FF3E00?style=for-the-badge&logo=svelte&logoColor=white">
 
 #### 3.3.2. 백엔드
 <img src="https://img.shields.io/badge/Java-F7DF1E?style=for-the-badge&logo=coffeescript&logoColor=white"> <img src="https://img.shields.io/badge/spring boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white">
@@ -101,8 +101,6 @@
 
 ![](https://velog.velcdn.com/images/deer0123/post/d0a60443-5aa3-42f4-b119-edafe1b49a74/image.png)
 
-![](https://velog.velcdn.com/images/deer0123/post/c9b5941c-a5b5-4ebe-8748-a9a3129a77a5/image.png)
-
 ![](https://velog.velcdn.com/images/deer0123/post/ad57a45d-2be5-43b4-8ae6-f0c872ef5559/image.png)
 
 ![](https://velog.velcdn.com/images/deer0123/post/00a295d0-b945-47a8-bda5-953fecebe2d3/image.png)
@@ -145,3 +143,10 @@
 
 #### 11.3.2. 해결
 엘라스틱서치를 도입하여 전문 검색과 유사 검색 기능을 구현함으로써 성능과 사용성을 개선했습니다.
+
+### 11.4. 리액트 대신 스벨트 도입
+#### 11.4.1. 문제
+리액트 기반 프로젝트에서 상태 관리를 위해 `useState`, `useEffect` 등을 사용하면서 **복잡한 상태 관리 로직**이 필요했고, 유지보수가 어려웠습니다. 그리고 react-router-dom으로 인해 **라우팅을 직접 설정**해야 했고, 파일 구조와 URL 매핑을 수동으로 관리해야 했습니다. **리액트의 빌드 속도가 느리고 번들 크기가 커지는 문제**로 인해 개발 및 배포 속도가 저하되었습니다.
+
+#### 11.4.2. 해결
+**스벨트의 자동 반응형(Reactivity) 시스템**으로 `useState`, `useEffect` 없이도 상태 변경 시 UI가 자동으로 업데이트되도록 개선했습니다. **스벨트킷(SvelteKit)의 파일 기반 라우팅**으로 라우팅 설정을 간소화하고, 폴더 구조만으로 페이지를 자동 매핑하여 유지보수성을 향상했습니다. **빌드 타임 컴파일을 활용하는 스벨트의 특성으로** 실행 시 가상 DOM 연산이 불필요해졌고, 더 빠른 성능과 작은 번들 크기로 배포 속도를 최적화했습니다. 결과적으로 **코드 간소화, 성능 향상, 개발 및 배포 속도 개선**을 동시에 달성했습니다.
