@@ -5,6 +5,32 @@ spring:
   application:
     name: user-service
 
+# Swagger Setting
+openapi:
+  service:
+    title: user-service doc
+    version: v1
+    url: http://localhost:8000/${spring.application.name}
+springdoc:
+#  default-consumes-media-type: application/json
+#  default-produces-media-type: application/json
+#  api-docs:
+#    enabled: true
+#    path: /v3/api-docs
+#  swagger-ui:
+#    enabled: true
+#    path: /swagger-ui.html
+#    config-url: /v3/api-docs/swagger-config
+#    urls:
+#      - url: /v3/api-docs
+#        name: API
+#  paths-to-match:
+#    - /**
+  api-docs:
+    path: /user-service/v3/api-docs
+  swagger-ui:
+    path: /user-service/swagger-ui.html
+
 # log level setting
 logging:
   level:

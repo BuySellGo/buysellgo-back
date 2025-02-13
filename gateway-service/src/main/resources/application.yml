@@ -1,47 +1,59 @@
 server:
-  port: 8000
-
+  port: 8000 # 서버가 실행될 포트 번호
+  servlet:
+    context-path: / # 기본 컨텍스트 경로 설정
 spring:
   application:
-    name: gateway-service
+    name: gateway-service # 애플리케이션 이름 설정
   cloud:
     gateway:
       globalcors:
         cors-configurations:
-          "[/**]": # ?? ??? ?? CORS ??
+          '[/**]': # 모든 경로에 대해 CORS 설정
             allowed-origins:
-               - "http://localhost:3000"
-#              - "https://buysellgo.shop"
+              - 'http://localhost:3000' # 허용할 도메인 추가
+            #               - "https://buysellgo.shop" # 필요시 추가
             allowed-methods:
-              - GET
+              - GET # 허용할 HTTP 메서드
               - POST
               - PUT
               - DELETE
               - OPTIONS
             allowed-headers:
-              - "Content-Type"
-              - "Authorization"
-              - "X-Requested-With"
-            allow-credentials: true
+              - 'Content-Type' # 허용할 HTTP 헤더
+              - 'Authorization'
+              - 'X-Requested-With'
+            allow-credentials: true # 자격 증명 허용 여부
+            exposed-headers:
+              - 'Content-Type' # 허용할 HTTP 헤더
+              - 'Authorization'
+              - 'X-Requested-With'
       default-filters:
         - name: GlobalFilter
           args:
-            baseMessage: BuySellGo Cloud Gateway Global Filter
-            preLogger: true
-            postLogger: true
+            baseMessage: BuySellGo Cloud Gateway Global Filter # 기본 메시지 설정
+            preLogger: true # 요청 전 로깅 활성화
+            postLogger: true # 응답 후 로깅 활성화
         - name: DedupeResponseHeader
           args:
-            name: Access-Control-Allow-Credentials Access-Control-Allow-Origin
-            strategy: RETAIN_FIRST
+            name: Access-Control-Allow-Credentials Access-Control-Allow-Origin # 중복 헤더 제거
+            strategy: RETAIN_FIRST # 첫 번째 헤더 유지 전략
       routes:
+        # user-service
+        - id: user-service-api-docs
+          uri: lb://USER-SERVICE # 로드 밸런서 URI
+          predicates:
+            - Path=/user-service/v3/api-docs # 경로 조건
+            - Method=GET # 메서드 조건
+
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/**
+            - Path=/user-service/** # 경로 조건
           filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
+            - RemoveRequestHeader=Cookie # 요청 헤더에서 쿠키 제거
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment} # 경로 재작성
+            - AuthorizationHeaderFilter # 인증 헤더 필터 적용
 
         - id: user-service
           uri: lb://USER-SERVICE
@@ -50,7 +62,219 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        # helpdesk-service
+        - id: helpdesk-service-api-docs
+          uri: lb://HELPDESK-SERVICE
+          predicates:
+            - Path=/helpdesk-service/v3/api-docs
+            - Method=GET
+
+        - id: helpdesk-service
+          uri: lb://HELPDESK-SERVICE
+          predicates:
+            - Path=/helpdesk-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/helpdesk-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
+
+        - id: helpdesk-service
+          uri: lb://HELPDESK-SERVICE
+          predicates:
+            - Path=/helpdesk-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/helpdesk-service/(?<segment>.*), /$\{segment}
+
+        # promotion-service
+        - id: promotion-service-api-docs
+          uri: lb://PROMOTION-SERVICE
+          predicates:
+            - Path=/promotion-service/v3/api-docs
+            - Method=GET
+
+        - id: promotion-service
+          uri: lb://PROMOTION-SERVICE
+          predicates:
+            - Path=/promotion-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/promotion-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: promotion-service
+          uri: lb://PROMOTION-SERVICE
+          predicates:
+            - Path=/promotion-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/promotion-service/(?<segment>.*), /$\{segment}
+
+        # statistics-service
+        - id: statistics-service-api-docs
+          uri: lb://STATISTICS-SERVICE
+          predicates:
+            - Path=/statistics-service/v3/api-docs
+            - Method=GET
+
+        - id: statistics-service
+          uri: lb://STATISTICS-SERVICE
+          predicates:
+            - Path=/statistics-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/statistics-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: statistics-service
+          uri: lb://STATISTICS-SERVICE
+          predicates:
+            - Path=/statistics-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/statistics-service/(?<segment>.*), /$\{segment}
+
+        # delivery-service
+        - id: delivery-service-api-docs
+          uri: lb://DELIVERY-SERVICE
+          predicates:
+            - Path=/delivery-service/v3/api-docs
+            - Method=GET
+
+        - id: delivery-service
+          uri: lb://DELIVERY-SERVICE
+          predicates:
+            - Path=/delivery-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/delivery-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: delivery-service
+          uri: lb://DELIVERY-SERVICE
+          predicates:
+            - Path=/delivery-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/delivery-service/(?<segment>.*), /$\{segment}
+
+        # chat-service
+        - id: chat-service-api-docs
+          uri: lb://CHAT-SERVICE
+          predicates:
+            - Path=/chat-service/v3/api-docs
+            - Method=GET
+
+        - id: chat-service
+          uri: lb://CHAT-SERVICE
+          predicates:
+            - Path=/chat-service/ws/info** # 경로 조건
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/chat-service/(?<segment>.*), /$\{segment} # 경로 재작성
+
+        - id: chat-service
+          uri: lb://CHAT-SERVICE
+          predicates:
+            - Path=/chat-service/chat/** # 경로 조건
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/chat-service/(?<segment>.*), /$\{segment} # 경로 재작성
+
+        - id: chat-service
+          uri: lb://CHAT-SERVICE
+          predicates:
+            - Path=/chat-service/** # 경로 조건
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/chat-service/(?<segment>.*), /$\{segment} # 경로 재작성
+
+        - id: chat-service
+          uri: lb://CHAT-SERVICE
+          predicates:
+            - Path=/chat-service/actuator/**
+          filters:
+            - RewritePath=/chat-service/(?<segment>.*), /$\{segment}
+
+        # review-service
+        - id: review-service-api-docs
+          uri: lb://REVIEW-SERVICE
+          predicates:
+            - Path=/review-service/v3/api-docs
+            - Method=GET
+
+        - id: review-service
+          uri: lb://REVIEW-SERVICE
+          predicates:
+            - Path=/review-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/review-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: review-service
+          uri: lb://REVIEW-SERVICE
+          predicates:
+            - Path=/review-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/review-service/(?<segment>.*), /$\{segment}
+
+        # qna-service
+        - id: qna-service-api-docs
+          uri: lb://QNA-SERVICE
+          predicates:
+            - Path=/qna-service/v3/api-docs
+            - Method=GET
+
+        - id: qna-service
+          uri: lb://QNA-SERVICE
+          predicates:
+            - Path=/qna-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/qna-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: qna-service
+          uri: lb://QNA-SERVICE
+          predicates:
+            - Path=/qna-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/qna-service/(?<segment>.*), /$\{segment}
+
+        # order-service
+        - id: order-service-api-docs
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/v3/api-docs
+            - Method=GET
+
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
+
+        # product-service
+        - id: product-service-api-docs
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product-service/v3/api-docs
+            - Method=GET
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE
@@ -68,6 +292,68 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/product-service/(?<segment>.*), /$\{segment}
+
+          # payment-service
+        - id: payment-service-api-docs
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment-service/v3/api-docs
+            - Method=GET
+
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/payment-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/payment-service/(?<segment>.*), /$\{segment}
+
+          # search-service
+        - id: search-service-api-docs
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/search-service/v3/api-docs
+            - Method=GET
+
+        - id: search-service
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/search-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/search-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: search-service
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/search-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/search-service/(?<segment>.*), /$\{segment}
+
+#        - id: openapi-proxy
+#          uri: http://localhost:8000
+#          predicates:
+#          - Path=/demo-microservices/v3/api-docs/**
+#          filters:
+#          - RewritePath=/demo-microservices/v3/api-docs/(?<path>.*), /demo-microservices/$\{path}/v3/api-docs
+
+#        - id: openapi
+#          uri: http://localhost:${server.port}
+#          predicates:
+#            - Path=/v3/api-docs/**
+#          filters:
+#            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
 #
 #        - id: main-service
 #          uri: lb://MAIN-SERVICE
@@ -124,8 +410,57 @@ logging:
   level:
     logging:
       level:
-        root: info
-        org.hibernate.orm.jdbc.bind: info
-        org.hibernate.SQL: info
-        springframework.cloud.config: info
-        com.buysellgo: info
+        root: info # 기본 로깅 레벨
+        org.hibernate.orm.jdbc.bind: info # Hibernate 바인딩 로깅 레벨
+        org.hibernate.SQL: info # Hibernate SQL 로깅 레벨
+        springframework.cloud.config: info # Spring Cloud Config 로깅 레벨
+        com.buysellgo: info # BuySellGo 관련 로깅 레벨
+
+springdoc:
+  enable-native-support: true # 네이티브 지원 활성화
+  api-docs:
+    enabled: true # API 문서 활성화
+  swagger-ui:
+    enabled: true # Swagger UI 활성화
+    path: /swagger-ui.html # Swagger UI 경로
+    config-url: /v3/api-docs/swagger-config # Swagger 설정 URL
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway Service # API 게이트웨이 서비스 이름
+      #        primaryName: API Gateway Service
+      - url: /user-service/v3/api-docs
+        name: User Service # 사용자 서비스 이름
+      #        primaryName: User Service
+      - url: /helpdesk-service/v3/api-docs
+        name: HelpDesk Service
+      #        primaryName: HelpDesk Service
+      - url: /promotion-service/v3/api-docs
+        name: Promotion Service
+      #        primaryName: Promotion Service
+      - url: /statistics-service/v3/api-docs
+        name: Statistics Service
+      #        primaryName: Statistics Service
+      - url: /delivery-service/v3/api-docs
+        name: Delivery Service
+      #        primaryName: Delivery Service
+      - url: /chat-service/v3/api-docs
+        name: Chat Service
+      #        primaryName: Chat Service
+      - url: /review-service/v3/api-docs
+        name: Review Service
+      #        primaryName: Review Service
+      - url: /qna-service/v3/api-docs
+        name: Qna Service
+      #        primaryName: Qna Service
+      - url: /order-service/v3/api-docs
+        name: Order Service
+      #        primaryName: Order Service
+      - url: /product-service/v3/api-docs
+        name: Product Service
+      #        primaryName: Product Service
+      - url: /payment-service/v3/api-docs
+        name: Payment Service
+      #        primaryName: Payment Service
+      - url: /search-service/v3/api-docs
+        name: Search Service
+      #        primaryName: Search Service

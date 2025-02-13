@@ -2,12 +2,24 @@
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/chat-service" />
     <file type="web" url="file://$PROJECT_DIR$/config-service" />
+    <file type="web" url="file://$PROJECT_DIR$/delivery-service" />
     <file type="web" url="file://$PROJECT_DIR$/discovery-service" />
     <file type="web" url="file://$PROJECT_DIR$/gateway-service" />
+    <file type="web" url="file://$PROJECT_DIR$/helpdesk-service" />
+    <file type="web" url="file://$PROJECT_DIR$/order-service" />
+    <file type="web" url="file://$PROJECT_DIR$/payment-service" />
+    <file type="web" url="file://$PROJECT_DIR$/product-service" />
+    <file type="web" url="file://$PROJECT_DIR$/promotion-service" />
+    <file type="web" url="file://$PROJECT_DIR$/qna-service" />
+    <file type="web" url="file://$PROJECT_DIR$/review-service" />
+    <file type="web" url="file://$PROJECT_DIR$/search-service" />
+    <file type="web" url="file://$PROJECT_DIR$/shipping-service" />
+    <file type="web" url="file://$PROJECT_DIR$/statistics-service" />
     <file type="web" url="file://$PROJECT_DIR$/user-service" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="corretto-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

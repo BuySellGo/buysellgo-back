@@ -5,19 +5,27 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
+import java.util.Map;
+import java.util.HashMap;
 
 @Getter @Setter
 @ToString
 @NoArgsConstructor
 public class CommonErrorDto {
 
-    private int statusCode;
-    private String statusMessage;
+    private HttpStatus status;
+    private String message;
+    private Map<String, String> errors;
 
-    public CommonErrorDto(HttpStatus httpStatus, String statusMessage) {
-        this.statusCode = httpStatus.value();
-        this.statusMessage = statusMessage;
+    public CommonErrorDto(HttpStatus status, String message) {
+        this.status = status;
+        this.message = message;
+        this.errors = new HashMap<>();
     }
 
-
+    public CommonErrorDto(HttpStatus status, String message, Map<String, String> errors) {
+        this.status = status;
+        this.message = message;
+        this.errors = errors != null ? errors : new HashMap<>();
+    }
 }
